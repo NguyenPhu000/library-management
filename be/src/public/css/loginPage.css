@@ -4,6 +4,7 @@
   --text-color: white;
   --bg-opacity: 0.85;
   --transition: 0.3s ease;
+  --shadow-color: rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -23,94 +24,98 @@ body {
     var(--primary-color),
     var(--secondary-color)
   );
+  overflow: hidden;
 }
 
 .login-container {
   background: rgba(0, 0, 0, var(--bg-opacity));
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  width: min(350px, 90%);
+  padding: 2.5rem 3rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px var(--shadow-color), 0 0 0 5px rgba(255, 255, 255, 0.1);
+  width: min(400px, 90%);
   text-align: center;
   color: var(--text-color);
+  transition: transform 0.4s ease-in-out;
+}
+
+.login-container:hover {
+  transform: scale(1.02);
 }
 
 h2 {
-  font-size: 1.5rem;
-  margin-bottom: 0.625rem;
+  font-size: 2rem;
+  margin-bottom: 1rem;
   color: var(--primary-color);
+  text-shadow: 2px 2px 3px var(--shadow-color);
 }
 
 p {
-  font-size: 0.875rem;
-  margin-bottom: 1.25rem;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.7;
 }
 
 .error-message {
-  color: #ff3b3b;
-  background: rgba(255, 0, 0, 0.1);
-  padding: 0.625rem;
-  border-radius: 5px;
-  font-size: 0.875rem;
-  margin-bottom: 1rem;
+  color: #ffcccc;
+  background: rgba(255, 0, 0, 0.2);
+  padding: 0.8rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 form {
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
-}
-
-/* ========== FORM ========== */
-form {
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 20px;
 }
 
 .input-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   text-align: left;
 }
 
 label {
-  font-weight: bold;
-  font-size: 14px;
+  font-weight: 600;
+  font-size: 15px;
   display: flex;
   align-items: center;
-  gap: 5px;
-  color: #b5db88; /* Chữ xanh nhạt */
+  gap: 8px;
+  color: var(--primary-color);
+  text-shadow: 1px 1px 2px var(--shadow-color);
 }
 
-/* ========== INPUT FIELD ========== */
 .input-wrapper {
   position: relative;
 }
 
 input {
   width: 100%;
-  padding: 12px;
+  padding: 14px 16px;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.15);
   color: white;
   outline: none;
-  transition: 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 input::placeholder {
   color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
 }
 
 input:focus {
-  border: 2px solid #b5db88;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-color);
 }
 
-/* ========== TOGGLE PASSWORD (EYE ICON) ========== */
 .toggle-password {
   position: absolute;
-  right: 15px;
+  right: 18px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
@@ -118,45 +123,69 @@ input:focus {
 
 .toggle-password i {
   color: white;
-  font-size: 16px;
-  transition: 0.3s;
+  font-size: 18px;
+  transition: color 0.3s;
 }
 
 .toggle-password:hover i {
-  color: #b5db88;
+  color: var(--primary-color);
+  transform: scale(1.1);
 }
 
-/* ========== FORGOT PASSWORD LINK ========== */
 .forgot-password {
-  font-size: 12px;
-  color: #b5db88;
+  font-size: 13px;
+  color: var(--primary-color);
   text-decoration: none;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  display: inline-block;
+  transition: color 0.3s, transform 0.3s;
 }
 
 .forgot-password:hover {
   text-decoration: underline;
+  color: #c2e59c;
+  transform: translateY(-2px);
 }
 
-/* ========== LOGIN BUTTON ========== */
 button {
-  background: #b5db88;
+  background: var(--primary-color);
   color: black;
-  padding: 12px;
+  padding: 14px 24px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 16px;
-  transition: 0.3s;
+  font-size: 17px;
+  font-weight: 500;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 8px var(--shadow-color);
 }
 
 button:hover {
   background: #a1c374;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px var(--shadow-color);
 }
 
-/* ========== RESPONSIVE ========== */
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px var(--shadow-color);
+}
+
 @media screen and (max-width: 400px) {
   .login-container {
-    width: 90%;
+    width: 95%;
+    padding: 2rem;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
+
+  button {
+    font-size: 16px;
   }
 }

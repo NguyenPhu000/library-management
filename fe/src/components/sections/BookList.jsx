@@ -1,18 +1,22 @@
 import React, { useState } from "react";
-import { useBook } from "../../contexts/BookContext";
 import Pagination from "../common/Pagination";
 import { Link } from "react-router-dom";
 import { generateSlug } from "../../utils/slugify";
 import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSpinner,
+  faBookOpen,
+  faUserPen,
+} from "@fortawesome/free-solid-svg-icons";
 
-const BookList = () => {
-  const { filteredBooks, loading } = useBook();
+const BookList = ({ books, loading }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
   const indexOfLastBook = currentPage * itemsPerPage;
   const indexOfFirstBook = indexOfLastBook - itemsPerPage;
-  const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
+  const currentBooks = books.slice(indexOfFirstBook, indexOfLastBook);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -28,16 +32,21 @@ const BookList = () => {
       >
         {loading ? (
           <motion.p
-            className="text-center col-span-full text-white text-lg"
+            className="text-center col-span-full text-white text-lg flex items-center justify-center space-x-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            ⏳ Đang tải sách...
+            <FontAwesomeIcon
+              icon={faSpinner}
+              spin
+              className="text-lightGreen"
+            />
+            <span>Đang tải sách...</span>
           </motion.p>
         ) : currentBooks.length > 0 ? (
           currentBooks.map((book) => {
-            const slug = generateSlug(book.book_id); // ✅ Sử dụng book_id để tạo slug
+            const slug = generateSlug(book.book_id);
             return (
               <motion.div
                 key={book.book_id}
@@ -48,7 +57,7 @@ const BookList = () => {
               >
                 <Link to={`/books/${slug}`}>
                   <motion.div
-                    className="relative bg-gray-800 rounded-lg shadow-md overflow-hidden group hover:shadow-2xl cursor-pointer"
+                    className="relative bg-gray-800 rounded-lg shadow-md overflow-hidden group hover:shadow-2xl cursor-pointer transform-gpu hover:-rotate-3 hover:translate-y-1 transition duration-300 ease-in-out"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.3 }}
                   >
@@ -56,11 +65,10 @@ const BookList = () => {
                       <motion.img
                         src={book.cover_image}
                         alt={book.title || "Không có tiêu đề"}
-                        className="w-full h-72 object-cover"
+                        className="w-full h-72 object-cover rounded-t-lg" // Thêm rounded-t-lg để bo góc trên ảnh
                         whileHover={{ scale: 1.1 }}
                         transition={{ duration: 0.3 }}
                       />
-                      {/* Hiệu ứng sáng bóng di chuyển từ trái trên xuống */}
                       <div
                         className="absolute inset-0 overflow-hidden bg-[linear-gradient(135deg,transparent_25%,rgba(255,255,255,.3)_50%,transparent_75%,transparent_100%)]
                                           bg-[length:250%_250%] bg-[position:-100%_-100%] bg-no-repeat transition-[background-position_0s_ease] group-hover:bg-[position:200%_200%] group-hover:duration-[1500ms]"
@@ -70,8 +78,10 @@ const BookList = () => {
                       <h3 className="text-lg font-semibold text-white truncate">
                         {book.title || "Không có tiêu đề"}
                       </h3>
-                      <p className="text-gray-400 text-sm truncate">
-                        ✍️ {book.author || "Không rõ tác giả"}
+                      <p className="text-gray-400 text-sm truncate flex items-center font-semibold">
+                        {" "}
+                        <FontAwesomeIcon icon={faUserPen} className="mr-1" />
+                        {book.author || "Không rõ tác giả"}
                       </p>
                     </div>
                   </motion.div>
@@ -81,23 +91,24 @@ const BookList = () => {
           })
         ) : (
           <motion.p
-            className="text-center col-span-full text-white text-lg"
+            className="text-center col-span-full text-white text-lg flex items-center justify-center space-x-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            📚 Không có sách nào...
+            <FontAwesomeIcon icon={faBookOpen} className="text-lightGreen" />
+            <span>Không có sách nào trong danh mục này.</span>
           </motion.p>
         )}
       </motion.section>
-      {filteredBooks.length > itemsPerPage && (
+      {books.length > itemsPerPage && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
           <Pagination
-            totalItems={filteredBooks.length}
+            totalItems={books.length}
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             onPageChange={handlePageChange}

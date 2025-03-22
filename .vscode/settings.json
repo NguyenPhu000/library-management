@@ -1,4 +1,10 @@
 {
-  "cSpell.words": ["fontawesome", "fortawesome", "VITE"],
+  "cSpell.words": [
+    "bookservice",
+    "fontawesome",
+    "fortawesome",
+    "VITE",
+    "Xmark"
+  ],
   "postman.settings.dotenv-detection-notification-visibility": false
 }

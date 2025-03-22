@@ -1,8 +1,7 @@
-import api from "../../services/api";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { FaSearch, FaUserCircle } from "react-icons/fa"; // Import icons
-
+import SearchBar from "../sections/SearchBar";
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const logoutUrl = `${import.meta.env.VITE_API_BASE_URL}/logout`;
@@ -43,14 +42,7 @@ const Header = () => {
       {/* Search & User */}
       <div className="flex items-center space-x-6">
         {/* Search Bar */}
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Tìm kiếm..."
-            className="bg-gray-800 border border-gray-700 text-white rounded-full px-5 py-2 pl-10 w-48 focus:w-64 focus:ring-2 focus:ring-lightGreen focus:border-lightGreen outline-none transition-all"
-          />
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
-        </div>
+        <SearchBar />
 
         {/* User Icon + Dropdown */}
         <div className="relative">

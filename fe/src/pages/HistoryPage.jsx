@@ -1,62 +1,40 @@
-import React, { useContext } from "react";
-import { LoanContext } from "../contexts/LoanContext";
+import React, { useEffect } from "react";
+import { useLoan } from "../contexts/LoanContext";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook, faRedo, faReply } from "@fortawesome/free-solid-svg-icons";
+const LoanHistory = () => {
+  const { loanHistory, fetchLoanHistory, loading, error } = useLoan();
 
-const LoanPage = () => {
-  const { loans, loading, error, returnLoan, requestRenewLoan } =
-    useContext(LoanContext);
+  useEffect(() => {
+    fetchLoanHistory(); // Gọi hàm để lấy lịch sử mượn khi component được mount
+  }, [fetchLoanHistory]);
 
-  const handleReturnBook = async (loanId, title) => {
-    if (!window.confirm(`Bạn có chắc chắn muốn trả sách "${title}" không?`))
-      return;
-
-    try {
-      await returnLoan(loanId);
-      alert(`Đã trả sách: "${title}"`);
-    } catch (error) {
-      console.error("Lỗi khi trả sách:", error);
-      alert(`Lỗi khi trả sách: ${error.message}`);
-    }
-  };
-
-  const handleRenewBook = async (loanId, title) => {
-    try {
-      const result = await requestRenewLoan(loanId);
-      if (result.success) {
-        alert(`Yêu cầu gia hạn sách "${title}" đã được gửi!`);
-      } else {
-        alert(`Lỗi: ${result.message}`);
-      }
-    } catch (error) {
-      console.error("Lỗi khi yêu cầu gia hạn:", error);
-      alert(`Không thể yêu cầu gia hạn: ${error.message}`);
-    }
-  };
-
-  if (loading)
+  if (loading) {
     return (
-      <div className="font-poppins p-4 bg-gray-900 text-white">Đang tải...</div>
+      <div className="font-poppins p-4 bg-gray-900 text-white">
+        Đang tải lịch sử mượn...
+      </div>
     );
-  if (error)
+  }
+
+  if (error) {
     return (
       <div className="font-poppins p-4 bg-gray-900 text-white">
         Lỗi: {error}
       </div>
     );
+  }
 
   return (
     <div className="font-poppins p-4 bg-gray-900 text-white">
       <h1 className="text-lightGreen mb-4 text-2xl font-bold">
-        Danh Sách Sách Đang Mượn
+        Lịch Sử Mượn Sách
       </h1>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-700 rounded-md shadow-md bg-gray-800">
           <thead className="bg-gray-700">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-lightGreen uppercase tracking-wider">
-                <FontAwesomeIcon icon={faBook} /> Tiêu đề sách
+                Tiêu đề sách
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-lightGreen uppercase tracking-wider">
                 Tác giả
@@ -65,7 +43,7 @@ const LoanPage = () => {
                 Ngày mượn
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-lightGreen uppercase tracking-wider">
-                Hạn trả
+                Ngày trả
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-lightGreen uppercase tracking-wider">
                 Số lần gia hạn
@@ -74,13 +52,13 @@ const LoanPage = () => {
                 Trạng thái gia hạn
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-lightGreen uppercase tracking-wider">
-                Hành động
+                Số tiền phạt
               </th>
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
-            {loans.length > 0 ? (
-              loans.map((loan) => (
+            {loanHistory.length > 0 ? (
+              loanHistory.map((loan) => (
                 <tr
                   key={loan.loan_id}
                   className="hover:bg-gray-600 transition-colors duration-200"
@@ -92,51 +70,46 @@ const LoanPage = () => {
                     {loan.Book.author}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {new Date(loan.loan_date).toLocaleDateString("en-GB")}
+                    {new Date(loan.loan_date)
+                      .toLocaleDateString("vi-VN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })
+                      .replace(/(^|\s)(\d)(?=\s|$)/g, "$10$2")}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {new Date(loan.due_date).toLocaleDateString("en-GB")}
+                    {new Date(loan.return_date)
+                      .toLocaleDateString("vi-VN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })
+                      .replace(/(^|\s)(\d)(?=\s|$)/g, "$10$2")}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {loan.renew_count}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {loan.renewal_status === "pending"
-                      ? "Đang chờ"
+                      ? "Đang chờ xác nhận"
                       : loan.renewal_status === "approved"
                       ? "Đã chấp nhận"
                       : loan.renewal_status === "rejected"
-                      ? "Từ chối"
-                      : "Đang chờ"}{" "}
-                    {/* Trạng thái gia hạn */}
+                      ? "Đã từ chối"
+                      : loan.renewal_status}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap space-x-2">
-                    <button
-                      className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none"
-                      type="button"
-                      onClick={() =>
-                        handleReturnBook(loan.loan_id, loan.Book.title)
-                      }
-                      disabled={loan.returned === 1}
-                    >
-                      <FontAwesomeIcon icon={faReply} /> Trả sách
-                    </button>
-                    <button
-                      className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none"
-                      type="button"
-                      onClick={() =>
-                        handleRenewBook(loan.loan_id, loan.Book.title)
-                      }
-                    >
-                      <FontAwesomeIcon icon={faRedo} /> Gia hạn
-                    </button>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {loan.fine_amount
+                      ? `${Math.floor(loan.fine_amount)} VND`
+                      : "0 VND"}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td colSpan="7" className="px-6 py-4 text-center">
-                  Không có sách đang mượn nào.
+                  Không có lịch sử mượn nào.
                 </td>
               </tr>
             )}
@@ -147,4 +120,4 @@ const LoanPage = () => {
   );
 };
 
-export default LoanPage;
+export default LoanHistory;

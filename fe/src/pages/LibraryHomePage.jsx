@@ -7,8 +7,8 @@ const LibraryHome = () => {
   return (
     <div>
       <HeroSection />
-      <FeatureSection />
       <UpdatedBook />
+      <FeatureSection />
     </div>
   );
 };

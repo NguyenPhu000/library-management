@@ -140,6 +140,21 @@ const deleteBook = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+const searchBooks = async (req, res) => {
+  try {
+    let filters = {
+      criteria: req.query.criteria,
+      query: req.query.query,
+    };
+    let books = await bookService.searchBook(filters);
+
+    return res.json({ books });
+  } catch (error) {
+    console.error("Lỗi khi tìm kiếm sách:", error);
+    return res.status(500).json({ error: "Lỗi hệ thống" });
+  }
+};
+
 export default {
   getCreateBooks,
   postCreateBooks,
@@ -148,4 +163,5 @@ export default {
   updateBook,
   deleteBook,
   getBookByCategory,
+  searchBooks,
 };

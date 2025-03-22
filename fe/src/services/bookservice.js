@@ -78,8 +78,36 @@ const getBookById = async (bookId) => {
   }
 };
 
+const searchBooks = async (criteria, query) => {
+  try {
+    const response = await API.get("/books/search", {
+      params: {
+        criteria: criteria,
+        query: query,
+      },
+    });
+
+    // Xử lý hình ảnh cho từng sách trong kết quả
+    const booksWithImages = response.data.books.map((book) => ({
+      ...book,
+      cover_image: book.cover_image
+        ? `http://localhost:8081/uploads/${book.cover_image.replace(
+            /['"]+/g,
+            ""
+          )}`
+        : "https://via.placeholder.com/150", // Hình ảnh placeholder nếu không có
+    }));
+
+    return { books: booksWithImages }; // Trả về danh sách sách đã xử lý
+  } catch (error) {
+    console.error("Lỗi khi tìm kiếm sách:", error);
+    throw error;
+  }
+};
+
 export default {
   getBooks,
   getBooksByCategory,
   getBookById,
+  searchBooks,
 };

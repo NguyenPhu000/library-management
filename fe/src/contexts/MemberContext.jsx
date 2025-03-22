@@ -10,7 +10,7 @@ const MemberContext = createContext();
 export const MemberProvider = ({ children }) => {
   const { user, loading: authLoading, error: authError } = useAuth();
   const [memberData, setMemberData] = useState(null);
-  const [memberId, setMemberId] = useState(null); 
+  const [memberId, setMemberId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -35,7 +35,7 @@ export const MemberProvider = ({ children }) => {
       setError(null);
       try {
         const member = await getCurrentMemberInfo(user.user_id);
-        setMemberData(member); 
+        setMemberData(member);
 
         const id = await getMemberIdByUserId(user.user_id);
         setMemberId(id);

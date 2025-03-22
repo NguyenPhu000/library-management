@@ -20,6 +20,7 @@ router.post(
   bookController.updateBook
 );
 
+router.get("/books/search", bookController.searchBooks);
 router.get("/books/delete", bookController.deleteBook);
 router.get("/books/:bookId", bookController.getBookById);
 router.get("/books/category/:categoryId", bookController.getBookByCategory);

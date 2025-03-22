@@ -7,7 +7,8 @@ import ProfilePage from "./pages/ProfilePage";
 import LoanPage from "./pages/LoanPage";
 import RequireAuth from "./components/ui/RequireAuth";
 import AppProviders from "./contexts/AppProviders";
-
+import LoanHistory from "./pages/HistoryPage";
+import ContactPage from "./pages/ContactPage";
 const App = () => {
   return (
     <AppProviders>
@@ -17,9 +18,11 @@ const App = () => {
             <Route path="/" element={<LibraryHome />} />
             <Route path="/books" element={<BookListPage />} />
             <Route path="/books/:slug" element={<BookDetail />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route element={<RequireAuth />}>
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/borrowed" element={<LoanPage />} />
+              <Route path="/history" element={<LoanHistory />} />
             </Route>
           </Route>
         </Routes>

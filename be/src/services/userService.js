@@ -106,6 +106,31 @@ let searchUser = async (filters) => {
     throw new Error("Lỗi khi tìm kiếm người dùng: " + error.message);
   }
 };
+let updateUserProfile = async (userId, data) => {
+  try {
+    const user = await db.User.findOne({ where: { user_id: userId } });
+    if (!user) throw new Error("User not found");
+
+    const updates = {
+      username: data.username,
+      first_name: data.first_name,
+      last_name: data.last_name,
+      gender: data.gender === "1",
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+    };
+
+    if (data.password) {
+      const salt = bcrypt.genSaltSync(10);
+      updates.password = bcrypt.hashSync(data.password, salt);
+    }
+
+    await db.User.update(updates, { where: { user_id: userId } });
+  } catch (error) {
+    throw new Error("Error updating user profile: " + error.message);
+  }
+};
 
 export default {
   createNewUser,
@@ -115,4 +140,5 @@ export default {
   deleteUserById,
   toggleActive,
   searchUser,
+  updateUserProfile,
 };

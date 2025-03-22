@@ -44,14 +44,18 @@
       </div>
 
       <div class="modal-body modal-body-custom">
-        <form action="/api/users/create" method="POST">
+        <form
+          action="/api/users/create"
+          method="POST"
+          onsubmit="return validateForm()"
+        >
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
                 <label
                   for="username"
                   class="form-label col-form-label-custom text-dark"
-                  >Tên Người Dùng</label
+                  >Tên Người Dùng (tối thiểu 6 ký tự)</label
                 >
                 <input
                   type="text"
@@ -59,13 +63,14 @@
                   id="username"
                   name="username"
                   placeholder="Nhập tên người dùng"
+                  required
                 />
               </div>
               <div class="mb-3">
                 <label
                   for="password"
                   class="form-label col-form-label-custom text-dark"
-                  >Mật Khẩu</label
+                  >Mật Khẩu (tối thiểu 6 ký tự)</label
                 >
                 <input
                   type="password"
@@ -73,6 +78,7 @@
                   id="password"
                   name="password"
                   placeholder="Nhập mật khẩu"
+                  required
                 />
               </div>
               <div class="mb-3">
@@ -109,7 +115,7 @@
                 <label
                   for="email"
                   class="form-label col-form-label-custom text-dark"
-                  >Email</label
+                  >Email (đúng định dạng)</label
                 >
                 <input
                   type="email"
@@ -117,13 +123,14 @@
                   id="email"
                   name="email"
                   placeholder="Nhập email"
+                  required
                 />
               </div>
               <div class="mb-3">
                 <label
                   for="phone"
                   class="form-label col-form-label-custom text-dark"
-                  >Số Điện Thoại</label
+                  >Số Điện Thoại (10 số)</label
                 >
                 <input
                   type="tel"
@@ -131,6 +138,7 @@
                   id="phone"
                   name="phone"
                   placeholder="Nhập số điện thoại"
+                  required
                 />
               </div>
               <div class="mb-3">

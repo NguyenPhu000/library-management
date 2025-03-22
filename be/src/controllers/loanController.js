@@ -17,7 +17,9 @@ const getAllLoans = async (req, res) => {
 
 const borrowBook = async (req, res) => {
   try {
-    let result = await loanService.borrowBook(req.body);
+    const member_id = req.params.memberId; // Lấy member_id từ req.params
+    const book_id = req.params.bookId; // Lấy book_id từ req.params
+    let result = await loanService.borrowBook(member_id, book_id); // Gọi service với các tham số
 
     if (!result.success) {
       return res.status(400).json({ message: result.message });
@@ -54,8 +56,7 @@ const returnBook = async (req, res) => {
 //  Lấy danh sách loan chưa trả
 const getCurrentLoans = async (req, res) => {
   try {
-    const { memberId } = req.params; // Nhận memberId từ URL
-    console.log("Lấy danh sách loan chưa trả cho member_id:", memberId);
+    const { memberId } = req.params;
 
     if (!memberId) {
       return res.status(400).json({ message: "Thiếu memberId!" });
@@ -67,13 +68,8 @@ const getCurrentLoans = async (req, res) => {
       return res.status(404).json({ message: result.message });
     }
 
-    console.log(
-      "API trả về danh sách loan chưa trả:",
-      JSON.stringify(result.loans, null, 2)
-    );
     res.status(200).json(result.loans);
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách loan:", error);
     res
       .status(500)
       .json({ message: "Lỗi khi lấy danh sách loan!", error: error.message });
@@ -117,6 +113,26 @@ const approveRenewLoan = async (req, res) => {
     });
   }
 };
+
+// Lấy lịch sử mượn sách
+const getLoanHistory = async (req, res) => {
+  try {
+    const { memberId } = req.params;
+    if (!memberId) return res.status(400).json({ message: "Thiếu memberId!" });
+
+    let result = await loanService.getLoanHistory(memberId);
+
+    if (!result.success)
+      return res.status(404).json({ message: result.message });
+
+    res.status(200).json(result.data);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Lỗi khi lấy lịch sử mượn!", error: error.message });
+  }
+};
+
 export default {
   getAllLoans,
   borrowBook,
@@ -124,4 +140,5 @@ export default {
   getCurrentLoans,
   requestRenewLoan,
   approveRenewLoan,
+  getLoanHistory,
 };

@@ -6,23 +6,11 @@ const getCreateUser = (req, res) => {
 
 const getDisplayUser = async (req, res) => {
   try {
-    // Thêm logic để lấy user hiện tại từ session/token
-    const userId = req.user?.id; // Giả sử có middleware xác thực
-    if (userId) {
-      const userData = await userService.getUserInfoById(userId);
-      if (req.headers.accept?.includes("application/json")) {
-        return res.json(userData);
-      }
-    }
     let { criteria, query } = req.query;
     let data =
       criteria && query
         ? await userService.searchUser({ criteria, query })
         : await userService.getAllUser();
-
-    if (req.headers.accept && req.headers.accept.includes("application/json")) {
-      return res.json(data);
-    }
 
     res.render("userPage", {
       dataTable: data,
@@ -55,7 +43,9 @@ const updateUser = async (req, res) => {
   try {
     await userService.updateUserData(req.body);
     const updatedData = await userService.getAllUser();
-
+    if (req.headers.accept?.includes("application/json")) {
+      return res.json(updatedData);
+    }
     res.render("userPage", {
       dataTable: updatedData,
       criteria: req.query.criteria || "",
@@ -101,6 +91,36 @@ const toggleActive = async (req, res) => {
     res.status(500).send(error.message);
   }
 };
+const getUserById = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    if (!userId) return res.status(400).send("User ID is required");
+
+    const user = await userService.getUserInfoById(userId);
+    if (!user) return res.status(404).send("User not found");
+
+    return res.json(user);
+  } catch (error) {
+    console.error("Lỗi khi lấy thông tin người dùng:", error);
+    res.status(500).send(error.message);
+  }
+};
+
+const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    if (!userId) return res.status(400).send("User ID is required");
+
+    // Gọi hàm updateUserProfile từ userService
+    await userService.updateUserProfile(userId, req.body);
+
+    // Trả về thông báo thành công
+    return res.status(200).send("Cập nhật thông tin thành công");
+  } catch (error) {
+    console.error("Lỗi khi cập nhật thông tin người dùng:", error);
+    res.status(500).send("Lỗi: " + error.message);
+  }
+};
 
 export default {
   getCreateUser,
@@ -109,4 +129,6 @@ export default {
   updateUser,
   deleteUser,
   toggleActive,
+  updateUserProfile,
+  getUserById,
 };
