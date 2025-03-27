@@ -1,8 +1,11 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { motion } from "framer-motion";
 
 const HeroSection = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleExploreClick = () => {
     navigate("/books");
@@ -12,12 +15,13 @@ const HeroSection = () => {
     <section className="relative bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-40 px-6 flex flex-col lg:flex-row items-center justify-center overflow-hidden">
       {/* Nội dung chính */}
       <div className="relative z-10 max-w-3xl text-center lg:text-left">
-        <h1
-          className="text-6xl md:text-7xl font-extrabold leading-tight tracking-wide bg-gradient-to-r from-white via-gray-400 to-lightGreen text-transparent bg-clip-text shadow-md"
+        <motion.h1
+          className="text-6xl md:text-7xl font-extrabold leading-tight tracking-wide bg-gradient-to-r from-white via-gray-400 to-lightGreen text-transparent bg-clip-text shadow-md hover:scale-105 transition-transform duration-300"
           style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700 }}
+          whileHover={{ scale: 1.05 }}
         >
           Khám phá kho tàng tri thức bất tận
-        </h1>
+        </motion.h1>
 
         <p className="mt-8 text-lg md:text-xl opacity-90">
           Đắm mình vào thế giới của hàng ngàn cuốn sách miễn phí, mở rộng kiến
@@ -27,9 +31,10 @@ const HeroSection = () => {
         {/* Nút CTA */}
         <button
           onClick={handleExploreClick}
-          className="mt-10 bg-lightGreen px-10 py-4 rounded-full text-black font-semibold text-lg hover:bg-green-500 transition-all shadow-lg transform hover:scale-105 hover:shadow-xl"
+          className="mt-10 bg-lightGreen hover:bg-green-500 text-black font-semibold text-lg py-3 px-8 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center space-x-2"
         >
-          🚀 Bắt đầu khám phá
+          <span>Bắt đầu khám phá</span>
+          <FontAwesomeIcon icon={faArrowRight} />
         </button>
       </div>
 
@@ -50,8 +55,8 @@ const HeroSection = () => {
       </div>
 
       {/* Các hình tròn trang trí */}
-      <div className="absolute top-1/4 left-10 w-48 h-48 rounded-full bg-gradient-to-r from-lightGreen to-green-500 opacity-20 blur-xl animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-10 w-64 h-64 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 opacity-20 blur-xl animate-pulse delay-1000"></div>
+      <div className="absolute top-1/4 left-10 w-48 h-48 rounded-full bg-gradient-to-r from-lightGreen to-green-500 opacity-20 blur-xl animate-pulse slow"></div>
+      <div className="absolute bottom-1/4 right-10 w-64 h-64 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 opacity-20 blur-xl animate-pulse slow delay-1000"></div>
     </section>
   );
 };

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useCategory } from "../../contexts/CategoryContext";
 import { useBook } from "../../contexts/BookContext";
 import { FaFolderOpen } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const CategoryFilter = () => {
   const { categories, loading } = useCategory();
@@ -14,7 +15,12 @@ const CategoryFilter = () => {
   };
 
   return (
-    <section className="bg-gray-900 p-6 rounded-lg shadow-md border-2 border-gray-700">
+    <motion.section
+      className="bg-gray-900 p-6 rounded-lg shadow-md border-2 border-gray-700"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-5 border-b border-gray-700 pb-3">
         <h2 className="text-white font-semibold text-xl flex items-center">
@@ -26,7 +32,8 @@ const CategoryFilter = () => {
       {/* Danh sách thể loại */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 text-white">
         {/* Nút "Tất Cả" */}
-        <label
+        <motion.label
+          whileHover={{ scale: 1.05 }}
           className={`flex items-center space-x-2 cursor-pointer text-base md:text-lg rounded-md p-2 hover:bg-gray-800 transition-colors duration-200 ${
             selectedCategory === null ? "bg-gray-800" : ""
           }`}
@@ -42,7 +49,7 @@ const CategoryFilter = () => {
             className="form-radio text-lightGreen bg-gray-800 rounded-full focus:ring-lightGreen focus:ring-offset-gray-900 transition w-4 h-4"
           />
           <span>Tất cả</span>
-        </label>
+        </motion.label>
 
         {/* Hiển thị danh mục */}
         {loading ? (
@@ -51,8 +58,9 @@ const CategoryFilter = () => {
           </p>
         ) : categories.length > 0 ? (
           categories.map((category) => (
-            <label
+            <motion.label
               key={category.category_id}
+              whileHover={{ scale: 1.05 }}
               className={`flex items-center space-x-2 cursor-pointer text-base md:text-lg rounded-md p-2 hover:bg-gray-800 transition-colors duration-200 ${
                 selectedCategory === category.category_id ? "bg-gray-800" : ""
               }`}
@@ -65,7 +73,7 @@ const CategoryFilter = () => {
                 className="form-radio text-lightGreen bg-gray-800 rounded-full focus:ring-lightGreen focus:ring-offset-gray-900 transition w-4 h-4"
               />
               <span>{category.name}</span>
-            </label>
+            </motion.label>
           ))
         ) : (
           <p className="text-gray-400 col-span-full text-center text-lg">
@@ -73,7 +81,7 @@ const CategoryFilter = () => {
           </p>
         )}
       </div>
-    </section>
+    </motion.section>
   );
 };
 

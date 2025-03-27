@@ -5,7 +5,7 @@ import { generateSlug } from "../../utils/slugify";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookOpen } from "@fortawesome/free-solid-svg-icons";
+import { faPenNib } from "@fortawesome/free-solid-svg-icons";
 
 const LiveShow = () => {
   const { books } = useBook();
@@ -49,7 +49,7 @@ const LiveShow = () => {
                       <motion.img
                         src={book.cover_image}
                         alt={book.title || "Không có tiêu đề"}
-                        className="w-full h-72 object-cover rounded-t-lg"
+                        className="w-full h-96 object-cover rounded-t-lg"
                         whileHover={{ scale: 1.1 }}
                         transition={{ duration: 0.3 }}
                       />
@@ -59,7 +59,7 @@ const LiveShow = () => {
                         {book.title || "Không có tiêu đề"}
                       </h3>
                       <p className="text-gray-400 text-sm truncate flex items-center font-semibold">
-                        <FontAwesomeIcon icon={faBookOpen} className="mr-1" />
+                        <FontAwesomeIcon icon={faPenNib} className="mr-1" />
                         {book.author || "Không rõ tác giả"}
                       </p>
                     </div>
