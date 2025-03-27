@@ -53,7 +53,7 @@ const Footer = () => {
             <span>Liên Hệ</span>
           </Link>
           <Link
-            to="/terms"
+            to="#"
             className="hover:text-lightGreen transition-colors flex items-center space-x-3"
           >
             <FontAwesomeIcon icon={faFileContract} className="text-xl" />

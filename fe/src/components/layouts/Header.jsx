@@ -78,8 +78,8 @@ const Header = () => {
                 to="/payment"
                 className="flex justify-start items-center block px-4 py-2 text-white hover:text-gray-400 hover:bg-gray-800 transition duration-200"
               >
-                <i className="fa-solid fa-credit-card mr-2 text-gray-400"></i>{" "}
-                Lịch sử thanh toán
+                <i className="fa-solid fa-credit-card mr-2 text-gray-400"></i>
+                Danh sách thanh toán
               </Link>
               <Link
                 to={logoutUrl}

@@ -1,5 +1,6 @@
 import React from "react";
 import { FaBookOpen, FaStar, FaGift, FaUserShield } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const features = [
   {
@@ -40,25 +41,27 @@ const FeatureSection = () => {
       {/* Feature Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-6 max-w-6xl mx-auto">
         {features.map((feature, index) => (
-          <div
+          <motion.div
             key={index}
-            className="p-8 bg-gray-800 rounded-xl shadow-md hover:shadow-2xl transition-transform transform hover:-translate-y-3 border border-gray-700"
+            className="p-8 bg-gray-800 rounded-xl shadow-md hover:shadow-2xl transition-transform transform hover:-translate-y-3 border border-gray-700 cursor-pointer"
+            whileHover={{ scale: 1.1, translateY: -5 }}
+            transition={{ duration: 0.3 }}
           >
             {/* Icon nằm giữa với background */}
             <div className="flex justify-center mb-6">
-              <div className="bg-gray-700 rounded-full p-3 shadow-md">
+              <div className="bg-gray-700 rounded-full p-3 shadow-md hover:bg-lightGreen transition duration-300">
                 {feature.icon}
               </div>
             </div>
 
-            <h3 className="text-xl font-semibold mb-4 text-gray-100">
+            <h3 className="text-xl font-semibold mb-4 text-gray-100 hover:text-lightGreen transition duration-300">
               {feature.title}
             </h3>
 
             <p className="text-gray-300 leading-relaxed text-lg">
               {feature.description}
             </p>
-          </div>
+          </motion.div>
         ))}
       </div>
     </section>
