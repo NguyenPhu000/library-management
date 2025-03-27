@@ -99,7 +99,7 @@ const getBookByCategory = async (req, res) => {
 
     return res.json({ books });
   } catch (error) {
-    console.error("❌ Lỗi khi lấy sách theo danh mục:", error);
+    console.error(" Lỗi khi lấy sách theo danh mục:", error);
     return res.status(500).json({ error: "Lỗi hệ thống" });
   }
 };

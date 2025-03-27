@@ -33,7 +33,7 @@ const PaymentRequestModal = ({ isOpen, onRequestClose, loanId }) => {
 
     try {
       const newPayment = await handleCreatePayment(loanId, paymentData);
-      console.log("Payment created successfully:", newPayment);
+
       window.location.reload(); // Reload lại trang sau khi gửi
     } catch (error) {
       console.error("Lỗi khi tạo thanh toán:", error);

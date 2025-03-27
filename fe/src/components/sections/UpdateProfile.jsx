@@ -39,7 +39,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     try {
       await updateUser(formData);
-      console.log("Dữ liệu người dùng sau khi cập nhật:", userData);
+
       alert("Cập nhật thông tin thành công!");
       window.location.reload(); // Tải lại trang sau khi cập nhật thành công
       onClose();

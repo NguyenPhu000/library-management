@@ -17,9 +17,9 @@ const getAllLoans = async (req, res) => {
 
 const borrowBook = async (req, res) => {
   try {
-    const member_id = req.params.memberId; // Lấy member_id từ req.params
-    const book_id = req.params.bookId; // Lấy book_id từ req.params
-    let result = await loanService.borrowBook(member_id, book_id); // Gọi service với các tham số
+    const member_id = req.params.memberId;
+    const book_id = req.params.bookId;
+    let result = await loanService.borrowBook(member_id, book_id);
 
     if (!result.success) {
       return res.status(400).json({ message: result.message });
@@ -95,7 +95,7 @@ const requestRenewLoan = async (req, res) => {
 
 const approveRenewLoan = async (req, res) => {
   try {
-    const { loan_id, action } = req.body; // action = "approve" hoặc "reject"
+    const { loan_id, action } = req.body;
     let result = await loanService.approveRenewLoan(
       loan_id,
       action === "approve"

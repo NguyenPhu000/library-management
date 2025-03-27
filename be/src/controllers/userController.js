@@ -111,10 +111,8 @@ const updateUserProfile = async (req, res) => {
     const userId = req.params.userId;
     if (!userId) return res.status(400).send("User ID is required");
 
-    // Gọi hàm updateUserProfile từ userService
     await userService.updateUserProfile(userId, req.body);
 
-    // Trả về thông báo thành công
     return res.status(200).send("Cập nhật thông tin thành công");
   } catch (error) {
     console.error("Lỗi khi cập nhật thông tin người dùng:", error);

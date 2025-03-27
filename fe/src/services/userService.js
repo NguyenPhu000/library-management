@@ -11,13 +11,11 @@ export const fetchUserById = async (userId) => {
 };
 
 export const updateMemberProfile = async (userId, data) => {
-  console.log("Cập nhật thông tin thành viên với userId:", userId);
-  console.log("Dữ liệu gửi đi:", data);
   try {
     const response = await API.post(`/users/update-profile/${userId}`, {
       ...data,
     });
-    console.log("Phản hồi từ API:", response.data);
+
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật thông tin thành viên:", error);

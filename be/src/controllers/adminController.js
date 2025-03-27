@@ -1,6 +1,6 @@
 import adminService from "../services/adminService.js";
 
-// ✅ Hiển thị danh sách admin (Admin: Render | React: JSON)
+//  Hiển thị danh sách admin (Admin: Render | React: JSON)
 const getDisplayAdmin = async (req, res) => {
   try {
     let data = await adminService.getAllAdmins();
@@ -15,7 +15,7 @@ const getDisplayAdmin = async (req, res) => {
   }
 };
 
-// ✅ Cập nhật admin (Admin: Render | React: JSON)
+//  Cập nhật admin (Admin: Render | React: JSON)
 const updateAdmin = async (req, res) => {
   try {
     await adminService.updateAdmin(req.body);
@@ -31,7 +31,7 @@ const updateAdmin = async (req, res) => {
   }
 };
 
-// ✅ Xóa admin (Admin: Render | React: JSON)
+// Xóa admin (Admin: Render | React: JSON)
 const deleteAdmin = async (req, res) => {
   try {
     if (!req.query.id) {
@@ -51,7 +51,7 @@ const deleteAdmin = async (req, res) => {
   }
 };
 
-// ✅ Đồng bộ admin từ Users (Admin: Render | React: JSON)
+// Đồng bộ admin từ Users (Admin: Render | React: JSON)
 const syncAdmin = async (req, res) => {
   try {
     await adminService.syncAdminFromUsers();
