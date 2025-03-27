@@ -2,7 +2,7 @@
    Custom Properties (Variables)
 ---------------------------- */
 :root {
-  --sidebar-width: 16rem; /* 256px */
+  --sidebar-width: 14rem; /* 240px */ /* Giảm chiều rộng sidebar */
   --primary-color: #2c5f2d;
   --secondary-color: #97bc62;
   --accent-color: #ffce00;
@@ -94,7 +94,7 @@ body {
 ---------------------------- */
 .submenu {
   display: none;
-  padding-left: 1.2rem;
+  padding-left: 1rem; /* Giảm padding submenu */
   margin-top: 0.4rem;
   transition: all 0.3s ease-in-out;
   background: transparent !important;
@@ -107,7 +107,7 @@ body {
 
 /* Căn chỉnh submenu item */
 .submenu .nav-link {
-  padding-left: 1.5rem;
+  padding-left: 1.3rem; /* Giảm padding nav-link trong submenu */
   background: transparent !important;
   border-radius: var(--radius-md);
 }
@@ -202,7 +202,7 @@ tr:nth-child(even) {
 ---------------------------- */
 @media (max-width: 1024px) {
   :root {
-    --sidebar-width: 13.75rem; /* 220px */
+    --sidebar-width: 13rem; /* 208px */ /* Điều chỉnh responsive sidebar width */
   }
 
   .main-content {
@@ -212,7 +212,7 @@ tr:nth-child(even) {
 
 @media (max-width: 768px) {
   :root {
-    --sidebar-width: 6.25rem; /* 100px */
+    --sidebar-width: 5rem; /* 80px */ /* Điều chỉnh responsive sidebar width nhỏ hơn */
   }
 
   .main-content {

@@ -16,7 +16,7 @@
           <div class="card-body">
             <i class="fas fa-users"></i>
             <h5>Thành viên</h5>
-            <h2>120</h2>
+            <h2><%= dashboardData.totalMembers %></h2>
           </div>
         </div>
       </div>
@@ -25,7 +25,7 @@
           <div class="card-body">
             <i class="fas fa-book"></i>
             <h5>Số sách</h5>
-            <h2>340</h2>
+            <h2><%= dashboardData.totalBooks %></h2>
           </div>
         </div>
       </div>
@@ -34,7 +34,7 @@
           <div class="card-body">
             <i class="fas fa-handshake"></i>
             <h5>Đơn mượn</h5>
-            <h2>58</h2>
+            <h2><%= dashboardData.totalLoans %></h2>
           </div>
         </div>
       </div>
@@ -43,7 +43,7 @@
           <div class="card-body">
             <i class="fas fa-exclamation-triangle"></i>
             <h5>Quá hạn</h5>
-            <h2>5</h2>
+            <h2><%= dashboardData.totalOverdueLoans %></h2>
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@
         <div class="card">
           <div class="card-body">
             <h5><i class="fas fa-chart-bar"></i> Sách mượn theo tháng</h5>
-            <div class="chart-placeholder">📊 Biểu đồ sẽ hiển thị tại đây</div>
+            <canvas id="loanChart"></canvas>
           </div>
         </div>
       </div>
@@ -63,20 +63,24 @@
         <div class="card">
           <div class="card-body">
             <h5><i class="fas fa-user-check"></i> Trạng thái thành viên</h5>
-            <div class="chart-placeholder">📊 Biểu đồ sẽ hiển thị tại đây</div>
+            <canvas id="memberChart"></canvas>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- HOẠT ĐỘNG GẦN ĐÂY -->
+    <!-- TÀI KHOẢN ĐANG HOẠT ĐỘNG -->
     <div class="row mt-4">
       <div class="col-md-12">
         <div class="card">
           <div class="card-body">
-            <h5><i class="fas fa-clock"></i> Hoạt động gần đây</h5>
+            <h5><i class="fas fa-users"></i> Tài khoản đang hoạt động</h5>
             <ul class="list-group">
-              <li class="list-group-item">📌 Đang tải...</li>
+              <% activeMembers.forEach(member => { %>
+              <li class="list-group-item">
+                <%= member.username %> - <%= member.email %>
+              </li>
+              <% }) %>
             </ul>
           </div>
         </div>
@@ -85,5 +89,97 @@
   </div>
 </div>
 
+<!-- Dữ liệu từ server -->
+<div
+  id="loansData"
+  data-loans="<%= JSON.stringify(loansByMonth || []) %>"
+></div>
+<div
+  id="memberData"
+  data-member="<%= JSON.stringify(memberStatus || []) %>"
+></div>
 <!-- Footer -->
 <%- include('layouts/footer') %>
+
+<!-- Thêm mã JavaScript để khởi tạo biểu đồ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Biểu đồ mượn sách theo tháng
+    const loanChartCtx = document.getElementById("loanChart").getContext("2d");
+    const loansByMonth = JSON.parse(
+      document.getElementById("loansData").getAttribute("data-loans")
+    );
+    const loanCounts = loansByMonth.map((loan) => loan.count);
+    const loanMonths = loansByMonth.map((loan) => loan.month);
+
+    new Chart(loanChartCtx, {
+      type: "bar",
+      data: {
+        labels: loanMonths,
+        datasets: [
+          {
+            label: "Số lượng mượn",
+            data: loanCounts,
+            backgroundColor: loanMonths.map((month) => {
+              // Thay đổi màu sắc dựa trên tháng
+              switch (month) {
+                case 1:
+                case 2:
+                  return "rgba(255, 99, 132, 0.6)";
+                case 3:
+                case 4:
+                case 5:
+                  return "rgba(75, 192, 192, 0.6)";
+                case 6:
+                case 7:
+                case 8:
+                  return "rgba(255, 205, 86, 0.6)";
+                case 9:
+                case 10:
+                case 11:
+                  return "rgba(54, 162, 235, 0.6)";
+                case 12:
+                  return "rgba(153, 102, 255, 0.6)";
+                default:
+                  return "rgba(0, 0, 0, 0.6)";
+              }
+            }),
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+
+    // Biểu đồ trạng thái thành viên
+    const memberChartCtx = document
+      .getElementById("memberChart")
+      .getContext("2d");
+    const memberStatus = JSON.parse(
+      document.getElementById("memberData").getAttribute("data-member")
+    ); // Lấy dữ liệu từ server
+
+    new Chart(memberChartCtx, {
+      type: "pie",
+      data: {
+        labels: ["Active", "Inactive"], // Chỉ có hai trạng thái
+        datasets: [
+          {
+            data: memberStatus, // Sử dụng trạng thái từ dữ liệu thực
+            backgroundColor: ["#28a745", "#f44336"],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+      },
+    });
+  });
+</script>

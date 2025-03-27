@@ -1,9 +1,18 @@
-const db = require("../models");
+import homeService from "../services/homeService.js";
 
 export const getHomePage = async (req, res) => {
   try {
-    const dataTable = await db.User.findAll();
-    res.render("homePage", { currentPage: "dashboard" });
+    const dashboardData = await homeService.getDashboardData();
+    const loansByMonth = await homeService.getLoansByMonth();
+    const memberStatus = await homeService.getMemberStatus();
+    const activeMembers = await homeService.getActiveMembers();
+
+    res.render("homePage", {
+      dashboardData,
+      loansByMonth,
+      memberStatus,
+      activeMembers,
+    });
   } catch (error) {
     res.status(500).send("Lỗi khi tải trang chủ");
   }

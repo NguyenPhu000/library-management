@@ -13,7 +13,7 @@ router.post(
 );
 
 // // Route để xác nhận thanh toán
-// router.post("/payments/confirm", handleConfirmPayment);
+router.post("/payments/confirm", paymentController.confirmPayment);
 
 //  Route để lấy danh sách thanh toán theo member_id
 router.get(

@@ -110,8 +110,62 @@ const createPayment = async (paymentData) => {
   }
 };
 
+const confirmPayment = async (paymentId, amount) => {
+  if (!paymentId || !amount) {
+    return {
+      success: false,
+      message: "Thiếu thông tin cần thiết để xác nhận thanh toán.",
+    };
+  }
+
+  const transaction = await sequelize.transaction();
+  try {
+    const payment = await Payment.findByPk(paymentId, { transaction });
+
+    if (!payment) {
+      throw new Error("Không tìm thấy thanh toán.");
+    }
+
+    if (payment.status === "APPROVED") {
+      return {
+        success: false,
+        message: "Thanh toán đã được xác nhận trước đó.",
+      };
+    }
+
+    if (amount < payment.amount) {
+      return {
+        success: false,
+        message: "Số tiền thanh toán không đúng.",
+      };
+    }
+
+    await payment.update(
+      {
+        status: "APPROVED",
+        amount: amount,
+      },
+      { transaction }
+    );
+
+    await transaction.commit();
+    return {
+      success: true,
+      message: "Xác nhận thanh toán thành công.",
+      payment,
+    };
+  } catch (error) {
+    await transaction.rollback();
+    return {
+      success: false,
+      message: "Lỗi xác nhận thanh toán: " + error.message,
+    };
+  }
+};
+
 export default {
   getAllPayments,
   getPaymentsByMemberId,
   createPayment,
+  confirmPayment,
 };

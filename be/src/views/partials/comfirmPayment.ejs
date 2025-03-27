@@ -1,0 +1,41 @@
+<div
+  class="modal fade"
+  id="paymentModal"
+  tabindex="-1"
+  aria-labelledby="paymentModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="paymentModalLabel">Xác Nhận Thanh Toán</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Đóng"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="payment_id" id="payment_id" />
+        <div class="mb-3">
+          <label for="amount" class="form-label"
+            >Số Tiền Nhận Được (Phí Phạt:
+            <span id="fineAmountDisplay"></span> VNĐ)</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            id="amount"
+            name="amount"
+            placeholder="Nhập số tiền..."
+            required
+          />
+        </div>
+        <button id="completePaymentBtn" class="btn btn-primary w-100">
+          Xác Nhận
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
