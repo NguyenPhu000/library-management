@@ -7,6 +7,7 @@ import adminRoutes from "./adminRoutes.js";
 import memberRoutes from "./memberRoutes.js";
 import authRoutes from "./authRoutes.js";
 import loanRoutes from "./loanRoutes.js";
+import paymentRoutes from "./paymentRoutes.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 let router = express.Router();
 
@@ -21,7 +22,7 @@ router.use("/api", categoryRoutes);
 router.use("/api", adminRoutes);
 router.use("/api", memberRoutes);
 router.use("/api", loanRoutes);
-
+router.use("/api", paymentRoutes);
 const initWebRoutes = (app) => {
   app.use("/", router);
 };

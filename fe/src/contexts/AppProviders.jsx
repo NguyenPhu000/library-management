@@ -5,6 +5,7 @@ import { MemberProvider } from "./MemberContext";
 import { LoanProvider } from "./LoanContext";
 import { SearchBookProvider } from "./SearchBookContext";
 import { UserProvider } from "./UserContext";
+import { PaymentProvider } from "./PaymentContext";
 const AppProviders = ({ children }) => {
   return (
     <AuthProvider>
@@ -13,7 +14,9 @@ const AppProviders = ({ children }) => {
           <SearchBookProvider>
             <CategoryProvider>
               <BookProvider>
-                <LoanProvider>{children}</LoanProvider>
+                <LoanProvider>
+                  <PaymentProvider>{children}</PaymentProvider>
+                </LoanProvider>
               </BookProvider>
             </CategoryProvider>
           </SearchBookProvider>

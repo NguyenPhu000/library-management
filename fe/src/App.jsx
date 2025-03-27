@@ -9,6 +9,7 @@ import RequireAuth from "./components/ui/RequireAuth";
 import AppProviders from "./contexts/AppProviders";
 import LoanHistory from "./pages/HistoryPage";
 import ContactPage from "./pages/ContactPage";
+import PaymentPage from "./pages/PaymentPage";
 const App = () => {
   return (
     <AppProviders>
@@ -23,6 +24,7 @@ const App = () => {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/borrowed" element={<LoanPage />} />
               <Route path="/history" element={<LoanHistory />} />
+              <Route path="/payment" element={<PaymentPage />} />
             </Route>
           </Route>
         </Routes>

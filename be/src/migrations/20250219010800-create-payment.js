@@ -14,6 +14,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      member_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -58,6 +62,18 @@ module.exports = {
       references: {
         table: "Users",
         field: "user_id",
+      },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
+
+    await queryInterface.addConstraint("Payments", {
+      fields: ["member_id"],
+      type: "foreign key",
+      name: "fk_payment_memberid",
+      references: {
+        table: "Members",
+        field: "member_id",
       },
       onDelete: "CASCADE",
       onUpdate: "CASCADE",

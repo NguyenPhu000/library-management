@@ -36,7 +36,7 @@ module.exports = {
       gender: {
         type: Sequelize.BOOLEAN,
         allowNull: true,
-        defaultValue: "other",
+        defaultValue: 0,
       },
       email: {
         type: Sequelize.STRING(255),

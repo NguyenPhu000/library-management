@@ -74,12 +74,12 @@ const Header = () => {
                 <i className="fa-solid fa-book-open mr-2 text-blue-500"></i>
                 Lịch sử Mượn
               </Link>
-
               <Link
-                to="/settings"
+                to="/payment"
                 className="flex justify-start items-center block px-4 py-2 text-white hover:text-gray-400 hover:bg-gray-800 transition duration-200"
               >
-                <i className="fa-solid fa-gear mr-2 text-gray-400"></i> Cài đặt
+                <i className="fa-solid fa-credit-card mr-2 text-gray-400"></i>{" "}
+                Lịch sử thanh toán
               </Link>
               <Link
                 to={logoutUrl}

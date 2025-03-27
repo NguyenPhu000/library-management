@@ -1,0 +1,177 @@
+<!-- Header -->
+<%- include('layouts/header', { title: 'Quản lý Thanh Toán' }) %>
+
+<!-- Sidebar -->
+<%- include('layouts/sidebar') %>
+
+<!-- Main Content -->
+<div class="main-content flex-grow-1 p-4">
+  <div class="container-fluid">
+    <!-- Nút xóa tất cả lịch sử giao dịch -->
+    <div class="d-flex justify-content-between mb-3">
+      <h3><i class="fas fa-dollar-sign"></i> Quản lý Thanh Toán</h3>
+      <form
+        action="/api/payments/delete-all"
+        method="POST"
+        onsubmit="return confirm('Bạn có chắc chắn muốn xóa tất cả lịch sử giao dịch không?')"
+      >
+        <button type="submit" class="btn btn-danger">
+          <i class="fas fa-trash"></i> Xóa tất cả lịch sử giao dịch
+        </button>
+      </form>
+    </div>
+
+    <table class="table table-bordered mt-4">
+      <thead class="table-dark">
+        <tr>
+          <th>#</th>
+          <th>Mã Thành Viên</th>
+          <th>Tên Người Dùng</th>
+          <!-- Thêm cột tên người dùng -->
+          <th>Phí Phạt</th>
+          <th>Ngày Thanh Toán</th>
+          <th>Phương Thức Thanh Toán</th>
+          <th>Số Tiền Đã Nhận</th>
+          <!-- Thêm cột số tiền đã nhận -->
+          <th>Trạng Thái</th>
+          <th>Thao Tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% dataTable.forEach(function(payment, index) { %>
+        <tr>
+          <td><%= index + 1 %></td>
+          <td><%= payment.Member ? payment.Member.member_code : "N/A" %></td>
+          <td><%= payment.User ? payment.User.username : "N/A" %></td>
+          <!-- Lấy tên người dùng -->
+          <td>
+            <%= payment.Loan.fine_amount ?
+            payment.Loan.fine_amount.toLocaleString('vi-VN') + " VNĐ" : "0 VNĐ"
+            %>
+          </td>
+          <td>
+            <%= new Date(payment.payment_date).toLocaleDateString('vi-VN') %>
+          </td>
+          <td><%= payment.payment_method %></td>
+          <td>
+            <%= payment.received_amount ? // Hiển thị số tiền đã nhận
+            payment.received_amount.toLocaleString('vi-VN') + " VNĐ" : "0 VNĐ"
+            %>
+          </td>
+          <td>
+            <% if (payment.status === "PENDING") { %>
+            <span class="badge bg-warning"
+              ><i class="fas fa-hourglass-half"></i> Chờ xác nhận</span
+            >
+            <% } else { %>
+            <span class="badge bg-success"
+              ><i class="fas fa-check"></i> Đã hoàn tất</span
+            >
+            <% } %>
+          </td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-sm btn-info rounded"
+              data-bs-toggle="modal"
+              data-bs-target="#paymentModal"
+              data-payment-id="<%= payment.payment_id %>"
+              data-fine-amount="<%= payment.Loan.fine_amount %>"
+              data-received-amount="<%= payment.amount %>"
+              <i class="fas fa-clock"></i> Xác nhận thanh toán
+            </button>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <!-- Modal for Payment Confirmation -->
+    <div
+      class="modal fade"
+      id="paymentModal"
+      tabindex="-1"
+      aria-labelledby="paymentModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="paymentModalLabel">
+              Xác Nhận Thanh Toán
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Đóng"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" name="payment_id" id="payment_id" />
+            <input type="hidden" name="fine_amount" id="fine_amount" />
+            <input type="hidden" name="received_amount" id="received_amount" />
+            <div class="mb-3">
+              <label for="amount" class="form-label">Số Tiền Nhận Được</label>
+              <input
+                type="number"
+                class="form-control"
+                id="amount"
+                name="amount"
+                min="0"
+                required
+                oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+              />
+            </div>
+            <button id="completePaymentBtn" class="btn btn-primary w-100">
+              Xác Nhận
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include('partials/pagination', { dataTable }) %>
+  </div>
+</div>
+
+<script src="/js/pagination.js"></script>
+<script>
+  document.querySelectorAll(".btn-info").forEach((button) => {
+    button.addEventListener("click", () => {
+      const paymentId = button.getAttribute("data-payment-id");
+      const fineAmount = button.getAttribute("data-fine-amount");
+      const receivedAmount = button.getAttribute("data-received-amount");
+      // Cập nhật giá trị payment_id và fine_amount trong modal
+      document.getElementById("payment_id").value = paymentId;
+      document.getElementById("fine_amount").value = fineAmount;
+      document.getElementById("received_amount").value = receivedAmount;
+    });
+  });
+
+  document
+    .getElementById("completePaymentBtn")
+    .addEventListener("click", async () => {
+      const paymentId = document.getElementById("payment_id").value;
+      const receivedAmount = document.getElementById("receivedAmount").value;
+
+      const response = await fetch("/api/payments/confirm", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ payment_id: paymentId, amount: receivedAmount }), // Gửi số tiền nhận được
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert(data.message);
+        location.reload();
+      } else {
+        alert(data.message);
+      }
+    });
+</script>
+
+<!-- Footer -->
+<%- include('layouts/footer') %>
