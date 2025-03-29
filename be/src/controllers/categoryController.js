@@ -18,7 +18,7 @@ const createCategory = async (req, res) => {
     res.render("categoryPage", { dataTable: data });
   } catch (error) {
     console.error("Lỗi khi tạo danh mục:", error);
-    res.status(500).json({ lỗi: error.message });
+    res.status(500).json({ error: "Có lỗi xảy ra khi tạo danh mục!" });
   }
 };
 
@@ -33,7 +33,7 @@ const displayCategory = async (req, res) => {
     res.render("categoryPage", { dataTable: data, currentPage: "category" });
   } catch (error) {
     console.error("Lỗi khi hiển thị danh mục:", error);
-    res.status(500).json({ lỗi: error.message });
+    res.status(500).json({ error: "Có lỗi xảy ra khi hiển thị danh mục!" });
   }
 };
 
@@ -53,7 +53,7 @@ const updateCategory = async (req, res) => {
     res.render("categoryPage", { dataTable: data });
   } catch (error) {
     console.error("Lỗi khi cập nhật danh mục:", error);
-    res.status(500).json({ lỗi: error.message });
+    res.status(500).json({ error: "Có lỗi xảy ra khi cập nhật danh mục!" });
   }
 };
 
@@ -71,7 +71,7 @@ const deleteCategory = async (req, res) => {
     console.error("Lỗi khi xóa danh mục:", error);
     res
       .status(500)
-      .json({ lỗi: "Không thể xóa danh mục", chi_tiết: error.message });
+      .json({ error: "Không thể xóa danh mục", detail: error.message });
   }
 };
 

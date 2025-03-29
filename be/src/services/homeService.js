@@ -1,5 +1,6 @@
 import db from "../models";
 
+// Hàm lấy dữ liệu bảng điều khiển
 const getDashboardData = async () => {
   const totalMembers = await db.User.count();
   const totalBooks = await db.Book.count();
@@ -26,14 +27,14 @@ const getMemberStatus = async () => {
   const active = await db.User.count({ where: { is_active: true } });
   const inactive = await db.User.count({ where: { is_active: false } });
 
-  return [active, inactive]; // Trả về chỉ hai trạng thái
+  return [active, inactive];
 };
 
 // Hàm lấy danh sách tài khoản đang hoạt động
 const getActiveMembers = async () => {
   try {
     const activeMembers = await db.User.findAll({
-      where: { is_active: true }, // Lọc theo trạng thái hoạt động
+      where: { is_active: true },
     });
     return activeMembers;
   } catch (error) {

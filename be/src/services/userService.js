@@ -3,6 +3,7 @@ import db from "../models/index.js";
 import { Op } from "sequelize";
 const salt = bcrypt.genSaltSync(10);
 
+// Hàm tạo người dùng mới
 let createNewUser = async (data) => {
   try {
     let hashPasswordFromBcrypt = await bcrypt.hash(data.password, salt);
@@ -19,18 +20,20 @@ let createNewUser = async (data) => {
       address: data.address,
     });
   } catch (error) {
-    throw new Error("Error creating user: " + error.message);
+    throw new Error("Lỗi khi tạo người dùng: " + error.message);
   }
 };
 
+// Hàm lấy tất cả người dùng
 let getAllUser = async () => {
   try {
     return await db.User.findAll({ raw: true });
   } catch (error) {
-    throw new Error("Error fetching users: " + error.message);
+    throw new Error("Lỗi khi lấy danh sách người dùng: " + error.message);
   }
 };
 
+// Hàm lấy thông tin người dùng theo ID
 let getUserInfoById = async (userId) => {
   try {
     const user = await db.User.findOne({
@@ -39,14 +42,15 @@ let getUserInfoById = async (userId) => {
     });
     return user || {};
   } catch (error) {
-    throw new Error("Error fetching user info: " + error.message);
+    throw new Error("Lỗi khi lấy thông tin người dùng: " + error.message);
   }
 };
 
+// Hàm cập nhật dữ liệu người dùng
 let updateUserData = async (data) => {
   try {
     const user = await db.User.findOne({ where: { user_id: data.user_id } });
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error("Không tìm thấy người dùng");
 
     await db.User.update(
       {
@@ -62,26 +66,28 @@ let updateUserData = async (data) => {
       { where: { user_id: data.user_id } }
     );
   } catch (error) {
-    throw new Error("Error updating user: " + error.message);
+    throw new Error("Lỗi khi cập nhật người dùng: " + error.message);
   }
 };
 
+// Hàm xóa người dùng theo ID
 let deleteUserById = async (id) => {
   try {
     console.log("📥 Nhận yêu cầu xóa user với ID:", id);
     const user = await db.User.findOne({ where: { user_id: id } });
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error("Không tìm thấy người dùng");
 
     await user.destroy();
   } catch (error) {
-    throw new Error("Error deleting user: " + error.message);
+    throw new Error("Lỗi khi xóa người dùng: " + error.message);
   }
 };
 
+// Hàm chuyển đổi trạng thái người dùng
 let toggleActive = async (id) => {
   try {
     const user = await db.User.findByPk(id);
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error("Không tìm thấy người dùng");
 
     // đảo trạng thái
     user.is_active = !user.is_active;
@@ -89,9 +95,13 @@ let toggleActive = async (id) => {
 
     return user.is_active;
   } catch (error) {
-    throw new Error("Error toggling user status: " + error.message);
+    throw new Error(
+      "Lỗi khi chuyển đổi trạng thái người dùng: " + error.message
+    );
   }
 };
+
+// Hàm tìm kiếm người dùng
 let searchUser = async (filters) => {
   try {
     let whereClause = {};
@@ -106,10 +116,12 @@ let searchUser = async (filters) => {
     throw new Error("Lỗi khi tìm kiếm người dùng: " + error.message);
   }
 };
+
+// Hàm cập nhật hồ sơ người dùng
 let updateUserProfile = async (userId, data) => {
   try {
     const user = await db.User.findOne({ where: { user_id: userId } });
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error("Không tìm thấy người dùng");
 
     const updates = {
       username: data.username,
@@ -128,7 +140,7 @@ let updateUserProfile = async (userId, data) => {
 
     await db.User.update(updates, { where: { user_id: userId } });
   } catch (error) {
-    throw new Error("Error updating user profile: " + error.message);
+    throw new Error("Lỗi khi cập nhật hồ sơ người dùng: " + error.message);
   }
 };
 

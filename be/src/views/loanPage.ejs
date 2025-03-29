@@ -32,22 +32,34 @@
           <td><%= loan.due_date.toISOString().split('T')[0] %></td>
           <td>
             <% if (loan.returned) { %>
-            <span class="badge bg-success">Đã trả</span>
+            <span class="badge bg-success"
+              ><i class="fas fa-check"></i> Đã trả</span
+            >
             <% } else { %>
-            <span class="badge bg-warning">Đang mượn</span>
+            <span class="badge bg-warning"
+              ><i class="fas fa-clock"></i> Đang mượn</span
+            >
             <% } %>
           </td>
 
           <!-- Cột Trạng thái Gia Hạn -->
           <td>
             <% if (loan.renewal_status === "pending") { %>
-            <span class="badge bg-info text-dark">Chờ duyệt</span>
+            <span class="badge bg-info text-dark"
+              ><i class="fas fa-hourglass-half"></i> Chờ duyệt</span
+            >
             <% } else if (loan.renewal_status === "approved") { %>
-            <span class="badge bg-success">Đã duyệt</span>
+            <span class="badge bg-success"
+              ><i class="fas fa-check-circle"></i> Đã duyệt</span
+            >
             <% } else if (loan.renewal_status === "rejected") { %>
-            <span class="badge bg-danger">Từ chối</span>
+            <span class="badge bg-danger"
+              ><i class="fas fa-times-circle"></i> Từ chối</span
+            >
             <% } else { %>
-            <span class="badge bg-secondary">Không yêu cầu</span>
+            <span class="badge bg-secondary"
+              ><i class="fas fa-ban"></i> Không yêu cầu</span
+            >
             <% } %>
           </td>
 
@@ -57,7 +69,7 @@
             <form action="/api/loans/return" method="POST" class="d-inline">
               <input type="hidden" name="loan_id" value="<%= loan.loan_id %>" />
               <button type="submit" class="btn btn-sm btn-danger">
-                Trả sách
+                <i class="fas fa-undo"></i> Trả sách
               </button>
             </form>
 
@@ -71,7 +83,7 @@
               <input type="hidden" name="loan_id" value="<%= loan.loan_id %>" />
               <input type="hidden" name="action" value="approve" />
               <button type="submit" class="btn btn-sm btn-success">
-                ✅ Duyệt
+                <i class="fas fa-check"></i> Duyệt
               </button>
             </form>
 
@@ -83,7 +95,7 @@
               <input type="hidden" name="loan_id" value="<%= loan.loan_id %>" />
               <input type="hidden" name="action" value="reject" />
               <button type="submit" class="btn btn-sm btn-warning">
-                ❌ Từ chối
+                <i class="fas fa-times"></i> Từ chối
               </button>
             </form>
             <% } %> <% } else { %>

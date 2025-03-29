@@ -10,9 +10,11 @@
       <div
         class="card-header d-flex justify-content-between align-items-center bg-dark text-white"
       >
-        <h2 class="mb-0"><strong>Admin Management</strong></h2>
+        <h2 class="mb-0"><strong>Quản lý Admin</strong></h2>
         <!-- Nút đồng bộ Admin -->
-        <a href="/api/admin/sync" class="btn btn-light">Đồng bộ Admin</a>
+        <a href="/api/admin/sync" class="btn btn-light"
+          ><i class="fas fa-sync"></i> Đồng bộ Admin</a
+        >
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -20,13 +22,12 @@
             <thead class="table-dark text-white">
               <tr>
                 <th class="text-center">#</th>
-                <th>Username</th>
-
-                <th>Access Level</th>
-                <th>Department</th>
-                <th>Can Manage Users</th>
-                <th>Can Manage Books</th>
-                <th class="text-center">Action</th>
+                <th>Tên đăng nhập</th>
+                <th>Cấp độ truy cập</th>
+                <th>Phòng ban</th>
+                <th>Có thể quản lý người dùng</th>
+                <th>Có thể quản lý sách</th>
+                <th class="text-center">Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -38,7 +39,6 @@
                     ><%= admin.User ? admin.User.username : "N/A" %></strong
                   >
                 </td>
-
                 <td>
                   <span class="badge rounded-pill bg-primary">
                     <%= admin.access_level %>
@@ -49,14 +49,14 @@
                   <span
                     class="badge rounded-pill <%= admin.can_manage_users ? 'bg-success' : 'bg-danger' %>"
                   >
-                    <%= admin.can_manage_users ? "Yes" : "No" %>
+                    <%= admin.can_manage_users ? "Có" : "Không" %>
                   </span>
                 </td>
                 <td>
                   <span
                     class="badge rounded-pill <%= admin.can_manage_books ? 'bg-success' : 'bg-danger' %>"
                   >
-                    <%= admin.can_manage_books ? "Yes" : "No" %>
+                    <%= admin.can_manage_books ? "Có" : "Không" %>
                   </span>
                 </td>
                 <td class="text-center">
@@ -72,7 +72,7 @@
                       data-can_manage_users="<%= admin.can_manage_users %>"
                       data-can_manage_books="<%= admin.can_manage_books %>"
                     >
-                      Edit
+                      <i class="fas fa-edit"></i> Chỉnh sửa
                     </button>
                   </div>
                 </td>
@@ -87,7 +87,7 @@
   </div>
 </div>
 <script src="/js/pagination.js"></script>
-<script src="../js/adminPage.js"></script>
+<script src="/js/adminPage.js"></script>
 <!-- Footer -->
 <%- include('partials/editAdmin') %>
 <!--  -->

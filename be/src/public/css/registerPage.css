@@ -32,7 +32,9 @@ body {
   padding: 2.5rem 3rem;
   border-radius: 15px;
   box-shadow: 0 8px 20px var(--shadow-color), 0 0 0 5px rgba(255, 255, 255, 0.1);
-  width: min(500px, 90%);
+  max-width: 800px; /* Điều chỉnh độ rộng tối đa của form */
+  width: 90%;
+  margin: 0 auto; /* Để form nằm giữa trang */
   text-align: center;
   color: var(--text-color);
   transition: transform 0.4s ease-in-out;
@@ -68,13 +70,21 @@ p {
 
 form {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-between;
   margin-bottom: 20px;
 }
 
 .input-group {
-  margin-bottom: 20px;
+  width: 48%; /* Chiếm 48% chiều rộng để tạo thành 2 cột */
+  margin-bottom: 15px;
+  margin-right: 2%; /* Thêm khoảng cách giữa 2 cột */
   text-align: left;
+}
+
+/* Loại bỏ margin-right ở cột cuối cùng bên phải */
+.input-group:nth-child(even) {
+  margin-right: 0;
 }
 
 label {
@@ -159,12 +169,12 @@ input:focus {
   color: #c2e59c;
   transform: translateY(-2px);
 }
-
 button {
   background: var(--primary-color);
   color: black;
   padding: 14px 24px;
   border: none;
+  width: 100%;
   border-radius: 10px;
   cursor: pointer;
   font-size: 17px;
@@ -182,6 +192,13 @@ button:hover {
 button:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+@media (max-width: 768px) {
+  .input-group {
+    width: 100%; /* Trên màn hình nhỏ, mỗi input-group chiếm toàn bộ chiều rộng */
+    margin-right: 0; /* Loại bỏ margin-right trên màn hình nhỏ */
+  }
 }
 
 @media screen and (max-width: 400px) {

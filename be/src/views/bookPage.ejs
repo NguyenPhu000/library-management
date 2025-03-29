@@ -4,7 +4,7 @@
 <div class="main-content flex-grow-1 p-4">
   <div class="card shadow-lg">
     <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
-      <h2 class="m-0">Library Management</h2>
+      <h2 class="m-0">Quản lý Sách</h2>
       <span><%- include('partials/createBook', { categories: categories || [] }) %></span>
     </div>
 
@@ -25,13 +25,13 @@
           <div class="input-group shadow-sm">
             <input type="text" name="query" class="form-control" placeholder="Nhập từ khóa..." value="<%= query || '' %>" required>
             <button type="submit" class="btn btn-primary">
-              <i class="bi bi-search"></i>
+              <i class="fa fa-search"></i>
             </button>
           </div>
         </div>
         <div class="col-md-3">
           <button type="submit" class="btn btn-outline-primary w-100 shadow-sm">
-            <i class="bi bi-search me-2"></i> Tìm kiếm
+            <i class="fa fa-search me-2"></i> Tìm kiếm
           </button>
         </div>
       </form>
@@ -43,17 +43,17 @@
             <tr>
               <th class="text-center">No.</th>
               <th>ISBN</th>
-              <th>Title</th>
-              <th>Author</th>
-              <th>Year</th>
-              <th>Publisher</th>
-              <th>Total Copies</th>
-              <th>Available Copies</th>
-              <th>Status</th>
-              <th>Category</th>
-              <th>Description</th>
-              <th>Cover Image</th>
-              <th class="text-center">Action</th>
+              <th>Tiêu đề</th>
+              <th>Tác giả</th>
+              <th>Năm</th>
+              <th>Nhà xuất bản</th>
+              <th>Tổng số bản</th>
+              <th>Số bản có sẵn</th>
+              <th>Trạng thái</th>
+              <th>Danh mục</th>
+              <th>Mô tả</th>
+              <th>Hình ảnh bìa</th>
+              <th class="text-center">Hành động</th>
             </tr>
           </thead>
           <tbody>
@@ -81,7 +81,7 @@
                 </span>
                 <% }) %>
                 <% } else { %>
-                <span class="badge bg-secondary text-white px-3 py-2">Uncategorized</span>
+                <span class="badge bg-secondary text-white px-3 py-2">Không có danh mục</span>
                 <% } %>
               </td>
               <td>
@@ -94,25 +94,21 @@
                 <% } %>
               </td>
               
-              
-
               <td class="text-center">
                 <% if (book.cover_image) { %>
                 <img src="/uploads/<%= book.cover_image.replace(/['"]/g, '') %>" alt="Cover for <%= book.title %>" class="img-thumbnail book-cover" style="max-width: 100px; height: auto;"/>
                 <% } else { %>
-                <span class="text-muted">No Cover</span>
+                <span class="text-muted">Không có hình ảnh</span>
                 <% } %>
               </td>
               <td class="text-center">
                 <div class="d-flex justify-content-center gap-2">
                   <button type="button" class="btn btn-outline-primary btn-sm edit-book-btn" data-bs-toggle="modal" data-bs-target="#editBookModal" data-id="<%= book.book_id || '' %>" data-title="<%= book.title || '' %>" data-author="<%= book.author || '' %>" data-isbn="<%= book.isbn || '' %>" data-year="<%= book.publication_year || '' %>" data-publisher="<%= book.publisher || '' %>" data-total="<%= book.total_copies || '' %>" data-available="<%= book.available_copies || '' %>" data-status="<%= book.status || '' %>" data-description="<%= book.description ? book.description.replace(/"/g, '&quot;') : '' %>" data-cover="<%= book.cover_image ? book.cover_image.replace(/['"]/g, '') : '' %>" data-categories='<%= JSON.stringify(book.categories ? book.categories.map(cat => cat.category_id) : []) %>'>
-                    Edit
+                    <i class="fa fa-edit"></i> Sửa
                   </button>
 
-
-
                   <button class="btn btn-outline-danger btn-sm" onclick="confirmDeleteBook('<%= book.book_id %>')">
-                    Delete
+                    <i class="fa fa-trash"></i> Xóa
                   </button>
                 </div>
               </td>

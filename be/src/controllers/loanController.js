@@ -1,5 +1,6 @@
 import loanService from "../services/loanService.js";
 
+// Lấy tất cả các khoản vay
 const getAllLoans = async (req, res) => {
   try {
     let loans = await loanService.getAllLoans();
@@ -15,6 +16,7 @@ const getAllLoans = async (req, res) => {
   }
 };
 
+// Mượn sách
 const borrowBook = async (req, res) => {
   try {
     const member_id = req.params.memberId;
@@ -35,6 +37,7 @@ const borrowBook = async (req, res) => {
   }
 };
 
+// Trả sách
 const returnBook = async (req, res) => {
   try {
     let result = await loanService.returnBook(req.body.loan_id);
@@ -93,6 +96,7 @@ const requestRenewLoan = async (req, res) => {
   }
 };
 
+// Phê duyệt yêu cầu gia hạn
 const approveRenewLoan = async (req, res) => {
   try {
     const { loan_id, action } = req.body;

@@ -1,6 +1,7 @@
 import db from "../models/index.js";
 import { Op } from "sequelize";
 
+// Hàm lấy sách theo ID
 let getBookById = async (bookId) => {
   if (!bookId) throw new Error("Book ID is required!");
   const book = await db.Book.findOne({
@@ -13,6 +14,7 @@ let getBookById = async (bookId) => {
   return book;
 };
 
+// Hàm lấy tất cả sách
 let getAllBooks = async () => {
   return await db.Book.findAll({
     include: [
@@ -21,6 +23,7 @@ let getAllBooks = async () => {
   });
 };
 
+// Hàm tạo sách mới
 let createNewBooks = async (req) => {
   let newBookData = {
     isbn: req.body.isbn,
@@ -42,6 +45,7 @@ let createNewBooks = async (req) => {
   return await db.Book.create(newBookData);
 };
 
+// Hàm cập nhật sách
 let updateBook = async (req) => {
   let bookId = req.body.book_id;
   if (!bookId) {
@@ -88,6 +92,7 @@ let updateBook = async (req) => {
   }
 };
 
+// Hàm tìm kiếm sách
 let searchBook = async (filters) => {
   try {
     let whereClause = {};
@@ -107,6 +112,8 @@ let searchBook = async (filters) => {
     throw new Error("Không thể tìm kiếm sách, vui lòng thử lại!");
   }
 };
+
+// Hàm lấy sách theo danh mục
 let getBookByCategory = async (categoryId) => {
   if (!categoryId) throw new Error("Category ID is required!");
 
@@ -128,6 +135,8 @@ let getBookByCategory = async (categoryId) => {
     throw new Error("Không thể lấy sách theo danh mục.");
   }
 };
+
+// Hàm xóa sách
 let deleteBook = async (bookId) => {
   try {
     const r1 = await db.BookCategory.destroy({ where: { book_id: bookId } });
@@ -144,6 +153,7 @@ let deleteBook = async (bookId) => {
     throw error;
   }
 };
+
 export default {
   getBookById,
   getAllBooks,

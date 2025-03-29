@@ -8,15 +8,15 @@ const getAllPayments = async () => {
       include: [
         {
           model: Member,
-          attributes: ["member_code"], // Lấy mã thành viên
+          attributes: ["member_code"],
         },
         {
           model: Loan,
-          attributes: ["loan_id", "fine_amount"], // Lấy ID của khoản vay
+          attributes: ["loan_id", "fine_amount"],
         },
         {
           model: User,
-          attributes: ["username"], // Lấy tên người dùng
+          attributes: ["username"],
         },
       ],
     });
@@ -32,15 +32,15 @@ const getPaymentsByMemberId = async (memberId) => {
       include: [
         {
           model: Member,
-          attributes: ["member_code"], // Lấy mã thành viên
+          attributes: ["member_code"],
         },
         {
           model: Loan,
-          attributes: ["loan_id", "fine_amount"], // Lấy ID của khoản vay
+          attributes: ["loan_id", "fine_amount"],
         },
         {
           model: User,
-          attributes: ["username"], // Lấy tên người dùng
+          attributes: ["username"],
         },
       ],
       attributes: [
@@ -50,7 +50,7 @@ const getPaymentsByMemberId = async (memberId) => {
         "amount",
         "status",
       ],
-      order: [["payment_date", "DESC"]], // Sắp xếp theo ngày thanh toán mới nhất
+      order: [["payment_date", "DESC"]],
     });
   } catch (error) {
     throw new Error("Lỗi lấy danh sách thanh toán: " + error.message);
@@ -59,23 +59,19 @@ const getPaymentsByMemberId = async (memberId) => {
 
 // Tạo một khoản thanh toán mới
 const createPayment = async (paymentData) => {
-  // Kiểm tra dữ liệu đầu vào
   if (!paymentData || Object.keys(paymentData).length === 0) {
     throw new Error("Dữ liệu thanh toán không hợp lệ.");
   }
 
-  const transaction = await sequelize.transaction(); // Bắt đầu transaction
+  const transaction = await sequelize.transaction();
   try {
-    // Kiểm tra và lấy thông tin cần thiết
     const { loan_id, payment_date, payment_method, user_id, member_id } =
       paymentData;
 
-    // Kiểm tra xem loan_id có tồn tại không
     if (!loan_id) {
       throw new Error("Thiếu loan_id để tạo thanh toán.");
     }
 
-    // Kiểm tra xem user_id và member_id có tồn tại không
     if (!user_id) {
       throw new Error("Thiếu user_id để tạo thanh toán.");
     }
@@ -83,7 +79,6 @@ const createPayment = async (paymentData) => {
       throw new Error("Thiếu member_id để tạo thanh toán.");
     }
 
-    // Lấy thông tin khoản vay để kiểm tra
     const loan = await Loan.findByPk(loan_id);
     if (!loan) {
       throw new Error("Không tìm thấy khoản vay.");
@@ -95,18 +90,18 @@ const createPayment = async (paymentData) => {
         loan_id,
         payment_date,
         payment_method,
-        user_id, // Thêm user_id vào đối tượng thanh toán
-        member_id, // Thêm member_id vào đối tượng thanh toán
-        status: "PENDING", // Trạng thái mặc định là PENDING
+        user_id,
+        member_id,
+        status: "PENDING",
       },
       { transaction }
     );
 
-    await transaction.commit(); // Commit nếu thành công
-    return { success: true, message: "Tạo thanh toán thành công.", payment }; // Trả về thông tin thanh toán đã tạo
+    await transaction.commit();
+    return { success: true, message: "Tạo thanh toán thành công.", payment };
   } catch (error) {
-    await transaction.rollback(); // Rollback nếu có lỗi
-    return { success: false, message: "Lỗi tạo thanh toán: " + error.message }; // Trả về thông báo lỗi
+    await transaction.rollback();
+    return { success: false, message: "Lỗi tạo thanh toán: " + error.message };
   }
 };
 

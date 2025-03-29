@@ -1,12 +1,14 @@
 import bcrypt from "bcryptjs";
 import { User } from "../models";
+import userService from "./userService";
 
+// Hàm đăng nhập
 const login = async (username, password) => {
   try {
     const user = await User.findOne({
       where: {
         username,
-        is_active: true, // kiểm tra user active
+        is_active: true,
       },
     });
 
@@ -25,7 +27,6 @@ const login = async (username, password) => {
       };
     }
 
-    // Trả về toàn bộ đối tượng user
     return { success: true, user };
   } catch (error) {
     console.error("Lỗi đăng nhập:", error);
@@ -33,6 +34,7 @@ const login = async (username, password) => {
   }
 };
 
+// Hàm đăng xuất
 const logout = async (req) => {
   return new Promise((resolve) => {
     req.session.destroy(() => {
@@ -41,12 +43,31 @@ const logout = async (req) => {
   });
 };
 
+// Hàm đăng ký
+const register = async (data) => {
+  try {
+    const existingUser = await User.findOne({
+      where: { username: data.username },
+    });
+    if (existingUser) {
+      return { success: false, message: "Tên đăng nhập đã tồn tại!" };
+    }
+
+    await userService.createNewUser(data);
+
+    return { success: true, message: "Đăng ký thành công!" };
+  } catch (error) {
+    console.error("Lỗi đăng ký:", error);
+    return { success: false, message: "Lỗi hệ thống!" };
+  }
+};
+
+// Hàm lấy thông tin người dùng hiện tại
 const getCurrentUser = async (req) => {
   if (!req.session?.user) {
     return { success: false, message: "Chưa đăng nhập" };
   }
 
-  // Kiểm tra user còn tồn tại và active không
   const user = await User.findOne({
     where: {
       user_id: req.session.user.user_id,
@@ -64,4 +85,4 @@ const getCurrentUser = async (req) => {
   return { success: true, user: req.session.user };
 };
 
-export default { login, logout, getCurrentUser };
+export default { login, logout, getCurrentUser, register };

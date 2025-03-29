@@ -51,7 +51,7 @@ const getMemberByUserId = async (userId) => {
   }
 };
 
-// Đồng bộ Member từ User (nếu chưa có)
+// Đồng bộ Member từ User
 const syncMembersFromUsers = async () => {
   try {
     const users = await User.findAll({ where: { role: "member" } });

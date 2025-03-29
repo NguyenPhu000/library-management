@@ -2,29 +2,26 @@
    Custom Properties (Variables)
 ---------------------------- */
 :root {
-  --navbar-height: 4rem; /* Chiều cao navbar */
   --primary-color: #2c5f2d;
   --secondary-color: #97bc62;
   --accent-color: #ffce00;
   --text-color: #e0e0e0;
   --text-light: #ffffff;
   --bg-main: #f4f6f9;
-  --bg-navbar: #1e1e1e; /* Màu nền navbar */
+  --bg-navbar: #1e1e1e;
   --bg-card: #ffffff;
   --shadow-lg: 0 5px 15px rgba(0, 0, 0, 0.15);
-  --radius-md: 0.625rem; /* 10px */
+  --radius-md: 0.625rem;
   --transition: all 0.3s ease-in-out;
 
-  /* Font-size chuẩn quốc tế */
-  --font-small: clamp(0.75rem, 1vw, 0.875rem); /* 12px - 14px */
-  --font-base: clamp(0.875rem, 1vw, 1rem); /* 14px - 16px */
-  --font-medium: clamp(1rem, 1.2vw, 1.125rem); /* 16px - 18px */
-  --font-large: clamp(1.125rem, 1.5vw, 1.25rem); /* 18px - 20px */
+  --font-small: clamp(0.75rem, 1vw, 0.875rem);
+  --font-base: clamp(0.875rem, 1vw, 1rem);
+  --font-medium: clamp(1rem, 1.2vw, 1.125rem);
+  --font-large: clamp(1.125rem, 1.5vw, 1.25rem);
 
-  /* Thêm thuộc tính mới */
-  --border-radius: 8px; /* Đường viền bo tròn */
-  --shadow-md: 0 3px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng trung bình */
-  --hover-color: #d4d4d4; /* Màu nền khi hover */
+  --border-radius: 8px;
+  --shadow-md: 0 3px 10px rgba(0, 0, 0, 0.1);
+  --hover-color: #d4d4d4;
 }
 
 /* ---------------------------
@@ -41,7 +38,7 @@ body {
   background: var(--bg-main);
   color: var(--text-color);
   display: flex;
-  flex-direction: column; /* Thay đổi để phù hợp với navbar */
+  flex-direction: column;
   font-size: var(--font-base);
   line-height: 1.6;
 }
@@ -50,15 +47,15 @@ body {
    Navbar Styling
 ---------------------------- */
 .navbar {
-  height: var(--navbar-height);
   background: var(--bg-navbar);
-  padding: 0 1rem; /* Padding cho navbar */
+  padding: 0 1rem;
   color: var(--text-light);
   box-shadow: var(--shadow-lg);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: relative; /* Để dropdown hoạt động chính xác */
+  position: relative;
+  z-index: 1001;
 }
 
 .nav-link {
@@ -70,11 +67,10 @@ body {
   text-decoration: none;
   font-size: var(--font-medium);
 }
-
 .nav-link:hover {
   background: var(--secondary-color);
   color: #1e1e1e !important;
-  transform: translateY(-2px); /* Hiệu ứng hover */
+  transform: translateY(-2px);
 }
 
 .nav-link.active {
@@ -87,16 +83,42 @@ body {
    Dropdown Menu Styling
 ---------------------------- */
 .dropdown-menu {
-  display: none; /* Ẩn menu dropdown mặc định */
-  position: absolute; /* Đặt vị trí tuyệt đối */
-  background: var(--bg-card);
+  display: none;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.65); /* Nền đen mặc định */
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-lg);
-  z-index: 1000; /* Đảm bảo menu nằm trên các phần tử khác */
+  z-index: 1000;
+  padding: 0.5rem 0;
+  min-width: 10rem;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .nav-item.dropdown:hover .dropdown-menu {
-  display: block; /* Hiện menu khi hover vào nav-item */
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  padding: 0.75rem 1.5rem;
+  clear: both;
+  font-weight: 400;
+  color: white;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: var(--secondary-color);
+  color: rgba(0, 0, 0, 0.5);
 }
 
 /* ---------------------------
@@ -113,10 +135,27 @@ body {
 ---------------------------- */
 @media (max-width: 768px) {
   .navbar {
-    flex-direction: column; /* Đổi hướng navbar cho màn hình nhỏ */
-  }
+    background-color: var(--bg-navbar);
+    box-shadow: var(--shadow-lg);
 
-  .nav-link {
-    padding: 0.5rem; /* Giảm padding cho nav-link */
+    .nav-link {
+      background-color: transparent;
+      padding: 0.75rem 1.5rem;
+      color: #ffffff;
+      border-radius: 0.25rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .nav-link:hover {
+      background-color: var(--secondary-color);
+      color: #ffffff;
+      transform: scale(1.05);
+    }
+
+    .nav-link:focus {
+      background-color: var(--bg-navbar);
+      color: #ffffff;
+      outline: none;
+    }
   }
 }

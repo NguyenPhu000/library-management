@@ -1,5 +1,6 @@
 import db from "../models/index";
 
+// Lấy tất cả danh mục
 let getAllCategory = () => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -12,6 +13,8 @@ let getAllCategory = () => {
     }
   });
 };
+
+// Tạo danh mục mới
 let createNewCategory = async (categoryData) => {
   try {
     if (!categoryData.name || categoryData.name.trim() === "") {
@@ -29,6 +32,8 @@ let createNewCategory = async (categoryData) => {
     throw error;
   }
 };
+
+// Cập nhật danh mục
 let updateCategory = async (categoryId, categoryData) => {
   if (!categoryId) {
     throw new Error("Category ID is missing!");
@@ -55,6 +60,7 @@ let updateCategory = async (categoryId, categoryData) => {
   }
 };
 
+// Xóa danh mục
 let deleteCategory = async (categoryId) => {
   try {
     const result = await db.Category.destroy({

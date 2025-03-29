@@ -1,7 +1,7 @@
 import { Loan, Book, Member } from "../models";
 const { sequelize } = require("../models"); // Đã export sequelize instance
 
-// Lấy danh sách tất cả lượt mượn
+// Hàm lấy danh sách tất cả lượt mượn
 const getAllLoans = async () => {
   try {
     return await Loan.findAll({
@@ -15,7 +15,7 @@ const getAllLoans = async () => {
   }
 };
 
-// Xử lý mượn sách
+// Hàm xử lý mượn sách
 const borrowBook = async (member_id, book_id) => {
   const transaction = await sequelize.transaction(); // Bắt đầu transaction
   try {
@@ -83,7 +83,7 @@ const borrowBook = async (member_id, book_id) => {
   }
 };
 
-// Xử lý trả sách
+// Hàm xử lý trả sách
 const returnBook = async (loan_id) => {
   const transaction = await sequelize.transaction(); // Bắt đầu transaction
   try {
@@ -141,7 +141,7 @@ const getLoanByBookId = async (bookId) => {
   }
 };
 
-// Lấy danh sách sách đang mượn hiện tại cho thành viên
+// Hàm lấy danh sách sách đang mượn hiện tại cho thành viên
 const getLoansByMemberId = async (member_id) => {
   try {
     const loans = await Loan.findAll({
@@ -171,7 +171,7 @@ const getLoansByMemberId = async (member_id) => {
   }
 };
 
-// Yêu cầu gia hạn sách
+// Hàm yêu cầu gia hạn sách
 const requestRenewLoan = async (loan_id) => {
   try {
     const loan = await Loan.findByPk(loan_id);
@@ -202,7 +202,7 @@ const requestRenewLoan = async (loan_id) => {
   }
 };
 
-// Phê duyệt gia hạn sách
+// Hàm phê duyệt gia hạn sách
 const approveRenewLoan = async (loan_id, approve = true) => {
   try {
     const loan = await Loan.findByPk(loan_id);

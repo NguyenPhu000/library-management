@@ -34,12 +34,10 @@ document
     const result = await response.json();
     if (result.success) {
       alert(result.message);
-      // Đóng modal sau khi xác nhận thành công
       const modal = bootstrap.Modal.getInstance(
         document.getElementById("paymentModal")
       );
       modal.hide();
-      // Cập nhật giao diện hoặc làm mới dữ liệu
     } else {
       alert(result.message);
     }

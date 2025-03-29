@@ -1,5 +1,6 @@
 import memberService from "../services/memberService.js";
 
+// Hàm này lấy danh sách thành viên và hiển thị
 const getDisplayMember = async (req, res) => {
   try {
     const result = await memberService.getAllMembers();
@@ -17,6 +18,7 @@ const getDisplayMember = async (req, res) => {
   }
 };
 
+// Hàm này lấy thông tin thành viên theo User ID
 const getMemberByUserId = async (req, res) => {
   try {
     if (!req.params.userId) {
@@ -35,6 +37,7 @@ const getMemberByUserId = async (req, res) => {
   }
 };
 
+// Hàm này cập nhật thông tin thành viên
 const updateMember = async (req, res) => {
   try {
     const updateResult = await memberService.updateMember(req.body);
@@ -55,6 +58,7 @@ const updateMember = async (req, res) => {
   }
 };
 
+// Hàm này xóa thành viên theo ID
 const deleteMember = async (req, res) => {
   try {
     if (!req.query.id) {
@@ -79,6 +83,7 @@ const deleteMember = async (req, res) => {
   }
 };
 
+// Hàm này đồng bộ hóa thành viên từ người dùng
 const syncMember = async (req, res) => {
   try {
     const syncResult = await memberService.syncMembersFromUsers();
@@ -99,6 +104,7 @@ const syncMember = async (req, res) => {
   }
 };
 
+// Hàm này lấy ID thành viên theo User ID
 const getMemberIdByUserId = async (req, res) => {
   if (!req.params.userId)
     return res.status(400).json({ message: "Thiếu User ID" });

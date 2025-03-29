@@ -7,14 +7,14 @@
 <!-- Main Content -->
 <div class="main-content flex-grow-1 p-4">
   <div class="container-fluid">
-    <h3 class="mb-4"><i class="fas fa-chart-line"></i> Dashboard</h3>
+    <h3 class="mb-4"><i class="fa-solid fa-chart-line"></i> Dashboard</h3>
 
     <!-- THỐNG KÊ -->
-    <div class="row">
+    <div class="row mb-4">
       <div class="col-md-3">
         <div class="card stat-card">
           <div class="card-body">
-            <i class="fas fa-users"></i>
+            <i class="fa-solid fa-users"></i>
             <h5>Thành viên</h5>
             <h2><%= dashboardData.totalMembers %></h2>
           </div>
@@ -23,7 +23,7 @@
       <div class="col-md-3">
         <div class="card stat-card">
           <div class="card-body">
-            <i class="fas fa-book"></i>
+            <i class="fa-solid fa-book"></i>
             <h5>Số sách</h5>
             <h2><%= dashboardData.totalBooks %></h2>
           </div>
@@ -32,7 +32,7 @@
       <div class="col-md-3">
         <div class="card stat-card">
           <div class="card-body">
-            <i class="fas fa-handshake"></i>
+            <i class="fa-solid fa-handshake"></i>
             <h5>Đơn mượn</h5>
             <h2><%= dashboardData.totalLoans %></h2>
           </div>
@@ -41,7 +41,7 @@
       <div class="col-md-3">
         <div class="card stat-card stat-danger">
           <div class="card-body">
-            <i class="fas fa-exclamation-triangle"></i>
+            <i class="fa-solid fa-exclamation-triangle"></i>
             <h5>Quá hạn</h5>
             <h2><%= dashboardData.totalOverdueLoans %></h2>
           </div>
@@ -49,12 +49,40 @@
       </div>
     </div>
 
+    <!-- CÁC HÀNH ĐỘNG NHANH -->
+    <div class="row mb-4">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-body">
+            <h5><i class="fa-solid fa-bolt"></i> Hành động nhanh</h5>
+            <div class="d-flex justify-content-around">
+              <button class="btn btn-primary">
+                <a href="/api/books" class="text-white text-decoration-none"
+                  ><i class="fa-solid fa-plus"></i> Thêm sách</a
+                >
+              </button>
+              <button class="btn btn-success">
+                <a href="/api/members" class="text-white text-decoration-none"
+                  ><i class="fa-solid fa-user-plus"></i> Thêm thành viên</a
+                >
+              </button>
+              <button class="btn btn-warning">
+                <a href="/api/category" class="text-white text-decoration-none"
+                  ><i class="fa-solid fa-list"></i> Quản lý thể loại</a
+                >
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- BIỂU ĐỒ -->
-    <div class="row mt-4">
+    <div class="row mt-4 mb-4">
       <div class="col-md-6">
         <div class="card">
           <div class="card-body">
-            <h5><i class="fas fa-chart-bar"></i> Sách mượn theo tháng</h5>
+            <h5><i class="fa-solid fa-chart-bar"></i> Sách mượn theo tháng</h5>
             <canvas id="loanChart"></canvas>
           </div>
         </div>
@@ -62,7 +90,9 @@
       <div class="col-md-6">
         <div class="card">
           <div class="card-body">
-            <h5><i class="fas fa-user-check"></i> Trạng thái thành viên</h5>
+            <h5>
+              <i class="fa-solid fa-user-check"></i> Trạng thái thành viên
+            </h5>
             <canvas id="memberChart"></canvas>
           </div>
         </div>
@@ -70,11 +100,11 @@
     </div>
 
     <!-- TÀI KHOẢN ĐANG HOẠT ĐỘNG -->
-    <div class="row mt-4">
+    <div class="row mt-4 mb-4">
       <div class="col-md-12">
         <div class="card">
           <div class="card-body">
-            <h5><i class="fas fa-users"></i> Tài khoản đang hoạt động</h5>
+            <h5><i class="fa-solid fa-users"></i> Tài khoản đang hoạt động</h5>
             <ul class="list-group">
               <% activeMembers.forEach(member => { %>
               <li class="list-group-item">

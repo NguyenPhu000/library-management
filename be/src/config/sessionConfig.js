@@ -11,13 +11,16 @@ const sessionConfig = (app) => {
         secure: false,
         httpOnly: true,
         sameSite: "lax",
-        maxAge: 24 * 60 * 60 * 1000, //  24h
+        maxAge: 12 * 60 * 60 * 1000, //  24h
       },
     })
   );
   app.use(flash());
 
   app.use((req, res, next) => {
+    if (!req.session) {
+      return next(new Error("Session not initialized"));
+    }
     res.locals.success_msg = req.flash("success_msg");
     res.locals.error_msg = req.flash("error_msg");
     res.locals.user = req.session.user || null;

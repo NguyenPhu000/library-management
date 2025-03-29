@@ -14,7 +14,7 @@ export const getHomePage = async (req, res) => {
       activeMembers,
     });
   } catch (error) {
-    res.status(500).send("Lỗi khi tải trang chủ");
+    res.status(500).send("Có lỗi xảy ra khi tải trang chủ");
   }
 };
 

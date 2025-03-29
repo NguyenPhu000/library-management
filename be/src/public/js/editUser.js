@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then((data) => {
           alert("Tạo người dùng thành công!");
-          location.reload(); // Tải lại trang để cập nhật dữ liệu
+          location.reload();
         })
         .catch((error) => {
           console.error("Lỗi:", error);
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("editUserForm")
     .addEventListener("submit", function (e) {
-      e.preventDefault(); // Ngăn chặn hành vi mặc định của form
+      e.preventDefault();
 
       const formData = new FormData(this);
       const username = formData.get("username");
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Kiểm tra tính hợp lệ
       if (!validateUserData(username, password, email, phone)) {
-        return; // Dừng nếu dữ liệu không hợp lệ
+        return;
       }
 
       // Gửi yêu cầu chỉnh sửa người dùng
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then((data) => {
           alert("Chỉnh sửa người dùng thành công!");
-          location.reload(); // Tải lại trang để cập nhật dữ liệu
+          location.reload();
         })
         .catch((error) => {
           console.error("Lỗi:", error);

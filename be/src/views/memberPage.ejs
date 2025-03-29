@@ -1,5 +1,5 @@
 <!-- Header -->
-<%- include('layouts/header', { title: 'Member Management' }) %>
+<%- include('layouts/header', { title: 'Quản lý Thành Viên' }) %>
 
 <!-- Sidebar -->
 <%- include('layouts/sidebar') %>
@@ -13,7 +13,9 @@
       >
         <h2>Quản lý thành viên</h2>
         <!-- Nút đồng bộ Admin -->
-        <a href="/api/members/sync" class="btn btn-light">Đồng bộ thành viên</a>
+        <a href="/api/members/sync" class="btn btn-light">
+          <i class="fas fa-sync"></i> Đồng bộ thành viên
+        </a>
       </div>
       <div class="card-body">
         <table class="table table-bordered table-hover">
@@ -55,7 +57,7 @@
                   data-current_loans="<%= member.current_loans %>"
                   data-status="<%= member.status %>"
                 >
-                  Chỉnh sửa
+                  <i class="fas fa-edit"></i> Chỉnh sửa
                 </button>
               </td>
             </tr>

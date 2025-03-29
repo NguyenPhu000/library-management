@@ -7,7 +7,7 @@
   --text-dark: #333333; /* Chữ màu đen */
   --card-border: #97bc62; /* Viền xanh nhạt */
   --shadow-color: rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
-  --hover-shadow: rgba(0, 0, 0, 0.2); /* Bóng hover */
+  --hover-shadow: rgba(0, 0, 0, 0.3); /* Bóng hover đậm hơn */
   --danger-color: #e74c3c; /* Màu đỏ cảnh báo */
 }
 
@@ -42,12 +42,17 @@ body {
   border-radius: 50%;
   font-size: 24px;
   margin-bottom: 10px;
+  transition: background-color 0.3s ease; /* Thêm transition cho background icon */
 }
 
 /* HIỆU ỨNG HOVER - CARD NỔI LÊN */
 .stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 6px 6px 15px var(--hover-shadow);
+  transform: translateY(-5px) scale(1.03); /* Thêm scale nhẹ */
+  box-shadow: 8px 8px 20px var(--hover-shadow); /* Bóng đậm hơn khi hover */
+}
+
+.stat-card:hover i {
+  background: var(--primary-color); /* Đổi màu nền icon khi hover */
 }
 
 /* ========== CẢNH BÁO - QUÁ HẠN ========== */
@@ -58,6 +63,12 @@ body {
 
 .stat-danger i {
   background: var(--danger-color) !important;
+}
+
+.stat-danger:hover i {
+  background: var(
+    --danger-color
+  ) !important; /* Giữ nguyên màu nền icon khi hover ở card danger */
 }
 
 /* ========== BIỂU ĐỒ ========== */

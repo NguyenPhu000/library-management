@@ -1,14 +1,15 @@
 import paymentService from "../services/paymentService";
 
 // Lấy danh sách tất cả các payment
+// Hàm này lấy tất cả các thanh toán từ dịch vụ paymentService
 const getAllPayments = async (req, res) => {
   try {
     const payments = await paymentService.getAllPayments();
 
     if (req.headers.accept?.includes("application/json")) {
-      return res.json({ success: true, data: payments }); // Xuất ra json
+      return res.json({ success: true, data: payments });
     }
-    res.render("paymentPage", { dataTable: payments }); // Xuất ra file ejs
+    res.render("paymentPage", { dataTable: payments });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -18,6 +19,7 @@ const getAllPayments = async (req, res) => {
   }
 };
 
+// Hàm này lấy danh sách thanh toán theo memberId
 const getPaymentsByMemberId = async (req, res) => {
   const memberId = req.params.memberId;
   try {
@@ -32,6 +34,7 @@ const getPaymentsByMemberId = async (req, res) => {
   }
 };
 
+// Hàm này tạo một thanh toán mới
 const createPayment = async (req, res) => {
   const { loanId, userId, memberId } = req.params;
   const { payment_date, payment_method } = req.body;
@@ -60,6 +63,7 @@ const createPayment = async (req, res) => {
   }
 };
 
+// Hàm này xác nhận một thanh toán
 const confirmPayment = async (req, res) => {
   const { paymentId, amount } = req.body;
 

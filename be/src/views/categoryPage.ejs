@@ -10,7 +10,7 @@
     <div
       class="card-header d-flex justify-content-between align-items-center bg-dark text-white"
     >
-      <h2 class="text-center">Library Categories</h2>
+      <h2 class="text-center">Danh Mục Thư Viện</h2>
       <span><%- include('partials/createCategory') %></span>
     </div>
 
@@ -26,7 +26,7 @@
               <th class="text-center">No.</th>
               <th>Tên Danh Mục</th>
               <th>Mô Tả</th>
-              <th class="text-center">Action</th>
+              <th class="text-center">Hành Động</th>
             </tr>
           </thead>
 
@@ -46,13 +46,13 @@
                   data-name="<%= category.name %>"
                   data-description="<%= category.description %>"
                 >
-                  Edit
+                  <i class="fas fa-edit"></i> Sửa
                 </button>
                 <button
                   class="btn btn-outline-danger btn-sm"
                   onclick="confirmDelete('<%= category.category_id %>')"
                 >
-                  Delete
+                  <i class="fas fa-trash-alt"></i> Xóa
                 </button>
               </td>
             </tr>

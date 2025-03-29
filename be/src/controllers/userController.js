@@ -1,9 +1,11 @@
 import userService from "../services/userService.js";
 
+// Hàm để hiển thị trang tạo người dùng
 const getCreateUser = (req, res) => {
   res.render("partials/createUser.ejs");
 };
 
+// Hàm để hiển thị danh sách người dùng
 const getDisplayUser = async (req, res) => {
   try {
     let { criteria, query } = req.query;
@@ -23,6 +25,7 @@ const getDisplayUser = async (req, res) => {
   }
 };
 
+// Hàm để tạo người dùng mới
 const postCreateUser = async (req, res) => {
   try {
     await userService.createNewUser(req.body);
@@ -39,6 +42,7 @@ const postCreateUser = async (req, res) => {
   }
 };
 
+// Hàm để cập nhật thông tin người dùng
 const updateUser = async (req, res) => {
   try {
     await userService.updateUserData(req.body);
@@ -56,6 +60,7 @@ const updateUser = async (req, res) => {
   }
 };
 
+// Hàm để xóa người dùng
 const deleteUser = async (req, res) => {
   try {
     if (!req.query.id) return res.status(400).send("User ID is required");
@@ -73,6 +78,7 @@ const deleteUser = async (req, res) => {
   }
 };
 
+// Hàm để chuyển đổi trạng thái hoạt động của người dùng
 const toggleActive = async (req, res) => {
   try {
     if (!req.query.id) return res.status(400).send("User ID is required");
@@ -91,6 +97,8 @@ const toggleActive = async (req, res) => {
     res.status(500).send(error.message);
   }
 };
+
+// Hàm để lấy thông tin người dùng theo ID
 const getUserById = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -106,6 +114,7 @@ const getUserById = async (req, res) => {
   }
 };
 
+// Hàm để cập nhật hồ sơ người dùng
 const updateUserProfile = async (req, res) => {
   try {
     const userId = req.params.userId;
