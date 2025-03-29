@@ -1,5 +1,6 @@
 import API from "./api";
 
+// Hàm lấy thông tin thành viên hiện tại theo userId
 export const getCurrentMemberInfo = async (userId) => {
   try {
     const { data } = await API.get(`/members/${userId}`);
@@ -10,6 +11,7 @@ export const getCurrentMemberInfo = async (userId) => {
   }
 };
 
+// Hàm lấy member_id theo userId
 export const getMemberIdByUserId = async (userId) => {
   try {
     const { data } = await API.get(`/members/member-id/${userId}`);

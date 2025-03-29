@@ -1,5 +1,6 @@
 import API from "./api";
 
+// Hàm lấy thông tin người dùng hiện tại
 const getCurrentUser = async () => {
   try {
     const response = await API.get("/me");
@@ -9,6 +10,7 @@ const getCurrentUser = async () => {
   }
 };
 
+// Hàm đăng nhập
 const login = async (username, password) => {
   try {
     const response = await API.post("/login", { username, password });
@@ -21,6 +23,7 @@ const login = async (username, password) => {
   }
 };
 
+// Hàm đăng xuất
 const logout = async () => {
   try {
     const response = await API.get("/logout");

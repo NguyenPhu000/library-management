@@ -5,6 +5,7 @@ import { useAuth } from "./AuthContext";
 
 const UserContext = createContext();
 
+// Cung cấp thông tin người dùng và các hàm liên quan
 export const UserProvider = ({ children }) => {
   const { user } = useAuth();
   const userId = user ? user.user_id : null;

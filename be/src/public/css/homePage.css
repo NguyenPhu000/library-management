@@ -2,14 +2,14 @@
    Custom Properties (Variables)
 ---------------------------- */
 :root {
-  --sidebar-width: 14rem; /* 240px */ /* Giảm chiều rộng sidebar */
+  --navbar-height: 4rem; /* Chiều cao navbar */
   --primary-color: #2c5f2d;
   --secondary-color: #97bc62;
   --accent-color: #ffce00;
   --text-color: #e0e0e0;
   --text-light: #ffffff;
   --bg-main: #f4f6f9;
-  --bg-sidebar: #1e1e1e;
+  --bg-navbar: #1e1e1e; /* Màu nền navbar */
   --bg-card: #ffffff;
   --shadow-lg: 0 5px 15px rgba(0, 0, 0, 0.15);
   --radius-md: 0.625rem; /* 10px */
@@ -20,6 +20,11 @@
   --font-base: clamp(0.875rem, 1vw, 1rem); /* 14px - 16px */
   --font-medium: clamp(1rem, 1.2vw, 1.125rem); /* 16px - 18px */
   --font-large: clamp(1.125rem, 1.5vw, 1.25rem); /* 18px - 20px */
+
+  /* Thêm thuộc tính mới */
+  --border-radius: 8px; /* Đường viền bo tròn */
+  --shadow-md: 0 3px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng trung bình */
+  --hover-color: #d4d4d4; /* Màu nền khi hover */
 }
 
 /* ---------------------------
@@ -36,39 +41,27 @@ body {
   background: var(--bg-main);
   color: var(--text-color);
   display: flex;
+  flex-direction: column; /* Thay đổi để phù hợp với navbar */
   font-size: var(--font-base);
   line-height: 1.6;
 }
 
 /* ---------------------------
-   Sidebar Styling
+   Navbar Styling
 ---------------------------- */
-.sidebar {
-  width: var(--sidebar-width);
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: var(--bg-sidebar);
-  padding: 1.5rem;
+.navbar {
+  height: var(--navbar-height);
+  background: var(--bg-navbar);
+  padding: 0 1rem; /* Padding cho navbar */
   color: var(--text-light);
   box-shadow: var(--shadow-lg);
-  overflow-y: auto;
-  transition: var(--transition);
-}
-
-.sidebar .library-brand h3 {
-  font-size: var(--font-large);
-  font-weight: 600;
-}
-
-.nav {
-  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative; /* Để dropdown hoạt động chính xác */
 }
 
 .nav-link {
-  display: flex;
-  align-items: center;
   padding: 1rem;
   color: var(--text-light) !important;
   font-weight: 500;
@@ -81,7 +74,7 @@ body {
 .nav-link:hover {
   background: var(--secondary-color);
   color: #1e1e1e !important;
-  transform: translateX(5px);
+  transform: translateY(-2px); /* Hiệu ứng hover */
 }
 
 .nav-link.active {
@@ -89,137 +82,41 @@ body {
   color: #1e1e1e !important;
   font-weight: 600;
 }
+
 /* ---------------------------
-   Submenu Styling (Dropdown)
+   Dropdown Menu Styling
 ---------------------------- */
-.submenu {
-  display: none;
-  padding-left: 1rem; /* Giảm padding submenu */
-  margin-top: 0.4rem;
-  transition: all 0.3s ease-in-out;
-  background: transparent !important;
-  box-shadow: none !important;
+.dropdown-menu {
+  display: none; /* Ẩn menu dropdown mặc định */
+  position: absolute; /* Đặt vị trí tuyệt đối */
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000; /* Đảm bảo menu nằm trên các phần tử khác */
 }
 
-.nav-item.has-submenu:hover .submenu {
-  display: block; /* Hiển thị submenu khi hover */
-}
-
-/* Căn chỉnh submenu item */
-.submenu .nav-link {
-  padding-left: 1.3rem; /* Giảm padding nav-link trong submenu */
-  background: transparent !important;
-  border-radius: var(--radius-md);
-}
-
-.submenu .nav-link:hover {
-  background: var(--secondary-color) !important;
-  transform: translateX(5px);
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block; /* Hiện menu khi hover vào nav-item */
 }
 
 /* ---------------------------
    Main Content
 ---------------------------- */
 .main-content {
-  margin-left: var(--sidebar-width);
   padding: 2rem;
-  width: calc(100% - var(--sidebar-width));
-  transition: var(--transition);
-}
-
-/* ---------------------------
-   Table Styling
----------------------------- */
-.table-container {
-  width: 95%;
-  max-width: 75rem; /* 1200px */
-  margin: 0 auto;
-  background: var(--bg-card);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  padding: 1rem;
-  overflow-x: auto;
-}
-
-table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: var(--font-base);
-}
-
-th,
-td {
-  padding: 0.75rem 1rem; /* 12px - 16px */
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-th {
-  background: var(--primary-color);
-  color: white;
-  font-weight: bold;
-  font-size: var(--font-medium);
-}
-
-tr:nth-child(even) {
-  background: #f8f9fa;
-}
-
-/* ---------------------------
-   Role & Status Styling
----------------------------- */
-.role-badge,
-.status {
-  display: inline-block;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: var(--font-small);
-  font-weight: bold;
-}
-
-.role-badge.member {
-  background: #007bff;
-  color: white;
-}
-
-.role-badge.admin {
-  background: #dc3545;
-  color: white;
-}
-
-.status.available {
-  background: #28a745;
-  color: white;
-}
-
-.status.borrowed {
-  background: #ffc107;
-  color: black;
+  transition: var(--transition);
 }
 
 /* ---------------------------
    Responsive Design
 ---------------------------- */
-@media (max-width: 1024px) {
-  :root {
-    --sidebar-width: 13rem; /* 208px */ /* Điều chỉnh responsive sidebar width */
-  }
-
-  .main-content {
-    margin-left: var(--sidebar-width);
-  }
-}
-
 @media (max-width: 768px) {
-  :root {
-    --sidebar-width: 5rem; /* 80px */ /* Điều chỉnh responsive sidebar width nhỏ hơn */
+  .navbar {
+    flex-direction: column; /* Đổi hướng navbar cho màn hình nhỏ */
   }
 
-  .main-content {
-    margin-left: var(--sidebar-width);
-  }
-
-  .nav-link span {
-    display: none;
+  .nav-link {
+    padding: 0.5rem; /* Giảm padding cho nav-link */
   }
 }

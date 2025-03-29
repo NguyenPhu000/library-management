@@ -1,87 +1,103 @@
-<nav class="sidebar">
-  <div class="library-brand">
-    <h3><i class="fas fa-book me-2"></i>Thư Viện</h3>
-    <small class="text-light">Hệ thống quản lý</small>
-  </div>
-
-  <ul class="nav flex-column mt-3">
-    <!-- Dashboard -->
-    <li class="nav-item">
-      <a class="nav-link" href="/api">
-        <i class="fas fa-chart-line"></i> Dashboard
-      </a>
-    </li>
-
-    <!-- Quản lý hệ thống (Dropdown) -->
-    <li class="nav-item has-submenu">
-      <a
-        class="nav-link dropdown-toggle"
-        data-bs-toggle="collapse"
-        href="#systemMenu"
-        aria-expanded="false"
-      >
-        <i class="fas fa-cogs"></i> Quản lý hệ thống
-      </a>
-      <ul id="systemMenu" class="submenu collapse list-unstyled">
-        <li>
-          <a class="nav-link" href="/api/users/">
-            <i class="fas fa-users"></i> Quản lý người dùng
-          </a>
-        </li>
-        <li>
-          <a class="nav-link" href="/api/admin/">
-            <i class="fas fa-user-shield"></i> Quản lý admin
-          </a>
-        </li>
-        <li>
-          <a class="nav-link" href="/api/members/">
-            <i class="fas fa-address-card"></i> Thành viên
-          </a>
-        </li>
-      </ul>
-    </li>
-
-    <!-- Quản lý Sách & Danh mục -->
-    <li class="nav-item has-submenu">
-      <a
-        class="nav-link dropdown-toggle"
-        data-bs-toggle="collapse"
-        href="#bookMenu"
-        aria-expanded="false"
-      >
-        <i class="fas fa-book"></i> Quản lý sách
-      </a>
-      <ul id="bookMenu" class="submenu collapse list-unstyled">
-        <li>
-          <a class="nav-link" href="/api/books/">
-            <i class="fas fa-book-open"></i> Sách
-          </a>
-        </li>
-        <li>
-          <a class="nav-link" href="/api/category/">
-            <i class="fas fa-layer-group"></i> Danh mục
-          </a>
-        </li>
-      </ul>
-    </li>
-
-    <!-- Mượn/Trả sách -->
-    <li class="nav-item">
-      <a class="nav-link" href="/api/loans/">
-        <i class="fas fa-exchange-alt"></i> Mượn/Trả sách
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="/api/payments/">
-        <i class="fas fa-credit-card"></i> Thanh toán
-      </a>
-    </li>
-  </ul>
-
-  <!-- Nút Logout -->
-  <div class="logout-section mt-auto">
-    <a href="/api/logout/" class="btn btn-danger w-100">
-      <i class="fas fa-sign-out-alt"></i> Logout
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <i class="fas fa-book me-2"></i> Thư Viện
     </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <!-- Dashboard -->
+        <li class="nav-item">
+          <a class="nav-link" href="/api">
+            <i class="fas fa-chart-line"></i> Dashboard
+          </a>
+        </li>
+
+        <!-- Quản lý hệ thống (Dropdown) -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="systemMenu"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="fas fa-cogs"></i> Quản lý hệ thống
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="systemMenu">
+            <li>
+              <a class="dropdown-item" href="/api/users/">
+                <i class="fas fa-users"></i> Quản lý người dùng
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/api/admin/">
+                <i class="fas fa-user-shield"></i> Quản lý admin
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/api/members/">
+                <i class="fas fa-address-card"></i> Thành viên
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Quản lý Sách & Danh mục -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="bookMenu"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="fas fa-book"></i> Quản lý sách
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="bookMenu">
+            <li>
+              <a class="dropdown-item" href="/api/books/">
+                <i class="fas fa-book-open"></i> Sách
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/api/category/">
+                <i class="fas fa-layer-group"></i> Danh mục
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Mượn/Trả sách -->
+        <li class="nav-item">
+          <a class="nav-link" href="/api/loans/">
+            <i class="fas fa-exchange-alt"></i> Mượn/Trả sách
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/api/payments/">
+            <i class="fas fa-credit-card"></i> Thanh toán
+          </a>
+        </li>
+      </ul>
+    </div>
+    <!-- Nút Logout -->
+    <div class="logout-section">
+      <a href="/api/logout/" class="btn btn-danger">
+        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+      </a>
+    </div>
   </div>
 </nav>

@@ -1,5 +1,6 @@
 import API from "./api";
 
+// Hàm lấy danh sách các danh mục từ API
 const getCategories = async () => {
   try {
     const response = await API.get("/category");

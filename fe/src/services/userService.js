@@ -1,5 +1,6 @@
 import API from "./api";
 
+// Hàm lấy thông tin người dùng theo ID
 export const fetchUserById = async (userId) => {
   try {
     const { data } = await API.get(`/users/${userId}`);
@@ -10,6 +11,7 @@ export const fetchUserById = async (userId) => {
   }
 };
 
+// Hàm cập nhật thông tin hồ sơ thành viên
 export const updateMemberProfile = async (userId, data) => {
   try {
     const response = await API.post(`/users/update-profile/${userId}`, {
