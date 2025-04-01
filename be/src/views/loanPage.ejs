@@ -17,19 +17,24 @@
           <th>Sách</th>
           <th>Ngày mượn</th>
           <th>Hạn trả</th>
+          <th>Phí phạt</th>
           <th>Trạng thái</th>
           <th>Gia hạn</th>
           <th>Thao tác</th>
         </tr>
       </thead>
       <tbody>
-        <% dataTable.forEach(function(loan, index) { %>
+        <% dataTable.slice().reverse().forEach(function(loan, index) { %>
         <tr>
-          <td><%= index + 1 %></td>
+          <td><%= dataTable.length - index %></td>
           <td><%= loan.Member ? loan.Member.member_code : "N/A" %></td>
           <td><%= loan.Book ? loan.Book.title : "N/A" %></td>
           <td><%= loan.loan_date.toISOString().split('T')[0] %></td>
-          <td><%= loan.due_date.toISOString().split('T')[0] %></td>
+          <td
+            class="<%= new Date(loan.due_date) < new Date() ? 'text-danger' : '' %>"
+          >
+            <%= loan.due_date.toISOString().split('T')[0] %>
+          </td>
           <td>
             <% if (loan.returned) { %>
             <span class="badge bg-success"
@@ -41,7 +46,8 @@
             >
             <% } %>
           </td>
-
+          <!-- Cột Phí phạt -->
+          <td><%= loan.fine_amount ? loan.fine_amount : "0" %></td>
           <!-- Cột Trạng thái Gia Hạn -->
           <td>
             <% if (loan.renewal_status === "pending") { %>

@@ -55,9 +55,9 @@
             </thead>
             <tbody>
               <% if (dataTable.length > 0) { %>
-                <% dataTable.forEach(function(user, index) { %>
+                <% dataTable.slice().reverse().forEach(function(user, index) { %>
                   <tr class="align-middle">
-                    <td class="text-center"><%= index + 1 %></td>
+                    <td class="text-center"><%= dataTable.length - index %></td>
                     <td><strong><%= user.username %></strong></td>
                     <td class="text-center">
                       <span class="badge rounded-pill <%= user.role === 'admin' ? 'bg-danger' : 'bg-primary' %>">
@@ -113,7 +113,9 @@
     </div>
 </div>
 
+
 <%- include('partials/editUser') %>
 <script src="/js/editUser.js"></script>
 <script src="/js/pagination.js"></script>
+
 <%- include('layouts/footer') %>

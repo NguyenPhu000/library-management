@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import bookService from "../services/bookservice";
+import Swal from "sweetalert2";
 
 const BookContext = createContext();
 
@@ -11,23 +12,41 @@ export const BookProvider = ({ children }) => {
   useEffect(() => {
     const fetchBooks = async () => {
       setLoading(true);
-      const response = await bookService.getBooks();
-      setBooks(response.books);
-      setFilteredBooks(response.books);
-      setLoading(false);
+      try {
+        const response = await bookService.getBooks();
+        setBooks(response.books);
+        setFilteredBooks(response.books);
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Lỗi",
+          text: "Không thể lấy danh sách sách!",
+        });
+      } finally {
+        setLoading(false);
+      }
     };
     fetchBooks();
   }, []);
 
   const filterByCategory = async (categoryId) => {
     setLoading(true);
-    if (categoryId === "all") {
-      setFilteredBooks(books);
-    } else {
-      const response = await bookService.getBooksByCategory(categoryId);
-      setFilteredBooks(response.books);
+    try {
+      if (categoryId === "all") {
+        setFilteredBooks(books);
+      } else {
+        const response = await bookService.getBooksByCategory(categoryId);
+        setFilteredBooks(response.books);
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Không thể lọc sách theo danh mục!",
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

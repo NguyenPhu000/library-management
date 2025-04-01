@@ -27,9 +27,9 @@
         </tr>
       </thead>
       <tbody>
-        <% dataTable.forEach(function(payment, index) { %>
+        <% dataTable.slice().reverse().forEach(function(payment, index) { %>
         <tr>
-          <td><%= index + 1 %></td>
+          <td><%= dataTable.length - index %></td>
           <td><%= payment.Member ? payment.Member.member_code : "N/A" %></td>
           <td><%= payment.User ? payment.User.username : "N/A" %></td>
           <td>

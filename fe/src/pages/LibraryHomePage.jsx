@@ -1,5 +1,4 @@
 import React from "react";
-
 import FeatureSection from "../components/sections/FeatureSection";
 import HeroSection from "../components/sections/Herosection";
 import LiveShow from "../components/sections/LiveShow";

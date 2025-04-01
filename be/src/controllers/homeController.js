@@ -12,6 +12,8 @@ export const getHomePage = async (req, res) => {
       loansByMonth,
       memberStatus,
       activeMembers,
+      successMessage: req.query.successMessage || null,
+      errorMessage: req.query.errorMessage || null,
     });
   } catch (error) {
     res.status(500).send("Có lỗi xảy ra khi tải trang chủ");

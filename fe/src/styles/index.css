@@ -9,4 +9,8 @@
 
 body {
   font-family: "Poppins", sans-serif;
+  /* index.css hoặc App.css */
+
+  background-color: #f0f0f0; /* Thay đổi màu nền ở đây */
+  color: #333; /* Màu chữ mặc định */
 }

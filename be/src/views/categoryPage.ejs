@@ -32,9 +32,9 @@
 
           <!-- Table Body -->
           <tbody>
-            <% dataTable.forEach((category, index) => { %>
+            <% dataTable.slice().reverse().forEach((category, index) => { %>
             <tr>
-              <td><%= index + 1 %></td>
+              <td><%= dataTable.length - index %></td>
               <td><%= category.name %></td>
               <td><%= category.description %></td>
               <td>

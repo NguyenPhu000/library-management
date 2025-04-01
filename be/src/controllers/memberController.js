@@ -3,16 +3,14 @@ import memberService from "../services/memberService.js";
 // Hàm này lấy danh sách thành viên và hiển thị
 const getDisplayMember = async (req, res) => {
   try {
+    await memberService.syncMembersFromUsers();
     const result = await memberService.getAllMembers();
 
-    if (!result.success) {
-      return res.status(400).json({ message: result.message });
-    }
-
-    if (req.headers.accept?.includes("application/json")) {
-      return res.json(result);
-    }
-    res.render("memberPage", { dataTable: result.members });
+    res.render("memberPage", {
+      dataTable: result.members,
+      successMessage: req.query.successMessage || null,
+      errorMessage: req.query.errorMessage || null,
+    });
   } catch (error) {
     res.status(500).json({ message: "Lỗi server: " + error.message });
   }
@@ -46,13 +44,11 @@ const updateMember = async (req, res) => {
       return res.status(400).json({ message: updateResult.message });
     }
 
-    const result = await memberService.getAllMembers();
-
     if (req.headers.accept?.includes("application/json")) {
       return res.json({ success: true, message: updateResult.message });
     }
 
-    res.render("memberPage", { dataTable: result.members });
+    res.redirect("/api/members?successMessage=Cập nhật thành công!");
   } catch (error) {
     res.status(500).json({ message: "Lỗi server: " + error.message });
   }
@@ -72,12 +68,11 @@ const deleteMember = async (req, res) => {
     }
 
     const result = await memberService.getAllMembers();
-
     if (req.headers.accept?.includes("application/json")) {
       return res.json({ success: true, message: deleteResult.message });
     }
 
-    res.render("memberPage", { dataTable: result.members });
+    res.redirect("/api/members?successMessage=Xóa thành công!");
   } catch (error) {
     res.status(500).json({ message: "Lỗi server: " + error.message });
   }
@@ -92,15 +87,13 @@ const syncMember = async (req, res) => {
       return res.status(400).json({ message: syncResult.message });
     }
 
-    const result = await memberService.getAllMembers();
-
-    if (req.headers.accept?.includes("application/json")) {
-      return res.json({ success: true, message: syncResult.message });
-    }
-
-    res.render("memberPage", { dataTable: result.members });
+    res.redirect("/api/members?successMessage=Đồng bộ hóa thành công!");
   } catch (error) {
-    res.status(500).json({ message: "Lỗi server: " + error.message });
+    res.redirect(
+      `/api/members?errorMessage=Có lỗi xảy ra khi đồng bộ hóa thành viên: ${encodeURIComponent(
+        error.message
+      )}`
+    );
   }
 };
 

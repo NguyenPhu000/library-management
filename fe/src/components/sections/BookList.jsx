@@ -10,6 +10,28 @@ import {
   faPenNib,
 } from "@fortawesome/free-solid-svg-icons";
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+    },
+  },
+};
+
 const BookList = ({ books, loading }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
@@ -20,19 +42,20 @@ const BookList = ({ books, loading }) => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <>
       <motion.section
-        className="container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 px-4 py-12"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delayChildren: 0.3, staggerChildren: 0.1 }}
+        className="container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8 px-4 py-12"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
       >
         {loading ? (
           <motion.p
-            className="text-center col-span-full text-white text-2xl flex items-center justify-center space-x-2 py-8"
+            className="text-center col-span-full text-white text-2xl flex items-center justify-center space-x-3 py-16"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -40,9 +63,11 @@ const BookList = ({ books, loading }) => {
             <FontAwesomeIcon
               icon={faSpinner}
               spin
-              className="text-lightGreen text-3xl"
+              className="text-lightGreen text-4xl"
             />
-            <span className="font-semibold">Đang tải sách...</span>
+            <span className="font-semibold text-gray-300">
+              Đang tải sách...
+            </span>
           </motion.p>
         ) : currentBooks.length > 0 ? (
           currentBooks.map((book) => {
@@ -50,67 +75,83 @@ const BookList = ({ books, loading }) => {
             return (
               <motion.div
                 key={book.book_id}
-                className="motion-container"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                variants={itemVariants}
+                whileHover={{
+                  y: -5,
+                  scale: 1.03,
+                  boxShadow: "0px 10px 20px rgba(0, 255, 150, 0.2)",
+                }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+                className="h-full"
               >
-                <Link to={`/books/${slug}`}>
-                  <motion.div
-                    className="relative bg-gray-800 rounded-lg shadow-md overflow-hidden group hover:shadow-2xl cursor-pointer transform-gpu hover:-rotate-2 hover:translate-y-1 transition duration-300 ease-in-out border-2 border-gray-700"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.3 }}
+                <Link to={`/books/${slug}`} className="block h-full">
+                  <div
+                    className="relative flex flex-col h-full bg-gray-800 rounded-lg shadow-lg overflow-hidden
+                               group transition duration-300 ease-in-out border border-transparent hover:border-teal-500/50 cursor-pointer"
                   >
-                    <div className="relative overflow-hidden">
-                      <motion.img
+                    <div className="relative overflow-hidden aspect-[3/4]">
+                      {" "}
+                      <img
                         src={book.cover_image}
-                        alt={book.title || "Không có tiêu đề"}
-                        className="w-full h-80 object-cover rounded-t-lg"
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.3 }}
+                        alt={book.title || "Bìa sách"}
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300"></div>
                       <div
                         className="absolute inset-0 overflow-hidden bg-[linear-gradient(135deg,transparent_25%,rgba(255,255,255,.2)_50%,transparent_75%,transparent_100%)]
-                                          bg-[length:250%_250%] bg-[position:-100%_-100%] bg-no-repeat transition-[background-position_0s_ease] group-hover:bg-[position:200%_200%] group-hover:duration-[1500ms]"
+                                 bg-[length:250%_250%] bg-[position:-100%_-100%] bg-no-repeat transition-[background-position_0s_ease] group-hover:bg-[position:200%_200%] group-hover:duration-[1200ms]"
                       ></div>
                     </div>
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold text-white truncate">
+                    <div className="p-4 flex flex-col flex-grow">
+                      {" "}
+                      <h3
+                        className="text-md font-semibold text-white mb-1 line-clamp-2"
+                        title={book.title || "Không có tiêu đề"}
+                      >
                         {book.title || "Không có tiêu đề"}
                       </h3>
-                      <p className="text-gray-400 text-sm truncate flex items-center font-semibold mt-1">
-                        <FontAwesomeIcon icon={faPenNib} className="mr-2" />
-                        {book.author || "Không rõ tác giả"}
+                      <p
+                        className="text-gray-400 text-xs mb-2 flex items-center"
+                        title={book.author || "Không rõ tác giả"}
+                      >
+                        <FontAwesomeIcon
+                          icon={faPenNib}
+                          className="mr-1.5 w-3 h-3 flex-shrink-0"
+                        />
+                        <span className="truncate">
+                          {" "}
+                          {book.author || "Không rõ tác giả"}
+                        </span>
                       </p>
                     </div>
-                  </motion.div>
+                  </div>
                 </Link>
               </motion.div>
             );
           })
         ) : (
           <motion.p
-            className="text-center col-span-full text-white text-2xl flex items-center justify-center space-x-2 py-8"
+            className="text-center col-span-full text-gray-400 text-xl flex items-center justify-center space-x-3 py-16"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
             <FontAwesomeIcon
               icon={faBookOpen}
-              className="text-lightGreen text-3xl"
+              className="text-lightGreen text-4xl"
             />
-            <span className="font-semibold">
-              Không có sách nào trong danh mục này.
-            </span>
+            <span className="font-semibold">Không tìm thấy sách phù hợp.</span>
           </motion.p>
         )}
       </motion.section>
+
       {books.length > itemsPerPage && (
         <motion.div
-          className="mt-6 flex justify-center"
-          initial={{ opacity: 0, y: 10 }}
+          className="mt-8 mb-12 flex justify-center"
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
           <Pagination
             totalItems={books.length}

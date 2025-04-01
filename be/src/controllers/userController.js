@@ -19,9 +19,13 @@ const getDisplayUser = async (req, res) => {
       currentPage: "users",
       criteria,
       query,
+      successMessage: req.query.successMessage || null,
+      errorMessage: req.query.errorMessage || null,
     });
   } catch (error) {
-    res.status(500).send(error.message);
+    res.redirect(
+      "/api/users?errorMessage=Có lỗi xảy ra khi hiển thị danh sách người dùng."
+    );
   }
 };
 
@@ -30,15 +34,13 @@ const postCreateUser = async (req, res) => {
   try {
     await userService.createNewUser(req.body);
     const data = await userService.getAllUser();
-
-    res.render("userPage", {
-      dataTable: data,
-      criteria: req.query.criteria || "",
-      query: req.query.query || "",
-    });
+    res.redirect("/api/users?successMessage=Tạo người dùng thành công!");
   } catch (error) {
     console.error(error);
-    return res.status(500).send("Lỗi khi tạo người dùng.");
+    return res.redirect(
+      "/api/users?errorMessage=Có lỗi xảy ra khi tạo người dùng: " +
+        encodeURIComponent(error.message)
+    );
   }
 };
 
@@ -50,13 +52,12 @@ const updateUser = async (req, res) => {
     if (req.headers.accept?.includes("application/json")) {
       return res.json(updatedData);
     }
-    res.render("userPage", {
-      dataTable: updatedData,
-      criteria: req.query.criteria || "",
-      query: req.query.query || "",
-    });
+    res.redirect("/api/users?successMessage=Cập nhật thông tin thành công!");
   } catch (error) {
-    res.status(500).send(error.message);
+    return res.redirect(
+      "/api/users?errorMessage=Có lỗi xảy ra khi cập nhật thông tin người dùng: " +
+        encodeURIComponent(error.message)
+    );
   }
 };
 
@@ -67,14 +68,13 @@ const deleteUser = async (req, res) => {
 
     await userService.deleteUserById(req.query.id);
     const data = await userService.getAllUser();
-
-    res.render("userPage", {
-      dataTable: data,
-      criteria: req.query.criteria || "",
-      query: req.query.query || "",
-    });
+    res.redirect("/api/users?successMessage=Xóa người dùng thành công!");
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    return res.redirect(
+      "/api/users?errorMessage=Có lỗi xảy ra khi xóa người dùng: " +
+        encodeURIComponent(error.message)
+    );
   }
 };
 
@@ -85,16 +85,15 @@ const toggleActive = async (req, res) => {
 
     await userService.toggleActive(req.query.id);
     const users = await userService.getAllUser();
-
-    res.render("userPage", {
-      dataTable: users,
-      currentPage: "users",
-      criteria: req.query.criteria || "",
-      query: req.query.query || "",
-    });
+    res.redirect(
+      "/api/users?successMessage=Cập nhật trạng thái người dùng thành công!"
+    );
   } catch (error) {
     console.error("Lỗi khi cập nhật trạng thái:", error);
-    res.status(500).send(error.message);
+    return res.redirect(
+      "/api/users?errorMessage=Có lỗi xảy ra khi cập nhật trạng thái người dùng: " +
+        encodeURIComponent(error.message)
+    );
   }
 };
 
@@ -110,7 +109,10 @@ const getUserById = async (req, res) => {
     return res.json(user);
   } catch (error) {
     console.error("Lỗi khi lấy thông tin người dùng:", error);
-    res.status(500).send(error.message);
+    return res.redirect(
+      "/api/users?errorMessage=Có lỗi xảy ra khi lấy thông tin người dùng: " +
+        encodeURIComponent(error.message)
+    );
   }
 };
 
@@ -121,11 +123,14 @@ const updateUserProfile = async (req, res) => {
     if (!userId) return res.status(400).send("User ID is required");
 
     await userService.updateUserProfile(userId, req.body);
-
-    return res.status(200).send("Cập nhật thông tin thành công");
+    return res.redirect(
+      "/api/users?successMessage=Cập nhật thông tin thành công"
+    );
   } catch (error) {
     console.error("Lỗi khi cập nhật thông tin người dùng:", error);
-    res.status(500).send("Lỗi: " + error.message);
+    return res.redirect(
+      "/api/users?errorMessage=Lỗi: " + encodeURIComponent(error.message)
+    );
   }
 };
 

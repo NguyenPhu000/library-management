@@ -15,18 +15,12 @@ const postCreateBooks = async (req, res) => {
       return res.json({ message: "Thêm sách thành công!" });
     }
 
-    res.render("bookPage", {
-      dataTable: data,
-      categories,
-      currentPage: "books",
-      criteria: req.query.criteria || "",
-      query: req.query.query || "",
-    });
+    res.redirect("/api/books?successMessage=Thêm sách thành công!");
   } catch (error) {
     console.error("Lỗi khi tạo sách:", error);
-    res
-      .status(500)
-      .json({ error: "Có lỗi xảy ra khi tạo sách, vui lòng thử lại!" });
+    res.redirect(
+      `/api/books?errorMessage=${encodeURIComponent(error.message)}`
+    );
   }
 };
 
@@ -49,19 +43,19 @@ const getDisplayBooks = async (req, res) => {
       currentPage: "books",
       criteria: criteria || "",
       query: query || "",
+      successMessage: req.query.successMessage || null,
+      errorMessage: req.query.errorMessage || null,
     });
   } catch (error) {
     console.error("Lỗi khi hiển thị sách:", error);
-    res
-      .status(500)
-      .json({ error: "Có lỗi xảy ra khi hiển thị sách, vui lòng thử lại!" });
+    res.status(500).json({ lỗi: "Lỗi hệ thống, vui lòng thử lại!" });
   }
 };
 
 const updateBook = async (req, res) => {
   try {
     if (!req.body.book_id) {
-      return res.status(400).json({ error: "Thiếu ID sách!" });
+      return res.status(400).json({ error: "Book ID is required!" });
     }
 
     await bookService.updateBook(req);
@@ -72,18 +66,12 @@ const updateBook = async (req, res) => {
       return res.json({ message: "Cập nhật sách thành công!" });
     }
 
-    res.render("bookPage", {
-      dataTable: data,
-      categories,
-      currentPage: "books",
-      criteria: req.query.criteria || "",
-      query: req.query.query || "",
-    });
+    res.redirect("/api/books?successMessage=Cập nhật sách thành công!");
   } catch (error) {
     console.error("Lỗi khi cập nhật sách:", error);
-    res
-      .status(500)
-      .json({ error: "Có lỗi xảy ra khi cập nhật sách, vui lòng thử lại!" });
+    res.redirect(
+      `/api/books?errorMessage=${encodeURIComponent(error.message)}`
+    );
   }
 };
 
@@ -105,10 +93,8 @@ const getBookByCategory = async (req, res) => {
 
     return res.json({ books });
   } catch (error) {
-    console.error("Lỗi khi lấy sách theo danh mục:", error);
-    return res
-      .status(500)
-      .json({ error: "Có lỗi xảy ra khi lấy sách theo danh mục!" });
+    console.error(" Lỗi khi lấy sách theo danh mục:", error);
+    return res.status(500).json({ error: "Lỗi hệ thống" });
   }
 };
 
@@ -123,8 +109,8 @@ const getBookById = async (req, res) => {
 
     return res.json({ book });
   } catch (error) {
-    console.error("Lỗi khi lấy sách:", error);
-    return res.status(500).json({ error: "Có lỗi xảy ra khi lấy sách!" });
+    console.error("Lỗi khi lấy sách!!!:", error);
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -135,17 +121,14 @@ const deleteBook = async (req, res) => {
     let data = await bookService.getAllBooks();
     let categories = await categoryService.getAllCategory();
 
-    res.render("bookPage", {
-      dataTable: data,
-      categories,
-      currentPage: "books",
-      criteria: req.query.criteria || "",
-      query: req.query.query || "",
-      message: "Xóa danh mục thành công",
-    });
+    res.redirect("/api/books?successMessage=Xóa sách thành công!");
   } catch (error) {
     console.error("Lỗi khi xóa sách:", error);
-    res.status(500).json({ error: "Có lỗi xảy ra khi xóa sách!" });
+    res.redirect(
+      `/api/books?errorMessage=Không thể xóa sách: ${encodeURIComponent(
+        error.message
+      )}`
+    );
   }
 };
 
@@ -160,7 +143,7 @@ const searchBooks = async (req, res) => {
     return res.json({ books });
   } catch (error) {
     console.error("Lỗi khi tìm kiếm sách:", error);
-    return res.status(500).json({ error: "Có lỗi xảy ra khi tìm kiếm sách!" });
+    return res.status(500).json({ error: "Lỗi hệ thống" });
   }
 };
 

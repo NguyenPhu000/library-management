@@ -32,9 +32,15 @@ let syncAdminFromUsers = async () => {
       await Admin.bulkCreate(newAdmins);
     }
 
-    return { message: `${newAdmins.length} Admins được thêm thành công!` };
+    return {
+      success: true,
+      message: `${newAdmins.length} Admins được thêm thành công!`,
+    };
   } catch (error) {
-    throw new Error("Lỗi đồng bộ Admin từ Users: " + error.message);
+    return {
+      success: false,
+      message: "Lỗi đồng bộ Admin từ Users: " + error.message,
+    };
   }
 };
 let updateAdmin = async (data) => {

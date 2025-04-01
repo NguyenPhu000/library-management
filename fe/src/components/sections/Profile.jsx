@@ -1,5 +1,5 @@
 import { useMember } from "../../contexts/MemberContext";
-import { FaUserCircle, FaIdCard, FaBookOpen } from "react-icons/fa";
+import { FaUserCircle, FaIdCard } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const Profile = () => {
@@ -93,12 +93,6 @@ const Profile = () => {
                 />
               </div>
             </div>
-
-            {member.current_loans > 0 && (
-              <div>
-                <SectionTitle icon={<FaBookOpen />} title="Sách Đang Mượn" />
-              </div>
-            )}
           </div>
         </div>
       </div>

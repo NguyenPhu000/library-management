@@ -1,23 +1,28 @@
+const handleUnauthorized = (req, res) => {
+  if (req.headers.accept?.includes("application/json")) {
+    return res.status(401).json({
+      success: false,
+      message: "Vui lòng đăng nhập!",
+    });
+  }
+  return res.redirect(
+    "/api/login?errorMessage=" + encodeURIComponent("Vui lòng đăng nhập!")
+  );
+};
+
 const authMiddleware = (req, res, next) => {
   if (!req.session.user) {
-    if (req.headers.accept?.includes("application/json")) {
-      return res.status(401).json({
-        success: false,
-        message: "Vui lòng đăng nhập!",
-      });
-    }
-    req.flash("error_msg", "Vui lòng đăng nhập!");
-    return res.redirect("/api/login");
+    return handleUnauthorized(req, res);
   }
 
   const { role } = req.session.user;
   const path = req.path;
 
   if (path.startsWith("/api/admin") && role !== "admin") {
-    return res.status(403).json({
-      success: false,
-      message: "Không có quyền truy cập!",
-    });
+    return res.redirect(
+      "/api/login?errorMessage=" +
+        encodeURIComponent("Không có quyền truy cập!")
+    );
   }
 
   if (role === "member" && path === "/") {

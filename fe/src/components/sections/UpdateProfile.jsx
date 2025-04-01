@@ -38,15 +38,22 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateUser(formData);
+      const dataToSubmit = { ...formData };
+
+      if (!dataToSubmit.password) {
+        delete dataToSubmit.password;
+      }
+
+      await updateUser(dataToSubmit);
 
       alert("Cập nhật thông tin thành công!");
-      window.location.reload(); // Tải lại trang sau khi cập nhật thành công
       onClose();
+      window.location.reload();
     } catch (error) {
       console.error("Lỗi khi cập nhật thông tin:", error);
-      alert("Cập nhật thông tin thất bại!");
-      window.location.reload(); // Tải lại trang sau khi cập nhật thất bại
+      const errorMessage =
+        error.response?.data?.message || "Cập nhật thông tin thất bại!";
+      alert(errorMessage);
     }
   };
 
@@ -96,8 +103,9 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            placeholder="Nhập mật khẩu mới (nếu cần)"
+            placeholder="Để trống nếu không đổi"
             className="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen"
+            autoComplete="new-password"
           />
         </div>
         <div>
@@ -137,6 +145,24 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
         <div>
           <label
             className="block text-lightGreen text-sm font-bold mb-2"
+            htmlFor="gender"
+          >
+            Giới tính:
+          </label>
+          <select
+            id="gender"
+            name="gender"
+            value={formData.gender}
+            onChange={handleInputChange}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen"
+          >
+            <option value="0">Nữ</option>
+            <option value="1">Nam</option>
+          </select>
+        </div>
+        <div>
+          <label
+            className="block text-lightGreen text-sm font-bold mb-2"
             htmlFor="email"
           >
             Email:
@@ -151,7 +177,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
             className="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen"
           />
         </div>
-        <div>
+        <div className="col-span-2">
           <label
             className="block text-lightGreen text-sm font-bold mb-2"
             htmlFor="phone"
@@ -188,9 +214,16 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
         <div className="col-span-2 flex justify-center mt-6">
           <button
             type="submit"
-            className="bg-lightGreen text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-lg"
+            className="bg-lightGreen text-gray-900 font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline text-lg hover:bg-opacity-90 transition duration-200"
           >
             Cập nhật
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="ml-4 bg-gray-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline text-lg hover:bg-gray-500 transition duration-200"
+          >
+            Hủy
           </button>
         </div>
       </form>
@@ -200,7 +233,6 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
 
 const UpdateProfileButton = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const { userData } = useUser();
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -214,11 +246,14 @@ const UpdateProfileButton = () => {
     <>
       <button
         onClick={openModal}
-        className="bg-lightGreen text-gray-900 font-bold py-2 px-4 rounded hover:bg-lightGreen-dark focus:outline-none"
+        className="bg-lightGreen text-gray-900 font-bold py-2 px-4 rounded hover:bg-opacity-90 focus:outline-none focus:shadow-outline transition duration-200"
       >
         Cập nhật thông tin thành viên
       </button>
-      <UpdateProfileModal isOpen={modalIsOpen} onClose={closeModal} />
+
+      {modalIsOpen && (
+        <UpdateProfileModal isOpen={modalIsOpen} onClose={closeModal} />
+      )}
     </>
   );
 };

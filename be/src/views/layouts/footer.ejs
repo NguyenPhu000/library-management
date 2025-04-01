@@ -1,4 +1,4 @@
-<footer class="bg-dark text-light py-4 fixed-bottom">
+<footer class="bg-dark text-light py-4 ">
   <div class="container">
     <div class="d-flex justify-content-between align-items-center">
       <!-- Social Icons on the left -->
@@ -35,10 +35,12 @@
         <p class="mb-0">
           &copy; <%= new Date().getFullYear() %> Quản Trị Thư Viện. Đã đăng ký bản quyền.
         </p>
-      </div>
     </div>
-  </div>
+</div>
+</div>
 </footer>
+
+
 
 <style>
   .footer-link:hover {
@@ -46,20 +48,34 @@
     transition: color 0.3s ease;
   }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../js/homePage.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="/js/homePage.js"></script>
+<!-- Hiển thị thông báo SweetAlert -->
+<% if (successMessage) { %>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        Swal.fire({
+          icon: 'success',
+          title: 'Thành công!',
+          text: '<%= successMessage %>',
+        });
+      });
+    </script>
+  <% } %>
+  
+  <% if (errorMessage) { %>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        Swal.fire({
+          icon: 'error',
+          title: 'Có lỗi xảy ra!',
+          text: '<%= errorMessage %>',
+        });
+      });
+    </script>
+  <% } %>
 </body>
 </html>

@@ -9,7 +9,11 @@ const getAllPayments = async (req, res) => {
     if (req.headers.accept?.includes("application/json")) {
       return res.json({ success: true, data: payments });
     }
-    res.render("paymentPage", { dataTable: payments });
+    res.render("paymentPage", {
+      dataTable: payments,
+      successMessage: req.query.successMessage || null,
+      errorMessage: req.query.errorMessage || null,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -40,9 +44,9 @@ const createPayment = async (req, res) => {
   const { payment_date, payment_method } = req.body;
 
   if (!loanId || !userId || !memberId || !payment_date || !payment_method) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Thiếu thông tin cần thiết." });
+    return res.redirect(
+      "/api/payments?errorMessage=Thiếu thông tin cần thiết."
+    );
   }
 
   try {
@@ -53,13 +57,22 @@ const createPayment = async (req, res) => {
       payment_date,
       payment_method,
     });
-    return res.status(result.success ? 201 : 500).json(result);
+
+    if (result.success) {
+      return res.redirect(
+        "/api/payments?successMessage=Tạo thanh toán thành công!"
+      );
+    } else {
+      return res.redirect(
+        `/api/payments?errorMessage=${encodeURIComponent(result.message)}`
+      );
+    }
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Không thể tạo thanh toán",
-      error: error.message,
-    });
+    return res.redirect(
+      `/api/payments?errorMessage=Không thể tạo thanh toán: ${encodeURIComponent(
+        error.message
+      )}`
+    );
   }
 };
 
@@ -70,13 +83,21 @@ const confirmPayment = async (req, res) => {
   try {
     const result = await paymentService.confirmPayment(paymentId, amount);
 
-    return res.status(result.success ? 200 : 500).json(result);
+    if (result.success) {
+      return res.redirect(
+        "/api/payments?successMessage=Xác nhận thanh toán thành công!"
+      );
+    } else {
+      return res.redirect(
+        `/api/payments?errorMessage=${encodeURIComponent(result.message)}`
+      );
+    }
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Không thể xác nhận thanh toán",
-      error: error.message,
-    });
+    return res.redirect(
+      `/api/payments?errorMessage=Không thể xác nhận thanh toán: ${encodeURIComponent(
+        error.message
+      )}`
+    );
   }
 };
 

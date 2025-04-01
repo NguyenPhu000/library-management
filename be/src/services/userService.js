@@ -3,9 +3,59 @@ import db from "../models/index.js";
 import { Op } from "sequelize";
 const salt = bcrypt.genSaltSync(10);
 
+const validateEmail = (email) => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+};
+
+const validatePhone = (phone) => {
+  const regex = /^[0-9]{10}$/;
+  return regex.test(phone);
+};
+
+const validateName = (name) => {
+  const regex = /^[a-zA-Z\s]+$/;
+  return regex.test(name);
+};
+
 // Hàm tạo người dùng mới
 let createNewUser = async (data) => {
   try {
+    if (!data.username || data.username.length <= 6) {
+      throw new Error("Tên người dùng phải lớn hơn 6 ký tự");
+    }
+    if (!data.password || data.password.length <= 6) {
+      throw new Error("Mật khẩu phải lớn hơn 6 ký tự");
+    }
+    if (!data.first_name || !validateName(data.first_name)) {
+      throw new Error("Tên không hợp lệ. Tên chỉ được chứa chữ cái.");
+    }
+    if (!data.last_name || !validateName(data.last_name)) {
+      throw new Error("Họ không hợp lệ. Họ chỉ được chứa chữ cái.");
+    }
+    if (!data.email || !validateEmail(data.email)) {
+      throw new Error("Email không hợp lệ");
+    }
+    if (!data.phone || !validatePhone(data.phone)) {
+      throw new Error("Số điện thoại không hợp lệ. Phải là số và đúng 10 số.");
+    }
+
+    // Kiểm tra username đã tồn tại chưa
+    const userByUsername = await db.User.findOne({
+      where: { username: data.username },
+    });
+    if (userByUsername) {
+      throw new Error("Tên người dùng đã tồn tại");
+    }
+
+    // Kiểm tra email đã tồn tại chưa
+    const userByEmail = await db.User.findOne({
+      where: { email: data.email },
+    });
+    if (userByEmail) {
+      throw new Error("Email đã tồn tại");
+    }
+
     let hashPasswordFromBcrypt = await bcrypt.hash(data.password, salt);
 
     await db.User.create({
@@ -49,6 +99,22 @@ let getUserInfoById = async (userId) => {
 // Hàm cập nhật dữ liệu người dùng
 let updateUserData = async (data) => {
   try {
+    if (!data.username || data.username.length <= 6) {
+      throw new Error("Tên người dùng phải lớn hơn 6 ký tự");
+    }
+    if (!data.first_name || !validateName(data.first_name)) {
+      throw new Error("Tên không hợp lệ. Tên chỉ được chứa chữ cái.");
+    }
+    if (!data.last_name || !validateName(data.last_name)) {
+      throw new Error("Họ không hợp lệ. Họ chỉ được chứa chữ cái.");
+    }
+    if (!data.email || !validateEmail(data.email)) {
+      throw new Error("Email không hợp lệ");
+    }
+    if (!data.phone || !validatePhone(data.phone)) {
+      throw new Error("Số điện thoại không hợp lệ. Phải là số và đúng 10 số.");
+    }
+
     const user = await db.User.findOne({ where: { user_id: data.user_id } });
     if (!user) throw new Error("Không tìm thấy người dùng");
 
@@ -120,8 +186,46 @@ let searchUser = async (filters) => {
 // Hàm cập nhật hồ sơ người dùng
 let updateUserProfile = async (userId, data) => {
   try {
+    if (!data.username || data.username.length <= 6) {
+      throw new Error("Tên người dùng phải lớn hơn 6 ký tự");
+    }
+    if (!data.first_name || !validateName(data.first_name)) {
+      throw new Error("Tên không hợp lệ. Tên chỉ được chứa chữ cái.");
+    }
+    if (!data.last_name || !validateName(data.last_name)) {
+      throw new Error("Họ không hợp lệ. Họ chỉ được chứa chữ cái.");
+    }
+    if (!data.email || !validateEmail(data.email)) {
+      throw new Error("Email không hợp lệ");
+    }
+    if (!data.phone || !validatePhone(data.phone)) {
+      throw new Error("Số điện thoại không hợp lệ. Phải là số và đúng 10 số.");
+    }
+
     const user = await db.User.findOne({ where: { user_id: userId } });
     if (!user) throw new Error("Không tìm thấy người dùng");
+
+    // Kiểm tra username đã tồn tại chưa và không phải của user hiện tại
+    const userByUsername = await db.User.findOne({
+      where: {
+        username: data.username,
+        user_id: { [Op.not]: userId },
+      },
+    });
+    if (userByUsername) {
+      throw new Error("Tên người dùng đã tồn tại");
+    }
+
+    // Kiểm tra email đã tồn tại chưa và không phải của user hiện tại
+    const userByEmail = await db.User.findOne({
+      where: {
+        email: data.email,
+        user_id: { [Op.not]: userId },
+      },
+    });
+    if (userByEmail) {
+      throw new Error("Email đã tồn tại");
+    }
 
     const updates = {
       username: data.username,
@@ -134,6 +238,9 @@ let updateUserProfile = async (userId, data) => {
     };
 
     if (data.password) {
+      if (!data.password || data.password.length <= 6) {
+        throw new Error("Mật khẩu phải lớn hơn 6 ký tự");
+      }
       const salt = bcrypt.genSaltSync(10);
       updates.password = bcrypt.hashSync(data.password, salt);
     }

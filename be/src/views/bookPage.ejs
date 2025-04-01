@@ -58,9 +58,9 @@
           </thead>
           <tbody>
             <% if (dataTable.length > 0) { %>
-            <% dataTable.forEach((book, index) => { %>
+            <% dataTable.slice().reverse().forEach((book, index) => { %>
             <tr>
-              <td class="text-center"><%= index + 1 %></td>
+              <td class="text-center"><%= dataTable.length - index %></td>
               <td><%= book.isbn %></td>
               <td><%= book.title %></td>
               <td><%= book.author %></td>
