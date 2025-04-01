@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-import { usePayment } from "../../contexts/PaymentContext"; // Import usePayment để sử dụng context
+import { usePayment } from "../../contexts/PaymentContext"; 
 
 const PaymentRequestModal = ({ isOpen, onRequestClose, loanId }) => {
   const [paymentDate, setPaymentDate] = useState(
@@ -8,14 +8,13 @@ const PaymentRequestModal = ({ isOpen, onRequestClose, loanId }) => {
   );
   const [paymentMethod, setPaymentMethod] = useState("OFFLINE");
 
-  const { handleCreatePayment, isPaymentExists } = usePayment(); // Lấy hàm tạo thanh toán và kiểm tra từ context
-
+  const { handleCreatePayment, isPaymentExists } = usePayment(); 
   // Kiểm tra nếu thanh toán đã tồn tại
   if (isPaymentExists(loanId)) {
     console.log(
       "Thanh toán đã tồn tại cho khoản vay này. Không hiển thị modal."
     );
-    return null; // Không hiển thị modal nếu thanh toán đã tồn tại
+    return null; 
   }
 
   const handleSubmit = async (e) => {
@@ -25,19 +24,17 @@ const PaymentRequestModal = ({ isOpen, onRequestClose, loanId }) => {
       payment_method: paymentMethod,
     };
 
-    // Kiểm tra dữ liệu thanh toán trước khi gọi hàm tạo thanh toán
     if (!paymentData.payment_date || !paymentData.payment_method) {
       console.error("Dữ liệu thanh toán không hợp lệ:", paymentData);
-      return; // Ngừng thực hiện nếu dữ liệu không hợp lệ
+      return; 
     }
 
     try {
       const newPayment = await handleCreatePayment(loanId, paymentData);
 
-      window.location.reload(); // Reload lại trang sau khi gửi
+      window.location.reload(); 
     } catch (error) {
       console.error("Lỗi khi tạo thanh toán:", error);
-      // Có thể thêm thông báo lỗi cho người dùng ở đây
     }
   };
 

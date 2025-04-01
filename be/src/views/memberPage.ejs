@@ -33,9 +33,9 @@
             </tr>
           </thead>
           <tbody>
-            <% dataTable.forEach(function(member, index) { %>
+            <% dataTable.slice().reverse().forEach(function(member, index) { %>
             <tr>
-              <td><%= index + 1 %></td>
+              <td><%= dataTable.length - index %></td>
               <td><%= member.User ? member.User.username : "N/A" %></td>
               <td><%= member.member_code %></td>
               <td><%= member.join_date.toLocaleDateString("vi-VN") %></td>

@@ -15,10 +15,12 @@ const createCategory = async (req, res) => {
     await categoryService.createNewCategory(newCategoryData);
     let data = await categoryService.getAllCategory();
 
-    res.render("categoryPage", { dataTable: data });
+    res.redirect("/api/categories?successMessage=Tạo danh mục thành công!");
   } catch (error) {
     console.error("Lỗi khi tạo danh mục:", error);
-    res.status(500).json({ error: "Có lỗi xảy ra khi tạo danh mục!" });
+    res.redirect(
+      `/api/categories?errorMessage=${encodeURIComponent(error.message)}`
+    );
   }
 };
 
@@ -30,10 +32,15 @@ const displayCategory = async (req, res) => {
       return res.json(data);
     }
 
-    res.render("categoryPage", { dataTable: data, currentPage: "category" });
+    res.render("categoryPage", {
+      dataTable: data,
+      currentPage: "category",
+      successMessage: req.query.successMessage || null,
+      errorMessage: req.query.errorMessage || null,
+    });
   } catch (error) {
     console.error("Lỗi khi hiển thị danh mục:", error);
-    res.status(500).json({ error: "Có lỗi xảy ra khi hiển thị danh mục!" });
+    res.status(500).json({ lỗi: error.message });
   }
 };
 
@@ -50,10 +57,14 @@ const updateCategory = async (req, res) => {
     await categoryService.updateCategory(categoryId, categoryData);
     let data = await categoryService.getAllCategory();
 
-    res.render("categoryPage", { dataTable: data });
+    res.redirect(
+      "/api/categories?successMessage=Cập nhật danh mục thành công!"
+    );
   } catch (error) {
     console.error("Lỗi khi cập nhật danh mục:", error);
-    res.status(500).json({ error: "Có lỗi xảy ra khi cập nhật danh mục!" });
+    res.redirect(
+      `/api/categories?errorMessage=${encodeURIComponent(error.message)}`
+    );
   }
 };
 
@@ -63,15 +74,14 @@ const deleteCategory = async (req, res) => {
     await categoryService.deleteCategory(categoryId);
     const data = await categoryService.getAllCategory();
 
-    res.render("categoryPage", {
-      dataTable: data,
-      message: "Xóa danh mục thành công",
-    });
+    res.redirect("/api/categories?successMessage=Xóa danh mục thành công!");
   } catch (error) {
     console.error("Lỗi khi xóa danh mục:", error);
-    res
-      .status(500)
-      .json({ error: "Không thể xóa danh mục", detail: error.message });
+    res.redirect(
+      `/api/categories?errorMessage=Không thể xóa danh mục: ${encodeURIComponent(
+        error.message
+      )}`
+    );
   }
 };
 

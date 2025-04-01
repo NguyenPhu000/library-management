@@ -4,6 +4,7 @@ import {
   getMemberIdByUserId,
 } from "../services/memberService";
 import { useAuth } from "./AuthContext";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const MemberContext = createContext();
 
@@ -27,6 +28,11 @@ export const MemberProvider = ({ children }) => {
         setError(
           "Người dùng chưa được xác thực hoặc ID người dùng không tồn tại"
         );
+        Swal.fire({
+          icon: "warning",
+          title: "Cảnh báo",
+          text: "Người dùng chưa được xác thực!",
+        });
         setLoading(false);
         return;
       }
@@ -40,10 +46,11 @@ export const MemberProvider = ({ children }) => {
         const id = await getMemberIdByUserId(user.user_id);
         setMemberId(id);
       } catch (error) {
-        console.error("❌ Lỗi khi lấy thông tin thành viên:", error);
-        setError("Không thể tải thông tin thành viên");
-        setMemberData(null);
-        setMemberId(null);
+        Swal.fire({
+          icon: "error",
+          title: "Lỗi",
+          text: "Không thể tải thông tin thành viên!",
+        });
       } finally {
         setLoading(false);
       }

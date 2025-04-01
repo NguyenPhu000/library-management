@@ -11,15 +11,15 @@ const AppProviders = ({ children }) => {
     <AuthProvider>
       <UserProvider>
         <MemberProvider>
-          <SearchBookProvider>
-            <CategoryProvider>
-              <BookProvider>
-                <LoanProvider>
+          <LoanProvider>
+            <SearchBookProvider>
+              <CategoryProvider>
+                <BookProvider>
                   <PaymentProvider>{children}</PaymentProvider>
-                </LoanProvider>
-              </BookProvider>
-            </CategoryProvider>
-          </SearchBookProvider>
+                </BookProvider>
+              </CategoryProvider>
+            </SearchBookProvider>
+          </LoanProvider>
         </MemberProvider>
       </UserProvider>
     </AuthProvider>

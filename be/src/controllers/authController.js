@@ -1,7 +1,7 @@
 import authService from "../services/authService.js";
 
 const showLogin = async (req, res) => {
-  res.render("auth/login", { errorMessage: null });
+  res.render("auth/login", { errorMessage: req.query.errorMessage || null });
 };
 
 const login = async (req, res) => {
@@ -12,7 +12,9 @@ const login = async (req, res) => {
       const message = "Vui lòng nhập đầy đủ thông tin!";
       return req.headers.accept?.includes("application/json")
         ? res.status(400).json({ success: false, error: { message } })
-        : res.render("auth/login", { errorMessage: message });
+        : res.redirect(
+            `/api/login?errorMessage=${encodeURIComponent(message)}`
+          );
     }
 
     const result = await authService.login(username, password);
@@ -22,7 +24,9 @@ const login = async (req, res) => {
         ? res
             .status(401)
             .json({ success: false, error: { message: result.message } })
-        : res.render("auth/login", { errorMessage: result.message });
+        : res.redirect(
+            `/api/login?errorMessage=${encodeURIComponent(result.message)}`
+          );
     }
 
     // Lưu session
@@ -44,7 +48,7 @@ const login = async (req, res) => {
     const message = "Lỗi hệ thống!";
     return req.headers.accept?.includes("application/json")
       ? res.status(500).json({ success: false, error: { message } })
-      : res.render("auth/login", { errorMessage: message });
+      : res.redirect(`/api/login?errorMessage=${encodeURIComponent(message)}`);
   }
 };
 
@@ -66,7 +70,9 @@ const logout = async (req, res) => {
 
 const showRegister = async (req, res) => {
   try {
-    res.render("auth/register", { errorMessage: null });
+    res.render("auth/register", {
+      errorMessage: req.query.errorMessage || null,
+    });
   } catch (error) {
     console.error("Lỗi khi hiển thị trang đăng ký:", error);
     res.status(500).json({
@@ -80,7 +86,9 @@ const register = async (req, res) => {
   try {
     const result = await authService.register(req.body);
     if (!result.success) {
-      return res.render("auth/register", { errorMessage: result.message });
+      return res.redirect(
+        `/api/register?errorMessage=${encodeURIComponent(result.message)}`
+      );
     }
     res.redirect("/api/login");
   } catch (error) {

@@ -83,7 +83,7 @@
         <div class="card">
           <div class="card-body">
             <h5><i class="fa-solid fa-chart-bar"></i> Sách mượn theo tháng</h5>
-            <canvas id="loanChart"></canvas>
+            <canvas id="loanChart" width="400" height="150"></canvas>
           </div>
         </div>
       </div>
@@ -93,7 +93,7 @@
             <h5>
               <i class="fa-solid fa-user-check"></i> Trạng thái thành viên
             </h5>
-            <canvas id="memberChart"></canvas>
+            <canvas id="memberChart" width="400" height="150"></canvas>
           </div>
         </div>
       </div>
@@ -131,7 +131,6 @@
 <!-- Footer -->
 <%- include('layouts/footer') %>
 
-<!-- Thêm mã JavaScript để khởi tạo biểu đồ -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -194,15 +193,15 @@
       .getContext("2d");
     const memberStatus = JSON.parse(
       document.getElementById("memberData").getAttribute("data-member")
-    ); // Lấy dữ liệu từ server
+    );
 
     new Chart(memberChartCtx, {
       type: "pie",
       data: {
-        labels: ["Active", "Inactive"], // Chỉ có hai trạng thái
+        labels: ["Active", "Inactive"],
         datasets: [
           {
-            data: memberStatus, // Sử dụng trạng thái từ dữ liệu thực
+            data: memberStatus,
             backgroundColor: ["#28a745", "#f44336"],
           },
         ],

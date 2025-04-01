@@ -79,9 +79,9 @@ const PaymentPage = () => {
                   }
                 >
                   {payment.status === "PENDING"
-                    ? "Đang chờ xác nhận thanh toán"
+                    ? "Đang chờ xác nhận thanh toán "
                     : payment.status === "APPROVED"
-                    ? "Đã xác nhận thanh toán"
+                    ? "Đã xác nhận thanh toán! Xin vui lòng lại quầy để thanh toán."
                     : payment.status}
                 </td>
               </tr>

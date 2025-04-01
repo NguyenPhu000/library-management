@@ -1,6 +1,6 @@
 import React, { createContext, useState, useCallback } from "react";
 import bookService from "../services/bookservice";
-
+import Swal from "sweetalert2";
 // Tạo SearchBookContext
 export const SearchBookContext = createContext();
 
@@ -9,13 +9,13 @@ export const SearchBookProvider = ({ children }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
-  const [isSearching, setIsSearching] = useState(false); // Thêm trạng thái để theo dõi việc tìm kiếm
+  const [isSearching, setIsSearching] = useState(false);
 
   // Hàm tìm kiếm sách
   const searchBooks = useCallback(async (criteria, query) => {
     setSearchLoading(true);
     setSearchError(null);
-    setIsSearching(true); // Đánh dấu là đang tìm kiếm
+    setIsSearching(true);
     try {
       const data = await bookService.searchBooks(criteria, query);
       setSearchResults(data.books || []);
@@ -23,12 +23,16 @@ export const SearchBookProvider = ({ children }) => {
       console.error("Lỗi khi tìm kiếm sách trong Context:", error);
       setSearchError(error);
       setSearchResults([]);
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Không thể tìm kiếm sách!",
+      });
     } finally {
       setSearchLoading(false);
     }
   }, []);
 
-  // Hàm để quay lại danh sách sách theo category
   const resetSearch = () => {
     setSearchResults([]);
     setIsSearching(false);
@@ -39,8 +43,8 @@ export const SearchBookProvider = ({ children }) => {
     searchLoading,
     searchError,
     searchBooks,
-    resetSearch, // Cung cấp hàm resetSearch cho context
-    isSearching, // Cung cấp trạng thái tìm kiếm
+    resetSearch,
+    isSearching,
   };
 
   return (

@@ -1,6 +1,6 @@
 import { Loan, Book, Member } from "../models";
 const { sequelize } = require("../models"); // Đã export sequelize instance
-
+const fineAmount = 1000;
 // Hàm lấy danh sách tất cả lượt mượn
 const getAllLoans = async () => {
   try {
@@ -17,7 +17,7 @@ const getAllLoans = async () => {
 
 // Hàm xử lý mượn sách
 const borrowBook = async (member_id, book_id) => {
-  const transaction = await sequelize.transaction(); // Bắt đầu transaction
+  const transaction = await sequelize.transaction();
   try {
     const book = await Book.findByPk(book_id);
     if (!book) {
@@ -36,7 +36,6 @@ const borrowBook = async (member_id, book_id) => {
       return { success: false, message: "Thành viên không tồn tại!" };
     }
 
-    // Kiểm tra hạn thẻ thành viên
     const currentDate = new Date();
     if (new Date(member.expiry_date) < currentDate) {
       return { success: false, message: "Thẻ thành viên đã hết hạn!" };
@@ -66,30 +65,35 @@ const borrowBook = async (member_id, book_id) => {
     );
 
     // Giảm số lượng bản sao có sẵn của sách
-    await Book.update(
-      { available_copies: book.available_copies - 1 },
-      { where: { book_id }, transaction }
-    );
+    await Book.decrement("available_copies", {
+      where: { book_id },
+      transaction,
+    });
+
+    // Tăng số sách đang mượn của thành viên
+    await Member.increment("current_loans", {
+      where: { member_id },
+      transaction,
+    });
 
     await transaction.commit();
     return { success: true, message: "Mượn sách thành công!", loan };
   } catch (error) {
-    await transaction.rollback(); // Rollback nếu có lỗi
+    await transaction.rollback();
     return {
       success: false,
-      message: "Lỗi khi mượn sách!",
-      error: error.message,
+      message: "Lỗi khi mượn sách: " + error.message,
     };
   }
 };
 
 // Hàm xử lý trả sách
 const returnBook = async (loan_id) => {
-  const transaction = await sequelize.transaction(); // Bắt đầu transaction
+  const transaction = await sequelize.transaction();
   try {
     const loan = await Loan.findOne({ where: { loan_id, returned: false } });
     if (!loan) {
-      await transaction.rollback(); // Rollback nếu không tìm thấy sách đang mượn hợp lệ
+      await transaction.rollback();
       return {
         success: false,
         message: "Sách đã được trả hoặc không tìm thấy!",
@@ -102,7 +106,7 @@ const returnBook = async (loan_id) => {
 
     if (today > loan.due_date) {
       fine_amount =
-        Math.ceil((today - loan.due_date) / (1000 * 60 * 60 * 24)) * 5000;
+        Math.ceil((today - loan.due_date) / (1000 * 60 * 60 * 24)) * fineAmount;
     }
 
     // Cập nhật trạng thái trả sách
@@ -111,16 +115,22 @@ const returnBook = async (loan_id) => {
       { transaction }
     );
 
-    // Tăng lại số lượng sách có sẵn
+    // Tăng số lượng bản sao có sẵn
     await Book.increment("available_copies", {
       where: { book_id: loan.book_id },
       transaction,
     });
 
-    await transaction.commit(); // Commit nếu thành công
+    // Giảm số sách đang mượn của thành viên
+    await Member.decrement("current_loans", {
+      where: { member_id: loan.member_id },
+      transaction,
+    });
+
+    await transaction.commit();
     return { success: true, message: "Sách đã được trả!", fine_amount };
   } catch (error) {
-    await transaction.rollback(); // Rollback nếu có lỗi
+    await transaction.rollback();
     return { success: false, message: "Lỗi khi trả sách: " + error.message };
   }
 };
@@ -175,29 +185,30 @@ const getLoansByMemberId = async (member_id) => {
 const requestRenewLoan = async (loan_id) => {
   try {
     const loan = await Loan.findByPk(loan_id);
-    if (!loan) return { success: false, message: "Không tìm thấy lượt mượn!" };
+    if (!loan)
+      return { success: false, message: "Không tìm thấy thông tin mượn sách!" };
 
     if (loan.returned) {
       return {
         success: false,
-        message: "Sách đã được trả, không thể gia hạn!",
+        message: "Sách đã được trả, không thể yêu cầu gia hạn!",
       };
     }
 
     if (loan.renew_count >= 2) {
-      return { success: false, message: "Bạn đã gia hạn tối đa 2 lần!" };
+      return { success: false, message: "Bạn đã đạt giới hạn gia hạn tối đa!" };
     }
 
     await loan.update({ renewal_status: "pending" });
 
     return {
       success: true,
-      message: "Yêu cầu gia hạn đã được gửi, vui lòng đợi xác nhận!",
+      message: "Yêu cầu gia hạn đã được gửi thành công!",
     };
   } catch (error) {
     return {
       success: false,
-      message: "Lỗi khi yêu cầu gia hạn: " + error.message,
+      message: "Đã xảy ra lỗi khi gửi yêu cầu gia hạn: " + error.message,
     };
   }
 };
