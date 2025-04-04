@@ -70,16 +70,16 @@ const PaymentPage = () => {
                 <td>{payment.payment_method}</td>
                 <td>{payment.amount}</td>
                 <td
-                  className={
+                  className={`px-6 py-4 whitespace-normal ${
                     payment.status === "PENDING"
                       ? "text-yellow-500"
                       : payment.status === "APPROVED"
                       ? "text-green-500"
                       : ""
-                  }
+                  }`}
                 >
                   {payment.status === "PENDING"
-                    ? "Đang chờ xác nhận thanh toán "
+                    ? "Đang chờ xác nhận thanh toán"
                     : payment.status === "APPROVED"
                     ? "Đã xác nhận thanh toán! Xin vui lòng lại quầy để thanh toán."
                     : payment.status}

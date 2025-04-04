@@ -195,7 +195,18 @@ const requestRenewLoan = async (loan_id) => {
       };
     }
 
-    if (loan.renew_count >= 2) {
+    const currentDate = new Date();
+    const overdueDays = Math.ceil(
+      (currentDate - new Date(loan.due_date)) / (1000 * 60 * 60 * 24)
+    );
+    if (overdueDays > 7) {
+      return {
+        success: false,
+        message: "Không thể gia hạn, đã quá hạn hơn 7 ngày!",
+      };
+    }
+
+    if (loan.renew_count >= 1) {
       return { success: false, message: "Bạn đã đạt giới hạn gia hạn tối đa!" };
     }
 
@@ -220,17 +231,28 @@ const approveRenewLoan = async (loan_id, approve = true) => {
     if (!loan) return { success: false, message: "Không tìm thấy lượt mượn!" };
 
     if (approve) {
-      if (loan.renew_count >= 2) {
+      if (loan.renew_count >= 1) {
         return { success: false, message: "Không thể gia hạn, đã đạt tối đa!" };
       }
 
+      const currentDate = new Date();
+      const overdueDays = Math.ceil(
+        (currentDate - new Date(loan.due_date)) / (1000 * 60 * 60 * 24)
+      );
+      if (overdueDays > 7) {
+        return {
+          success: false,
+          message: "Không thể gia hạn, đã quá hạn hơn 7 ngày!",
+        };
+      }
+
       await loan.update({
-        due_date: new Date(loan.due_date.getTime() + 14 * 24 * 60 * 60 * 1000), // +14 ngày
+        due_date: new Date(loan.due_date.getTime() + 7 * 24 * 60 * 60 * 1000), // +7 ngày
         renew_count: loan.renew_count + 1,
         renewal_status: "approved",
       });
 
-      return { success: true, message: "Gia hạn thành công, thêm 14 ngày!" };
+      return { success: true, message: "Gia hạn thành công, thêm 7 ngày!" };
     } else {
       await loan.update({ renewal_status: "rejected" });
 
@@ -249,8 +271,8 @@ const getLoanHistory = async (memberId) => {
     const loans = await Loan.findAll({
       where: { member_id: memberId, returned: true },
       include: [
-        { model: Book, attributes: ["title", "author"] }, // Lấy thông tin sách
-        { model: Member, attributes: ["member_code"] }, // Lấy mã thành viên
+        { model: Book, attributes: ["title", "author"] },
+        { model: Member, attributes: ["member_code"] },
       ],
       attributes: [
         "loan_id",

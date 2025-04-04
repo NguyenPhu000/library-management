@@ -91,37 +91,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// Hàm kiểm tra tính hợp lệ của dữ liệu người dùng
-function validateUserData(username, password, email, phone) {
-  // Kiểm tra tên người dùng
-  if (!username || username.length < 6) {
-    alert("Tên người dùng phải có ít nhất 6 ký tự.");
-    return false;
-  }
-
-  // Kiểm tra mật khẩu
-  if (!password || password.length < 6) {
-    alert("Mật khẩu phải có ít nhất 6 ký tự.");
-    return false;
-  }
-
-  // Kiểm tra email
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!email || !emailPattern.test(email)) {
-    alert("Email không hợp lệ.");
-    return false;
-  }
-
-  // Kiểm tra số điện thoại
-  const phonePattern = /^[0-9]{10}$/; // Kiểm tra số điện thoại có đúng 10 số
-  if (!phone || !phonePattern.test(phone)) {
-    alert("Số điện thoại phải có đúng 10 số.");
-    return false;
-  }
-
-  return true; // Tất cả dữ liệu hợp lệ
-}
-
 function confirmDelete(userId) {
   if (confirm("Bạn có chắc chắn muốn xóa người dùng này không?")) {
     fetch(`/api/users/delete?id=${userId}`, { method: "GET" }).then(() =>

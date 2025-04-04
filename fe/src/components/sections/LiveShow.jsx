@@ -41,7 +41,7 @@ const LiveShow = () => {
     autoplaySpeed: 5000,
     pauseOnHover: true,
     centerMode: randomBooks.length > 1,
-    centerPadding: "100px",
+    centerPadding: "0px", // Cố định kích thước
     cssEase: "cubic-bezier(0.8, 0, 0.2, 1)",
     dotsClass: "slick-dots custom-dots-liveshow",
     arrows: false,
@@ -50,7 +50,7 @@ const LiveShow = () => {
         breakpoint: 1280,
         settings: {
           slidesToShow: Math.min(3, randomBooks.length),
-          centerPadding: "80px",
+          centerPadding: "0px", // Cố định kích thước
           infinite: randomBooks.length > 3,
         },
       },
@@ -58,7 +58,7 @@ const LiveShow = () => {
         breakpoint: 1024,
         settings: {
           slidesToShow: Math.min(2, randomBooks.length),
-          centerPadding: "60px",
+          centerPadding: "0px", // Cố định kích thước
           infinite: randomBooks.length > 2,
         },
       },
@@ -67,7 +67,7 @@ const LiveShow = () => {
         settings: {
           slidesToShow: 1,
           centerMode: true,
-          centerPadding: "100px",
+          centerPadding: "0px", // Cố định kích thước
           infinite: randomBooks.length > 1,
           dots: true,
         },
@@ -77,7 +77,7 @@ const LiveShow = () => {
         settings: {
           slidesToShow: 1,
           centerMode: false,
-          centerPadding: "0px",
+          centerPadding: "0px", // Cố định kích thước
           infinite: randomBooks.length > 1,
           dots: true,
         },
@@ -117,8 +117,8 @@ const LiveShow = () => {
 
   return (
     <section className="relative mx-auto px-0 md:px-0 py-24 md:py-32 bg-gradient-to-b from-gray-950 via-black to-gray-950 text-white overflow-hidden">
-      <h2 className="relative z-10 text-5xl md:text-6xl font-extrabold font-poppins tracking-tight bg-gradient-to-r from-emerald-300 via-teal-400 to-cyan-500 text-transparent bg-clip-text mb-20 text-center uppercase">
-        Sách Nổi Bật
+      <h2 className="relative z-10 text-4xl md:text-5xl font-bold  tracking-tight bg-gradient-to-r from-emerald-300  to-lightGreen text-transparent bg-clip-text mb-16 text-center uppercase">
+        Sách Ngẫu Nhiên
       </h2>
 
       <style jsx global>{`

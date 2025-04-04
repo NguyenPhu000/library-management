@@ -57,8 +57,8 @@ const UpdatedBook = () => {
       animate="visible"
       viewport={{ once: true, amount: 0.2 }}
     >
-      <motion.h2 className="relative z-10 text-4xl md:text-5xl font-bold font-poppins text-center bg-gradient-to-r from-emerald-300 via-teal-400 to-cyan-500 text-transparent bg-clip-text mb-16 uppercase">
-        📚 Sách Mới Cập Nhật 📚
+      <motion.h2 className="relative z-10 text-4xl md:text-5xl font-bold font-poppins text-center bg-gradient-to-r from-emerald-300  to-lightGreen text-transparent bg-clip-text mb-16 uppercase">
+        Sách Mới Cập Nhật
       </motion.h2>
       <motion.div
         className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8"

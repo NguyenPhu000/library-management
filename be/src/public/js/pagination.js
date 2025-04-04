@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const rowsPerPage = 5;
+  const rowsPerPage = 8;
   const table = document.querySelector(".table tbody");
   const rows = Array.from(table.rows);
   const totalPages = Math.ceil(rows.length / rowsPerPage);
