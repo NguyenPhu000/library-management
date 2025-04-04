@@ -84,6 +84,7 @@
                   id="publication_year"
                   name="publication_year"
                   placeholder="Nhập năm xuất bản"
+                  max="<%= new Date().getFullYear() %>"
                 />
               </div>
               <div class="mb-3">
@@ -149,16 +150,6 @@
                     <%= category.name %>
                   </option>
                   <% }) %>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="status" class="form-label text-secondary"
-                  >Trạng Thái</label
-                >
-                <select id="status" class="form-select" name="status">
-                  <option value="">Chọn trạng thái...</option>
-                  <option value="available">Còn Sách</option>
-                  <option value="unavailable">Hết Sách</option>
                 </select>
               </div>
 

@@ -5,7 +5,6 @@ const getDisplayMember = async (req, res) => {
   try {
     await memberService.syncMembersFromUsers();
     const result = await memberService.getAllMembers();
-
     res.render("memberPage", {
       dataTable: result.members,
       successMessage: req.query.successMessage || null,

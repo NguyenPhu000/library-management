@@ -15,11 +15,11 @@ const createCategory = async (req, res) => {
     await categoryService.createNewCategory(newCategoryData);
     let data = await categoryService.getAllCategory();
 
-    res.redirect("/api/categories?successMessage=Tạo danh mục thành công!");
+    res.redirect("/api/category?successMessage=Tạo danh mục thành công!");
   } catch (error) {
     console.error("Lỗi khi tạo danh mục:", error);
     res.redirect(
-      `/api/categories?errorMessage=${encodeURIComponent(error.message)}`
+      `/api/category?errorMessage=${encodeURIComponent(error.message)}`
     );
   }
 };
@@ -57,13 +57,11 @@ const updateCategory = async (req, res) => {
     await categoryService.updateCategory(categoryId, categoryData);
     let data = await categoryService.getAllCategory();
 
-    res.redirect(
-      "/api/categories?successMessage=Cập nhật danh mục thành công!"
-    );
+    res.redirect("/api/category?successMessage=Cập nhật danh mục thành công!");
   } catch (error) {
     console.error("Lỗi khi cập nhật danh mục:", error);
     res.redirect(
-      `/api/categories?errorMessage=${encodeURIComponent(error.message)}`
+      `/api/category?errorMessage=${encodeURIComponent(error.message)}`
     );
   }
 };
@@ -74,11 +72,11 @@ const deleteCategory = async (req, res) => {
     await categoryService.deleteCategory(categoryId);
     const data = await categoryService.getAllCategory();
 
-    res.redirect("/api/categories?successMessage=Xóa danh mục thành công!");
+    res.redirect("/api/category?successMessage=Xóa danh mục thành công!");
   } catch (error) {
     console.error("Lỗi khi xóa danh mục:", error);
     res.redirect(
-      `/api/categories?errorMessage=Không thể xóa danh mục: ${encodeURIComponent(
+      `/api/category?errorMessage=Không thể xóa danh mục: ${encodeURIComponent(
         error.message
       )}`
     );

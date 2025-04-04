@@ -1,18 +1,19 @@
 import db from "../models";
-
+import { Op } from "sequelize";
 // Hàm lấy dữ liệu bảng điều khiển
 const getDashboardData = async () => {
   const totalMembers = await db.User.count();
   const totalBooks = await db.Book.count();
   const totalLoans = await db.Loan.count();
-  const totalOverdueLoans = await db.Loan.count({
-    where: {
-      returned: false,
-      due_date: {
-        [db.Sequelize.Op.lt]: new Date(),
+  const totalOverdueLoans =
+    (await db.Loan.count({
+      where: {
+        returned: false,
+        due_date: {
+          [Op.lt]: new Date(),
+        },
       },
-    },
-  });
+    })) || 0;
 
   return {
     totalMembers,

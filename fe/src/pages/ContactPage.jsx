@@ -161,7 +161,6 @@ const ContactPage = () => {
               </div>
             </motion.div>
 
-            {/* Opening Hours Section */}
             <motion.div variants={itemVariants}>
               <h3 className="text-lightGreen text-2xl md:text-3xl font-semibold mb-6 md:mb-8 border-b-2 border-lightGreen/50 pb-2 inline-block">
                 <FontAwesomeIcon icon={faClock} className="mr-2" />

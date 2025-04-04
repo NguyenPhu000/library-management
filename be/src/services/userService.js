@@ -14,18 +14,18 @@ const validatePhone = (phone) => {
 };
 
 const validateName = (name) => {
-  const regex = /^[a-zA-Z\s]+$/;
-  return regex.test(name);
+  const regex = /^[\p{L}\s]+$/u;
+  return regex.test(name.trim());
 };
 
 // Hàm tạo người dùng mới
 let createNewUser = async (data) => {
   try {
-    if (!data.username || data.username.length <= 6) {
-      throw new Error("Tên người dùng phải lớn hơn 6 ký tự");
+    if (!data.username || data.username.length < 6) {
+      throw new Error("Tên người dùng ít nhất 6 ký tự");
     }
-    if (!data.password || data.password.length <= 6) {
-      throw new Error("Mật khẩu phải lớn hơn 6 ký tự");
+    if (!data.password || data.password.length < 6) {
+      throw new Error("Mật khẩu phải ít nhất 6 ký tự");
     }
     if (!data.first_name || !validateName(data.first_name)) {
       throw new Error("Tên không hợp lệ. Tên chỉ được chứa chữ cái.");
