@@ -1,6 +1,6 @@
 import homeService from "../services/homeService.js";
 
-export const getHomePage = async (req, res) => {
+const getHomePage = async (req, res) => {
   try {
     const dashboardData = await homeService.getDashboardData();
     const loansByMonth = await homeService.getLoansByMonth();
@@ -20,6 +20,6 @@ export const getHomePage = async (req, res) => {
   }
 };
 
-module.exports = {
-  getHomePage: getHomePage,
+export default {
+  getHomePage,
 };

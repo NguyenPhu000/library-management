@@ -1,7 +1,9 @@
+// Lắng nghe sự kiện khi nhấn vào nút "Edit"
 document
   .querySelectorAll('[data-bs-target="#editBookModal"]')
   .forEach((button) => {
     button.addEventListener("click", function () {
+      //  Gán giá trị từ dataset của button vào modal
       document.getElementById("edit_book_id").value = this.dataset.id || "";
       document.getElementById("edit_isbn").value = this.dataset.isbn || "";
       document.getElementById("edit_title").value = this.dataset.title || "";
@@ -32,6 +34,7 @@ document
             .replace(/>/g, "&gt;")
         : "";
 
+      //  Xử lý ảnh bìa
       let coverImage = this.dataset.cover || "";
       let imagePreview = document.getElementById("edit_image_preview");
       let currentCoverInput = document.getElementById("current_cover");
@@ -47,6 +50,7 @@ document
     });
   });
 
+// 🖼 Hiển thị ảnh xem trước ngay khi chọn file mới
 document
   .getElementById("edit_cover_image")
   .addEventListener("change", function () {

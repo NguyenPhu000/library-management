@@ -10,6 +10,7 @@ export const SearchBookProvider = ({ children }) => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   // Hàm tìm kiếm sách
   const searchBooks = useCallback(async (criteria, query) => {
@@ -36,6 +37,15 @@ export const SearchBookProvider = ({ children }) => {
   const resetSearch = () => {
     setSearchResults([]);
     setIsSearching(false);
+    setSelectedCategory(null);
+  };
+
+  const resetCategory = () => {
+    setSelectedCategory(null);
+  };
+
+  const filterSearchResultsByCategory = (categoryId) => {
+    setSelectedCategory(categoryId);
   };
 
   const contextValue = {
@@ -45,6 +55,9 @@ export const SearchBookProvider = ({ children }) => {
     searchBooks,
     resetSearch,
     isSearching,
+    selectedCategory,
+    resetCategory,
+    filterSearchResultsByCategory,
   };
 
   return (

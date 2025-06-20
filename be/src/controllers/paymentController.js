@@ -1,4 +1,4 @@
-import paymentService from "../services/paymentService";
+import paymentService from "../services/paymentService.js";
 
 // Lấy danh sách tất cả các payment
 // Hàm này lấy tất cả các thanh toán từ dịch vụ paymentService

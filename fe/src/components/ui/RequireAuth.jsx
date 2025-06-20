@@ -1,12 +1,13 @@
-import { useLocation, Outlet } from "react-router-dom";
+import { useLocation, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 
 const RequireAuth = () => {
-  const { user, loading, error, logout } = useAuth();
+  const { currentUser, loading, error, logout } = useAuth();
   const location = useLocation();
-  const loginUrl = "http://localhost:8081/api/login";
+  const navigate = useNavigate();
+  const loginUrl = "/login";
 
   useEffect(() => {
     const handleRedirect = async () => {
@@ -19,23 +20,33 @@ const RequireAuth = () => {
           title: "Lỗi",
           text: "Vui lòng đăng nhập!",
         });
-        window.location.href = loginUrl;
+        navigate(loginUrl, { replace: true, state: { from: location } });
         return;
       }
 
-      if (!user) {
-        await Swal.fire({
-          icon: "warning",
-          title: "Cảnh báo",
-          text: "Bạn cần đăng nhập để truy cập trang này!",
+      if (!currentUser) {
+        const result = await Swal.fire({
+          icon: "question",
+          title: "Bạn chưa đăng nhập",
+          text: "Bạn cần đăng nhập để sử dụng tính năng này. Bạn có muốn đăng nhập hoặc đăng ký tài khoản không?",
+          showCancelButton: true,
+          confirmButtonText: "Đăng nhập / Đăng ký",
+          cancelButtonText: "Không, quay lại",
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
         });
-        window.location.href = loginUrl;
+
+        if (result.isConfirmed) {
+          navigate(loginUrl, { replace: true, state: { from: location } });
+        } else {
+          navigate(-1); // Quay lại trang trước đó
+        }
         return;
       }
     };
 
     handleRedirect();
-  }, [loading, error, user, logout, loginUrl]);
+  }, [loading, error, currentUser, logout, loginUrl, location, navigate]);
 
   if (loading) {
     return (
@@ -43,6 +54,11 @@ const RequireAuth = () => {
         <div className="text-lg">Đang tải...</div>
       </div>
     );
+  }
+
+  // Chỉ hiển thị nội dung khi đã xác thực thành công
+  if (!currentUser) {
+    return null;
   }
 
   return <Outlet />;

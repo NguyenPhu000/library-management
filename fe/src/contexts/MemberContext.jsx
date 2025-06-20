@@ -9,7 +9,7 @@ import Swal from "sweetalert2"; // Import SweetAlert2
 const MemberContext = createContext();
 
 export const MemberProvider = ({ children }) => {
-  const { user, loading: authLoading, error: authError } = useAuth();
+  const { currentUser, loading: authLoading, error: authError } = useAuth();
   const [memberData, setMemberData] = useState(null);
   const [memberId, setMemberId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -24,15 +24,10 @@ export const MemberProvider = ({ children }) => {
         return;
       }
 
-      if (!user || !user.user_id) {
-        setError(
-          "Người dùng chưa được xác thực hoặc ID người dùng không tồn tại"
-        );
-        Swal.fire({
-          icon: "warning",
-          title: "Cảnh báo",
-          text: "Người dùng chưa được xác thực!",
-        });
+      if (!currentUser || !currentUser.id) {
+        // Người dùng chưa đăng nhập, không hiển thị cảnh báo
+        setMemberData(null);
+        setMemberId(null);
         setLoading(false);
         return;
       }
@@ -40,24 +35,21 @@ export const MemberProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       try {
-        const member = await getCurrentMemberInfo(user.user_id);
+        const member = await getCurrentMemberInfo(currentUser.id);
         setMemberData(member);
 
-        const id = await getMemberIdByUserId(user.user_id);
+        const id = await getMemberIdByUserId(currentUser.id);
         setMemberId(id);
       } catch (error) {
-        Swal.fire({
-          icon: "error",
-          title: "Lỗi",
-          text: "Không thể tải thông tin thành viên!",
-        });
+        // Chỉ hiển thị thông báo lỗi nếu người dùng đã đăng nhập
+        setError("Không thể tải thông tin thành viên");
       } finally {
         setLoading(false);
       }
     };
 
     fetchCurrentMember();
-  }, [user, authLoading, authError]);
+  }, [currentUser, authLoading, authError]);
 
   return (
     <MemberContext.Provider value={{ memberData, memberId, loading, error }}>

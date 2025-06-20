@@ -4,55 +4,162 @@ import authService from "../services/authService";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(undefined);
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Kiểm tra xác thực khi component mount
   useEffect(() => {
-    checkAuth();
+    const initAuth = async () => {
+      setLoading(true);
+      try {
+        // Kiểm tra token trong localStorage
+        const token = localStorage.getItem("auth_token");
+        if (!token) {
+          setCurrentUser(null);
+          setLoading(false);
+          return;
+        }
+
+        // Lấy thông tin người dùng từ token
+        const userData = await authService.getCurrentUser();
+        if (userData) {
+          setCurrentUser(userData);
+          setError(null);
+        } else {
+          // Nếu không lấy được thông tin user, xóa token
+          localStorage.removeItem("auth_token");
+          setCurrentUser(null);
+        }
+      } catch (error) {
+        console.error("Auth initialization error:", error);
+        setError(error.message);
+        setCurrentUser(null);
+        localStorage.removeItem("auth_token"); // Xóa token không hợp lệ
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initAuth();
   }, []);
 
   const checkAuth = async () => {
+    setLoading(true);
     try {
       const userData = await authService.getCurrentUser();
-
-      setUser(userData);
+      if (userData) {
+        setCurrentUser(userData);
+        setError(null);
+        return userData;
+      }
+      return null;
     } catch (error) {
+      console.error("Check auth error:", error);
       setError(error.message);
-      setUser(null);
+      setCurrentUser(null);
+      return null;
     } finally {
       setLoading(false);
     }
   };
 
   const login = async (username, password) => {
+    setLoading(true);
     try {
       const result = await authService.login(username, password);
-      if (result.success) {
-        setUser(result.user);
-        window.location.href = result.redirectUrl;
+
+      if (result.success && result.user) {
+        setCurrentUser(result.user);
+        setError(null);
+
+        // Trả về thông tin người dùng để component xử lý chuyển hướng
+        return {
+          success: true,
+          user: result.user,
+          redirectUrl: result.redirectUrl || "/",
+        };
       }
-      return result;
+
+      return {
+        success: false,
+        message: result.message || "Đăng nhập thất bại",
+      };
     } catch (error) {
+      console.error("Login error in context:", error);
       setError(error.message);
-      throw error;
+      return {
+        success: false,
+        message: error.message || "Đã xảy ra lỗi khi đăng nhập",
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const register = async (username, password, email, fullName) => {
+    setLoading(true);
+    try {
+      const result = await authService.register(
+        username,
+        password,
+        email,
+        fullName
+      );
+      if (result.success) {
+        // Cập nhật currentUser nếu API trả về thông tin người dùng
+        if (result.user) {
+          setCurrentUser(result.user);
+        }
+        setError(null);
+        return { success: true, redirectUrl: result.redirectUrl || "/" };
+      }
+      return { success: false, message: result.message };
+    } catch (error) {
+      console.error("Register error:", error);
+      setError(error.message);
+      return { success: false, message: error.message };
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = async () => {
+    setLoading(true);
     try {
       await authService.logout();
-      setUser(null);
+      setCurrentUser(null);
+      setError(null);
+      return { success: true };
     } catch (error) {
+      console.error("Logout error:", error);
       setError(error.message);
-      throw error;
+      return { success: false, message: error.message };
+    } finally {
+      setLoading(false);
+      // Đảm bảo xóa token khỏi localStorage
+      localStorage.removeItem("auth_token");
     }
   };
 
+  const isAdmin = () => {
+    return currentUser && currentUser.role === "admin";
+  };
+
+  // Giá trị được chia sẻ cho context
+  const authValue = {
+    currentUser,
+    loading,
+    error,
+    login,
+    register,
+    logout,
+    isAdmin,
+    checkAuth,
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>
   );
 };
 

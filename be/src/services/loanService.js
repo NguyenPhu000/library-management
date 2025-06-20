@@ -1,6 +1,6 @@
-import { Loan, Book, Member } from "../models";
-const { sequelize } = require("../models"); // Đã export sequelize instance
+import { Loan, Book, Member, sequelize } from "../models";
 const fineAmount = 1000;
+
 // Hàm lấy danh sách tất cả lượt mượn
 const getAllLoans = async () => {
   try {
@@ -21,10 +21,12 @@ const borrowBook = async (member_id, book_id) => {
   try {
     const book = await Book.findByPk(book_id);
     if (!book) {
+      await transaction.rollback();
       return { success: false, message: "Không tìm thấy sách!" };
     }
 
     if (book.available_copies <= 0) {
+      await transaction.rollback();
       return {
         success: false,
         message: "Sách này hiện đã hết bản sao để mượn!",
@@ -33,11 +35,13 @@ const borrowBook = async (member_id, book_id) => {
 
     const member = await Member.findByPk(member_id);
     if (!member) {
+      await transaction.rollback();
       return { success: false, message: "Thành viên không tồn tại!" };
     }
 
     const currentDate = new Date();
     if (new Date(member.expiry_date) < currentDate) {
+      await transaction.rollback();
       return { success: false, message: "Thẻ thành viên đã hết hạn!" };
     }
 
@@ -46,6 +50,7 @@ const borrowBook = async (member_id, book_id) => {
       where: { member_id, returned: false },
     });
     if (activeLoans >= member.max_loans) {
+      await transaction.rollback();
       return {
         success: false,
         message: "Bạn đã đạt giới hạn số sách có thể mượn!",
@@ -128,7 +133,12 @@ const returnBook = async (loan_id) => {
     });
 
     await transaction.commit();
-    return { success: true, message: "Sách đã được trả!", fine_amount };
+    return {
+      success: true,
+      message: "Sách đã được trả!",
+      fine_amount,
+      loan,
+    };
   } catch (error) {
     await transaction.rollback();
     return { success: false, message: "Lỗi khi trả sách: " + error.message };
@@ -152,32 +162,56 @@ const getLoanByBookId = async (bookId) => {
 };
 
 // Hàm lấy danh sách sách đang mượn hiện tại cho thành viên
-const getLoansByMemberId = async (member_id) => {
+const getCurrentLoansByMemberId = async (member_id) => {
   try {
     const loans = await Loan.findAll({
       where: { member_id, returned: false }, // Chỉ lấy sách chưa trả
       include: [
-        { model: Book, attributes: ["title", "author"] }, // Lấy thông tin sách
+        { model: Book, attributes: ["title", "author", "cover_image"] }, // Lấy thông tin sách
         { model: Member, attributes: ["member_code"] }, // Lấy mã thành viên
       ],
       attributes: [
         "loan_id",
         "loan_date",
         "due_date",
-
         "renew_count",
         "renewal_status",
       ],
       order: [["loan_date", "DESC"]], // Sắp xếp theo ngày mượn mới nhất
+      raw: true, // Trả về dữ liệu dạng plain object thay vì instance
+      nest: true, // Lồng các mối quan hệ vào object
     });
 
-    return { success: true, loans };
+    return loans;
   } catch (error) {
-    return {
-      success: false,
-      message: "Lỗi khi lấy danh sách sách đang mượn!",
-      error: error.message,
-    };
+    throw new Error("Lỗi khi lấy danh sách sách đang mượn: " + error.message);
+  }
+};
+
+// Hàm lấy lịch sử mượn sách cho thành viên
+const getLoanHistoryByMemberId = async (member_id) => {
+  try {
+    const loans = await Loan.findAll({
+      where: { member_id, returned: true }, // Chỉ lấy sách đã trả
+      include: [
+        { model: Book, attributes: ["title", "author", "cover_image"] },
+        { model: Member, attributes: ["member_code"] },
+      ],
+      attributes: [
+        "loan_id",
+        "loan_date",
+        "due_date",
+        "return_date",
+        "fine_amount",
+      ],
+      order: [["return_date", "DESC"]], // Sắp xếp theo ngày trả mới nhất
+      raw: true, // Trả về dữ liệu dạng plain object thay vì instance
+      nest: true, // Lồng các mối quan hệ vào object
+    });
+
+    return loans;
+  } catch (error) {
+    throw new Error("Lỗi khi lấy lịch sử mượn sách: " + error.message);
   }
 };
 
@@ -215,6 +249,7 @@ const requestRenewLoan = async (loan_id) => {
     return {
       success: true,
       message: "Yêu cầu gia hạn đã được gửi thành công!",
+      loan,
     };
   } catch (error) {
     return {
@@ -225,76 +260,52 @@ const requestRenewLoan = async (loan_id) => {
 };
 
 // Hàm phê duyệt gia hạn sách
-const approveRenewLoan = async (loan_id, approve = true) => {
+const approveRenewLoan = async (loan_id) => {
   try {
     const loan = await Loan.findByPk(loan_id);
-    if (!loan) return { success: false, message: "Không tìm thấy lượt mượn!" };
-
-    if (approve) {
-      if (loan.renew_count >= 1) {
-        return { success: false, message: "Không thể gia hạn, đã đạt tối đa!" };
-      }
-
-      const currentDate = new Date();
-      const overdueDays = Math.ceil(
-        (currentDate - new Date(loan.due_date)) / (1000 * 60 * 60 * 24)
-      );
-      if (overdueDays > 7) {
-        return {
-          success: false,
-          message: "Không thể gia hạn, đã quá hạn hơn 7 ngày!",
-        };
-      }
-
-      await loan.update({
-        due_date: new Date(loan.due_date.getTime() + 7 * 24 * 60 * 60 * 1000), // +7 ngày
-        renew_count: loan.renew_count + 1,
-        renewal_status: "approved",
-      });
-
-      return { success: true, message: "Gia hạn thành công, thêm 7 ngày!" };
-    } else {
-      await loan.update({ renewal_status: "rejected" });
-
-      return { success: false, message: "Yêu cầu gia hạn đã bị từ chối!" };
+    if (!loan) {
+      return { success: false, message: "Không tìm thấy lượt mượn!" };
     }
-  } catch (error) {
-    return {
-      success: false,
-      message: "Lỗi khi xử lý gia hạn: " + error.message,
-    };
-  }
-};
 
-const getLoanHistory = async (memberId) => {
-  try {
-    const loans = await Loan.findAll({
-      where: { member_id: memberId, returned: true },
-      include: [
-        { model: Book, attributes: ["title", "author"] },
-        { model: Member, attributes: ["member_code"] },
-      ],
-      attributes: [
-        "loan_id",
-        "loan_date",
-        "due_date",
-        "return_date",
-        "renew_count",
-        "renewal_status",
-        "fine_amount",
-      ],
-      order: [["loan_date", "DESC"]], // Sắp xếp theo ngày mượn giảm dần
+    if (loan.renewal_status !== "pending") {
+      return {
+        success: false,
+        message: "Yêu cầu gia hạn không ở trạng thái chờ duyệt!",
+      };
+    }
+
+    if (loan.renew_count >= 1) {
+      return { success: false, message: "Không thể gia hạn, đã đạt tối đa!" };
+    }
+
+    const currentDate = new Date();
+    const overdueDays = Math.ceil(
+      (currentDate - new Date(loan.due_date)) / (1000 * 60 * 60 * 24)
+    );
+
+    if (overdueDays > 7) {
+      return {
+        success: false,
+        message: "Không thể gia hạn, đã quá hạn hơn 7 ngày!",
+      };
+    }
+
+    // Cập nhật ngày hẹn trả và trạng thái gia hạn
+    await loan.update({
+      due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Thêm 7 ngày từ ngày hiện tại
+      renewal_status: "approved",
+      renew_count: loan.renew_count + 1,
     });
 
-    if (!loans.length) {
-      return { success: false, message: "Không có lịch sử mượn nào." };
-    }
-
-    return { success: true, data: loans };
+    return {
+      success: true,
+      message: "Gia hạn đã được phê duyệt!",
+      loan,
+    };
   } catch (error) {
     return {
       success: false,
-      message: "Lỗi khi lấy lịch sử mượn: " + error.message,
+      message: "Lỗi khi duyệt gia hạn: " + error.message,
     };
   }
 };
@@ -304,8 +315,8 @@ export default {
   borrowBook,
   returnBook,
   getLoanByBookId,
-  getLoansByMemberId,
+  getCurrentLoansByMemberId,
+  getLoanHistoryByMemberId,
   requestRenewLoan,
   approveRenewLoan,
-  getLoanHistory,
 };

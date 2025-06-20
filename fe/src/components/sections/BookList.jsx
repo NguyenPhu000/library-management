@@ -8,6 +8,7 @@ import {
   faSpinner,
   faBookOpen,
   faPenNib,
+  faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
 
 const containerVariants = {
@@ -32,13 +33,15 @@ const itemVariants = {
   },
 };
 
-const BookList = ({ books, loading }) => {
+const BookList = ({ books, loading, error }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
   const indexOfLastBook = currentPage * itemsPerPage;
   const indexOfFirstBook = indexOfLastBook - itemsPerPage;
-  const currentBooks = books.slice(indexOfFirstBook, indexOfLastBook);
+  const currentBooks = books
+    ? books.slice(indexOfFirstBook, indexOfLastBook)
+    : [];
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -69,7 +72,22 @@ const BookList = ({ books, loading }) => {
               Đang tải sách...
             </span>
           </motion.p>
-        ) : currentBooks.length > 0 ? (
+        ) : error ? (
+          <motion.p
+            className="text-center col-span-full text-red-400 text-xl flex items-center justify-center space-x-3 py-16"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <FontAwesomeIcon
+              icon={faExclamationTriangle}
+              className="text-red-400 text-4xl"
+            />
+            <span className="font-semibold">
+              Đã xảy ra lỗi khi tải sách. Vui lòng thử lại sau.
+            </span>
+          </motion.p>
+        ) : currentBooks && currentBooks.length > 0 ? (
           currentBooks.map((book) => {
             const slug = generateSlug(book.book_id);
             return (
@@ -141,12 +159,14 @@ const BookList = ({ books, loading }) => {
               icon={faBookOpen}
               className="text-lightGreen text-4xl"
             />
-            <span className="font-semibold">Không tìm thấy sách phù hợp.</span>
+            <span className="font-semibold">
+              Chưa có sách nào để hiển thị. Vui lòng quay lại sau nhé!
+            </span>
           </motion.p>
         )}
       </motion.section>
 
-      {books.length > itemsPerPage && (
+      {books && books.length > itemsPerPage && (
         <motion.div
           className="mt-8 mb-12 flex justify-center"
           initial={{ opacity: 0, y: 20 }}

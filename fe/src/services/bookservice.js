@@ -1,11 +1,12 @@
-import API from "./api";
+import { API, PublicAPI } from "./api";
 
-// Lấy danh sách tất cả sách
+// Lấy danh sách tất cả sách - sử dụng PublicAPI vì đây là API công khai
 const getBooks = async () => {
   try {
-    const response = await API.get("/books");
+    const response = await PublicAPI.get("/books");
 
-    if (!response.data || !response.data.books) {
+    if (!response.data || !response.data.success) {
+      console.warn("Phản hồi API không hợp lệ:", response.data);
       return { books: [] };
     }
 
@@ -26,12 +27,13 @@ const getBooks = async () => {
   }
 };
 
-// Lấy sách theo danh mục
+// Lấy sách theo danh mục - sử dụng PublicAPI vì đây là API công khai
 const getBooksByCategory = async (categoryId) => {
   try {
-    const response = await API.get(`/books/category/${categoryId}`);
+    const response = await PublicAPI.get(`/books/category/${categoryId}`);
 
-    if (!response.data || !response.data.books) {
+    if (!response.data || !response.data.success) {
+      console.warn("Phản hồi API không hợp lệ:", response.data);
       return { books: [] };
     }
 
@@ -52,12 +54,13 @@ const getBooksByCategory = async (categoryId) => {
   }
 };
 
-// Lấy chi tiết sách theo book_id
+// Lấy chi tiết sách theo book_id - sử dụng PublicAPI vì đây là API công khai
 const getBookById = async (bookId) => {
   try {
-    const response = await API.get(`/books/${bookId}`);
+    const response = await PublicAPI.get(`/books/${bookId}`);
 
-    if (!response.data || !response.data.book) {
+    if (!response.data || !response.data.success || !response.data.book) {
+      console.warn("Phản hồi API không hợp lệ:", response.data);
       return { book: null };
     }
 
@@ -80,12 +83,17 @@ const getBookById = async (bookId) => {
 
 const searchBooks = async (criteria, query) => {
   try {
-    const response = await API.get("/books/search", {
+    const response = await PublicAPI.get("/books/search", {
       params: {
         criteria: criteria,
         query: query,
       },
     });
+
+    if (!response.data || !response.data.success) {
+      console.warn("Phản hồi API không hợp lệ:", response.data);
+      return { books: [] };
+    }
 
     // Xử lý hình ảnh cho từng sách trong kết quả
     const booksWithImages = response.data.books.map((book) => ({
@@ -101,7 +109,7 @@ const searchBooks = async (criteria, query) => {
     return { books: booksWithImages }; // Trả về danh sách sách đã xử lý
   } catch (error) {
     console.error("Lỗi khi tìm kiếm sách:", error);
-    throw error;
+    return { books: [] };
   }
 };
 

@@ -1,7 +1,6 @@
 import db from "../models/index.js";
 import { Op } from "sequelize";
 
-// Hàm lấy sách theo ID
 let getBookById = async (bookId) => {
   if (!bookId) throw new Error("Book ID is required!");
   const book = await db.Book.findOne({
@@ -14,7 +13,6 @@ let getBookById = async (bookId) => {
   return book;
 };
 
-// Hàm lấy tất cả sách
 let getAllBooks = async () => {
   return await db.Book.findAll({
     include: [
@@ -23,29 +21,66 @@ let getAllBooks = async () => {
   });
 };
 
-// Hàm tạo sách mới
 let createNewBooks = async (req) => {
+  // Kiểm tra các trường bắt buộc
+  if (!req.body.isbn || !req.body.title || !req.body.author) {
+    throw new Error("Chưa nhập ISBN, tiêu đề và tác giả!");
+  }
+
+  // Kiểm tra năm xuất bản
+  if (req.body.publication_year) {
+    const publicationYear = parseInt(req.body.publication_year, 10);
+    const currentYear = new Date().getFullYear();
+
+    if (isNaN(publicationYear) || publicationYear.toString().length !== 4) {
+      throw new Error("Năm xuất bản phải là một số 4 chữ số!");
+    }
+
+    if (publicationYear > currentYear) {
+      throw new Error("Năm xuất bản không được vượt quá năm hiện tại!");
+    }
+  }
+
   let newBookData = {
     isbn: req.body.isbn,
     title: req.body.title,
     author: req.body.author,
     publication_year: req.body.publication_year,
     publisher: req.body.publisher,
-    total_copies: req.body.total_copies,
-    available_copies: req.body.total_copies,
-    status: req.body.total_copies > 0 ? "available" : "unavailable",
-    category: req.body.category,
+    total_copies: req.body.total_copies || 0,
+    available_copies: req.body.total_copies || 0,
+    status: req.body.status,
     description: req.body.description,
     cover_image: req.file ? req.file.filename : null,
-    category_id: Array.isArray(req.body.category_id)
-      ? req.body.category_id
-      : [req.body.category_id],
   };
 
-  return await db.Book.create(newBookData);
+  // Tạo sách mới
+  const newBook = await db.Book.create(newBookData);
+
+  // Lấy tất cả danh mục
+  let allCategories = await db.Category.findAll({
+    attributes: ["category_id"],
+  });
+  let validCategoryIds = new Set(allCategories.map((cat) => cat.category_id));
+
+  // Kiểm tra và thêm danh mục
+  if (req.body.category_id) {
+    // Đảm bảo category_id là một mảng
+    let categoryIds = Array.isArray(req.body.category_id)
+      ? req.body.category_id.map((id) => parseInt(id))
+      : [parseInt(req.body.category_id)];
+
+    // Lọc các ID danh mục hợp lệ
+    categoryIds = categoryIds.filter((id) => validCategoryIds.has(id));
+
+    if (categoryIds.length > 0) {
+      await newBook.addCategories(categoryIds);
+    }
+  }
+
+  return newBook;
 };
 
-// Hàm cập nhật sách
 let updateBook = async (req) => {
   let bookId = req.body.book_id;
   if (!bookId) {
@@ -75,8 +110,7 @@ let updateBook = async (req) => {
     publication_year: req.body.publication_year,
     publisher: req.body.publisher,
     total_copies: req.body.total_copies,
-    available_copies: req.body.total_copies,
-    status: req.body.total_copies > 0 ? "available" : "unavailable",
+    status: req.body.status,
     description: req.body.description,
     cover_image: coverImage,
     category_id: categoryIds.length
@@ -84,21 +118,81 @@ let updateBook = async (req) => {
       : existingBook.categories.map((cat) => cat.category_id) || [],
   };
 
+  // Cập nhật tổng số lượng sách
   await db.Book.update(updatedBookData, { where: { book_id: bookId } });
 
+  // Cập nhật số lượng bản sao có sẵn
+  if (req.body.total_copies) {
+    const difference = req.body.total_copies - existingBook.total_copies;
+    if (difference > 0) {
+      await db.Book.increment("available_copies", {
+        by: difference,
+        where: { book_id: bookId },
+      });
+    } else if (difference < 0) {
+      await db.Book.decrement("available_copies", {
+        by: Math.abs(difference),
+        where: { book_id: bookId },
+      });
+    }
+  }
+
+  // Cập nhật danh mục
   if (req.body.category_id && req.body.category_id.length > 0) {
     await db.BookCategory.destroy({ where: { book_id: bookId } });
     await existingBook.addCategories(req.body.category_id);
   }
 };
 
-// Hàm tìm kiếm sách
 let searchBook = async (filters) => {
   try {
     let whereClause = {};
 
     if (filters.criteria && filters.query) {
-      whereClause[filters.criteria] = { [Op.like]: `%${filters.query}%` };
+      const query = filters.query.trim();
+
+      // Tùy thuộc vào tiêu chí tìm kiếm
+      if (filters.criteria === "title") {
+        // Tìm kiếm theo tiêu đề
+        whereClause = {
+          [Op.or]: [
+            { title: { [Op.like]: `%${query}%` } },
+            { title: { [Op.substring]: query } },
+          ],
+        };
+      } else if (filters.criteria === "author") {
+        // Tìm kiếm theo tác giả
+        whereClause = {
+          [Op.or]: [
+            { author: { [Op.like]: `%${query}%` } },
+            { author: { [Op.substring]: query } },
+          ],
+        };
+      } else if (filters.criteria === "isbn") {
+        // Tìm kiếm chính xác theo ISBN
+        whereClause = {
+          isbn: { [Op.like]: `%${query}%` },
+        };
+      } else if (filters.criteria === "publisher") {
+        // Tìm kiếm theo nhà xuất bản
+        whereClause = {
+          publisher: { [Op.like]: `%${query}%` },
+        };
+      } else if (filters.criteria === "all") {
+        // Tìm kiếm theo tất cả các trường
+        whereClause = {
+          [Op.or]: [
+            { title: { [Op.like]: `%${query}%` } },
+            { author: { [Op.like]: `%${query}%` } },
+            { isbn: { [Op.like]: `%${query}%` } },
+            { publisher: { [Op.like]: `%${query}%` } },
+            { description: { [Op.like]: `%${query}%` } },
+          ],
+        };
+      } else {
+        // Mặc định tìm kiếm theo tiêu đề
+        whereClause[filters.criteria] = { [Op.like]: `%${query}%` };
+      }
     }
 
     let books = await db.Book.findAll({
@@ -106,14 +200,18 @@ let searchBook = async (filters) => {
       include: [
         { model: db.Category, as: "categories", through: { attributes: [] } },
       ],
+      order: [
+        ["title", "ASC"], // Sắp xếp kết quả theo tiêu đề
+      ],
     });
+
     return books;
   } catch (error) {
+    console.error("Lỗi khi tìm kiếm sách:", error);
     throw new Error("Không thể tìm kiếm sách, vui lòng thử lại!");
   }
 };
 
-// Hàm lấy sách theo danh mục
 let getBookByCategory = async (categoryId) => {
   if (!categoryId) throw new Error("Category ID is required!");
 
@@ -136,7 +234,6 @@ let getBookByCategory = async (categoryId) => {
   }
 };
 
-// Hàm xóa sách
 let deleteBook = async (bookId) => {
   try {
     const r1 = await db.BookCategory.destroy({ where: { book_id: bookId } });

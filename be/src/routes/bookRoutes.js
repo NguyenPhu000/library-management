@@ -1,6 +1,6 @@
 import express from "express";
-import bookController from "../controllers/bookController";
-import upload from "../config/multerConfig";
+import bookController from "../controllers/bookController.js";
+import upload from "../config/multerConfig.js";
 
 let router = express.Router();
 
@@ -20,7 +20,6 @@ router.post(
   bookController.updateBook
 );
 
-router.get("/books/search", bookController.searchBooks);
 router.get("/books/delete", bookController.deleteBook);
 router.get("/books/:bookId", bookController.getBookById);
 router.get("/books/category/:categoryId", bookController.getBookByCategory);

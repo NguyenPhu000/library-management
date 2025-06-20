@@ -1,36 +1,87 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/layouts/Layout";
-import LibraryHome from "./pages/LibraryHomePage";
+import LibraryHomePage from "./pages/LibraryHomePage";
 import BookListPage from "./pages/BookListPage";
-import BookDetail from "./components/sections/BookDetail";
 import ProfilePage from "./pages/ProfilePage";
-import LoanPage from "./pages/LoanPage";
+import LoginPage from "./pages/LoginPage";
+import NotFoundPage from "./pages/NotFoundPage";
 import RequireAuth from "./components/ui/RequireAuth";
-import AppProviders from "./contexts/AppProviders";
-import LoanHistory from "./pages/HistoryPage";
-import ContactPage from "./pages/ContactPage";
+import LoanPage from "./pages/LoanPage";
+import HistoryPage from "./pages/HistoryPage";
 import PaymentPage from "./pages/PaymentPage";
-const App = () => {
+import ContactPage from "./pages/ContactPage";
+import AppProviders from "./contexts/AppProviders";
+import BookDetail from "./components/sections/BookDetail";
+
+// Admin pages
+import AdminLayout from "./admin/layouts/AdminLayout";
+import AdminDashboard from "./admin/pages/AdminDashboard";
+import BookManagePage from "./admin/pages/BookManagePage";
+import BookForm from "./admin/pages/BookForm";
+import BookView from "./admin/pages/BookView";
+import AdminPage from "./admin/pages/AdminPage";
+import AdminLogin from "./admin/pages/AdminLogin";
+import AdminRoute from "./admin/components/auth/AdminRoute";
+
+function App() {
   return (
     <AppProviders>
-      <Router>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route element={<RequireAuth />}>
-              <Route path="/" element={<LibraryHome />} />
-              <Route path="/books" element={<BookListPage />} />
-              <Route path="/books/:slug" element={<BookDetail />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/borrowed" element={<LoanPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/history" element={<LoanHistory />} />
-              <Route path="/payment" element={<PaymentPage />} />
-            </Route>
+      <Routes>
+        {/* Main site routes */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<LibraryHomePage />} />
+          <Route path="books" element={<BookListPage />} />
+          <Route path="books/:slug" element={<BookDetail />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="login" element={<LoginPage />} />
+
+          {/* Protected routes */}
+          {/* Protected routes need to be wrapped by a parent RequireAuth route */}
+          <Route element={<RequireAuth />}>
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="loans" element={<LoanPage />} />
+            <Route path="history" element={<HistoryPage />} />
+            <Route path="payments" element={<PaymentPage />} />
           </Route>
-        </Routes>
-      </Router>
+        </Route>
+
+        {/* Admin routes */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="books" element={<BookManagePage />} />
+          <Route path="books/create" element={<BookForm />} />
+          <Route path="books/edit/:id" element={<BookForm />} />
+          <Route path="books/view/:id" element={<BookView />} />
+          <Route path="members" element={<AdminPage />} />
+
+          {/* Add other admin routes here */}
+          <Route
+            path="categories"
+            element={<div>Trang quản lý danh mục</div>}
+          />
+          <Route path="users" element={<div>Trang quản lý người dùng</div>} />
+          <Route path="loans" element={<div>Trang quản lý mượn sách</div>} />
+          <Route
+            path="payments"
+            element={<div>Trang quản lý thanh toán</div>}
+          />
+        </Route>
+
+        {/* Catch-all route */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
     </AppProviders>
   );
-};
+}
 
 export default App;

@@ -29,7 +29,10 @@ const displayCategory = async (req, res) => {
     let data = await categoryService.getAllCategory();
 
     if (req.headers.accept?.includes("application/json")) {
-      return res.json(data);
+      return res.status(200).json({
+        success: true,
+        categories: data,
+      });
     }
 
     res.render("categoryPage", {
@@ -40,6 +43,13 @@ const displayCategory = async (req, res) => {
     });
   } catch (error) {
     console.error("Lỗi khi hiển thị danh mục:", error);
+    if (req.headers.accept?.includes("application/json")) {
+      return res.status(500).json({
+        success: false,
+        message: "Lỗi khi tải danh mục",
+        categories: [],
+      });
+    }
     res.status(500).json({ lỗi: error.message });
   }
 };

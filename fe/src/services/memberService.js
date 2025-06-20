@@ -3,21 +3,26 @@ import API from "./api";
 // Hàm lấy thông tin thành viên hiện tại theo userId
 export const getCurrentMemberInfo = async (userId) => {
   try {
-    const { data } = await API.get(`/members/${userId}`);
-    return data;
+    const response = await API.get(`/members/${userId}`);
+    return response.data;
   } catch (error) {
-    console.error("Lỗi khi lấy thông tin người dùng hiện tại:", error);
-    throw error;
+    throw new Error(
+      error.response?.data?.message || "Không thể lấy thông tin thành viên"
+    );
   }
 };
 
 // Hàm lấy member_id theo userId
 export const getMemberIdByUserId = async (userId) => {
   try {
-    const { data } = await API.get(`/members/member-id/${userId}`);
-    return data.member_id;
+    const response = await API.get(`/members/member-id/${userId}`);
+
+    if (!response.data || !response.data.member_id) {
+      throw new Error("Không tìm thấy member_id");
+    }
+
+    return response.data.member_id;
   } catch (error) {
-    console.error("Lỗi khi lấy member_id:", error);
-    throw error;
+    throw new Error(error.response?.data?.message || "Không thể lấy member_id");
   }
 };

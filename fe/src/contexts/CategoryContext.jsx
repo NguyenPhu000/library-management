@@ -6,25 +6,27 @@ const CategoryContext = createContext();
 export const CategoryProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
-      const response = await categoryService.getCategories();
-
-      if (response.categories.length > 0) {
-        setCategories(response.categories);
-      } else {
-        console.warn("⚠ Không có danh mục nào được trả về từ API");
+      setError(null);
+      try {
+        const response = await categoryService.getCategories();
+        setCategories(response.categories || []);
+      } catch (error) {
+        console.error("Lỗi khi tải danh mục:", error);
+        setError("Không thể tải danh mục");
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
     fetchCategories();
   }, []);
 
   return (
-    <CategoryContext.Provider value={{ categories, loading }}>
+    <CategoryContext.Provider value={{ categories, loading, error }}>
       {children}
     </CategoryContext.Provider>
   );

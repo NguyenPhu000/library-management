@@ -34,7 +34,10 @@ const getDisplayBooks = async (req, res) => {
     let categories = await categoryService.getAllCategory();
 
     if (req.headers.accept?.includes("application/json")) {
-      return res.json({ books, categories });
+      return res.status(200).json({
+        success: true,
+        books,
+      });
     }
 
     res.render("bookPage", {
@@ -48,6 +51,13 @@ const getDisplayBooks = async (req, res) => {
     });
   } catch (error) {
     console.error("Lỗi khi hiển thị sách:", error);
+    if (req.headers.accept?.includes("application/json")) {
+      return res.status(500).json({
+        success: false,
+        message: "Lỗi khi tải danh sách sách",
+        books: [],
+      });
+    }
     res.status(500).json({ lỗi: "Lỗi hệ thống, vui lòng thử lại!" });
   }
 };
@@ -79,22 +89,34 @@ const getBookByCategory = async (req, res) => {
   try {
     const { categoryId } = req.params;
     if (!categoryId) {
-      return res.status(400).json({ error: "Thiếu categoryId!" });
+      return res.status(400).json({
+        success: false,
+        message: "Thiếu categoryId!",
+        books: [],
+      });
     }
 
     let books = await bookService.getBookByCategory(categoryId);
 
     if (books.length === 0) {
-      return res.json({
+      return res.status(200).json({
+        success: true,
         books: [],
         message: "Không có sách nào trong danh mục này!",
       });
     }
 
-    return res.json({ books });
+    return res.status(200).json({
+      success: true,
+      books,
+    });
   } catch (error) {
     console.error(" Lỗi khi lấy sách theo danh mục:", error);
-    return res.status(500).json({ error: "Lỗi hệ thống" });
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi hệ thống",
+      books: [],
+    });
   }
 };
 
@@ -104,13 +126,24 @@ const getBookById = async (req, res) => {
     let book = await bookService.getBookById(bookId);
 
     if (!book) {
-      return res.status(404).json({ error: "Sách không tồn tại!" });
+      return res.status(404).json({
+        success: false,
+        message: "Sách không tồn tại!",
+        book: null,
+      });
     }
 
-    return res.json({ book });
+    return res.status(200).json({
+      success: true,
+      book,
+    });
   } catch (error) {
     console.error("Lỗi khi lấy sách!!!:", error);
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+      book: null,
+    });
   }
 };
 
@@ -140,10 +173,17 @@ const searchBooks = async (req, res) => {
     };
     let books = await bookService.searchBook(filters);
 
-    return res.json({ books });
+    return res.status(200).json({
+      success: true,
+      books,
+    });
   } catch (error) {
     console.error("Lỗi khi tìm kiếm sách:", error);
-    return res.status(500).json({ error: "Lỗi hệ thống" });
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi hệ thống",
+      books: [],
+    });
   }
 };
 
