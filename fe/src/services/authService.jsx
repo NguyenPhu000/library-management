@@ -1,15 +1,9 @@
 import API, { PublicAPI } from "./api";
 
-// Hàm lấy thông tin người dùng hiện tại dựa trên token
+// Hàm lấy thông tin người dùng hiện tại dựa trên token (từ cookie)
 const getCurrentUser = async () => {
   try {
-    // Lấy token từ localStorage
-    const token = localStorage.getItem("auth_token");
-    if (!token) {
-      return null;
-    }
-
-    // Gọi API để lấy thông tin người dùng từ token
+    // Gọi API để lấy thông tin người dùng từ cookie token
     const response = await API.get("/me");
 
     if (response.data && response.data.user) {
@@ -19,8 +13,6 @@ const getCurrentUser = async () => {
     return null;
   } catch (error) {
     console.error("Get current user error:", error);
-    // Xóa token nếu không hợp lệ
-    localStorage.removeItem("auth_token");
     throw new Error(
       error.response?.data?.message || "Không thể lấy thông tin người dùng"
     );
@@ -34,18 +26,12 @@ const login = async (username, password) => {
     const response = await PublicAPI.post("/login", { username, password });
 
     if (response.data.success) {
-      // Lưu token vào localStorage
-      if (response.data.token) {
-        localStorage.setItem("auth_token", response.data.token);
-        console.log("Token saved:", response.data.token);
-      } else {
-        console.warn("No token received in login response");
-      }
+      console.log("Login successful, token saved in httpOnly cookie");
 
       // Đảm bảo response.data có chứa thông tin user
-      if (!response.data.user && response.data.token) {
+      if (!response.data.user && response.data.success) {
         try {
-          // Lấy thông tin user từ token nếu response không chứa
+          // Lấy thông tin user từ cookie token nếu response không chứa
           const userResponse = await API.get("/me");
           if (userResponse.data && userResponse.data.user) {
             response.data.user = userResponse.data.user;
@@ -81,27 +67,24 @@ const register = async (username, password, email, fullName) => {
     });
 
     if (response.data.success) {
-      // Tự động đăng nhập sau khi đăng ký thành công nếu có token
-      if (response.data.token) {
-        localStorage.setItem("auth_token", response.data.token);
-        console.log("Token saved after registration:", response.data.token);
+      console.log("Registration successful");
 
-        // Lấy thông tin user từ token nếu response không chứa
-        if (!response.data.user) {
-          try {
-            const userResponse = await API.get("/me");
-            if (userResponse.data && userResponse.data.user) {
-              response.data.user = userResponse.data.user;
-              console.log(
-                "User info fetched after registration:",
-                response.data.user
-              );
-            }
-          } catch (userError) {
-            console.error("Error fetching user after registration:", userError);
+      // Lấy thông tin user từ token nếu response không chứa
+      if (!response.data.user) {
+        try {
+          const userResponse = await API.get("/me");
+          if (userResponse.data && userResponse.data.user) {
+            response.data.user = userResponse.data.user;
+            console.log(
+              "User info fetched after registration:",
+              response.data.user
+            );
           }
+        } catch (userError) {
+          console.error("Error fetching user after registration:", userError);
         }
       }
+
       return response.data;
     }
     throw new Error(response.data.message || "Đăng ký không thành công");
@@ -116,14 +99,12 @@ const register = async (username, password, email, fullName) => {
 // Hàm đăng xuất
 const logout = async () => {
   try {
-    // Gọi API logout ở server để hủy session nếu cần
+    // Gọi API logout ở server để xóa httpOnly cookie
     await API.get("/logout");
-    console.log("Logout successful");
+    console.log("Logout successful, cookie cleared");
   } catch (error) {
     console.error("Logout error:", error);
-  } finally {
-    // Luôn xóa token khỏi localStorage kể cả khi API lỗi
-    localStorage.removeItem("auth_token");
+    // Không cần xử lý gì thêm vì cookie sẽ được server xóa
   }
 };
 

@@ -1,16 +1,40 @@
 import { Member, User, Loan } from "../models";
 
-// Lấy tất cả member
-const getAllMembers = async () => {
+// Lấy tất cả member với pagination
+const getAllMembers = async (options = {}) => {
   try {
+    const { page = 1, limit = 10 } = options;
+    const offset = (page - 1) * limit;
+
+    // Đếm tổng số members
+    const total = await Member.count({
+      include: [
+        {
+          model: User,
+          where: { role: "member" },
+        },
+      ],
+    });
+
+    // Lấy members với pagination
     const members = await Member.findAll({
       include: [
         {
           model: User,
         },
       ],
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      order: [["created_at", "DESC"]], // Sắp xếp theo ngày tạo mới nhất
     });
-    return { success: true, members };
+
+    return {
+      success: true,
+      members,
+      total,
+      page: parseInt(page),
+      limit: parseInt(limit),
+    };
   } catch (error) {
     return {
       success: false,

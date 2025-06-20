@@ -13,29 +13,18 @@ export const AuthProvider = ({ children }) => {
     const initAuth = async () => {
       setLoading(true);
       try {
-        // Kiểm tra token trong localStorage
-        const token = localStorage.getItem("auth_token");
-        if (!token) {
-          setCurrentUser(null);
-          setLoading(false);
-          return;
-        }
-
-        // Lấy thông tin người dùng từ token
+        // Lấy thông tin người dùng từ httpOnly cookie
         const userData = await authService.getCurrentUser();
         if (userData) {
           setCurrentUser(userData);
           setError(null);
         } else {
-          // Nếu không lấy được thông tin user, xóa token
-          localStorage.removeItem("auth_token");
           setCurrentUser(null);
         }
       } catch (error) {
         console.error("Auth initialization error:", error);
         setError(error.message);
         setCurrentUser(null);
-        localStorage.removeItem("auth_token"); // Xóa token không hợp lệ
       } finally {
         setLoading(false);
       }
@@ -137,8 +126,6 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: error.message };
     } finally {
       setLoading(false);
-      // Đảm bảo xóa token khỏi localStorage
-      localStorage.removeItem("auth_token");
     }
   };
 

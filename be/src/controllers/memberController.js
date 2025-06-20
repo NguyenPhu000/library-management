@@ -1,14 +1,39 @@
 import memberService from "../services/memberService.js";
 
-// GET /api/members
-const listMembers = async (_req, res) => {
+// GET /api/admin/members - với pagination
+const listMembers = async (req, res) => {
   try {
+    // Lấy pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    // Sync members trước khi lấy data
     await memberService.syncMembersFromUsers();
-    const result = await memberService.getAllMembers();
-    return res.json({ success: true, members: result.members });
+
+    // Lấy members với pagination
+    const result = await memberService.getAllMembers({ page, limit });
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.message,
+      });
+    }
+
+    return res.json({
+      success: true,
+      members: result.members,
+      total: result.total,
+      page: page,
+      limit: limit,
+      totalPages: Math.ceil(result.total / limit),
+    });
   } catch (error) {
     console.error("Lỗi khi lấy danh sách member:", error);
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

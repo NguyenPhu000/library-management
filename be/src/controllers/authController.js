@@ -40,9 +40,6 @@ const login = async (req, res) => {
       { expiresIn: config.expiresIn }
     );
 
-    // Lưu session (cho EJS backward compatibility)
-    req.session.user = result.user;
-
     // Lưu token vào cookie
     res.cookie("auth_token", token, {
       httpOnly: true,
