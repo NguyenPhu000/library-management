@@ -1,31 +1,42 @@
 import loanService from "../services/loanService.js";
 
-// Lấy tất cả các khoản vay
-const getAllLoans = async (req, res) => {
+// Hiển thị trang mượn sách
+const showLoanPage = async (req, res) => {
   try {
-    let loans = await loanService.getAllLoans();
-    if (req.headers.accept?.includes("application/json")) {
-      return res.json({ success: true, data: loans });
-    }
+    const loans = await loanService.getAllLoans();
     res.render("loanPage", {
-      dataTable: loans,
-      successMessage: req.query.successMessage || null,
-      errorMessage: req.query.errorMessage || null,
+      loans: loans,
+      successMessage: req.query.successMessage,
+      errorMessage: req.query.errorMessage,
     });
   } catch (error) {
-    res.status(500).json({
-      error: "Không thể lấy danh sách mượn sách",
-      error: error.message,
-    });
+    res.status(500).render("error", { message: error.message });
   }
 };
 
-// Mượn sách
+// API lấy tất cả lượt mượn sách
+const getAllLoans = async (req, res) => {
+  try {
+    const loans = await loanService.getAllLoans();
+    res.json(loans);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// API mượn sách
 const borrowBook = async (req, res) => {
   try {
-    const member_id = req.params.memberId;
-    const book_id = req.params.bookId;
-    let result = await loanService.borrowBook(member_id, book_id);
+    const { memberId, bookId } = req.params;
+
+    if (!memberId || !bookId) {
+      return res.status(400).json({
+        success: false,
+        message: "Thiếu thông tin member_id hoặc book_id",
+      });
+    }
+
+    const result = await loanService.borrowBook(memberId, bookId);
 
     if (!result.success) {
       return res.status(400).json({
@@ -34,138 +45,174 @@ const borrowBook = async (req, res) => {
       });
     }
 
-    return res.status(200).json({
+    return res.json({
       success: true,
-      message: "Mượn sách thành công!",
+      message: "Mượn sách thành công",
+      loan: result.loan,
     });
   } catch (error) {
-    console.error("Lỗi khi mượn sách:", error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: "Đã xảy ra lỗi khi mượn sách. Vui lòng thử lại sau.",
+      message: "Có lỗi trong quá trình mượn sách: " + error.message,
     });
   }
 };
 
-// Trả sách
+// API trả sách
 const returnBook = async (req, res) => {
   try {
-    let result = await loanService.returnBook(req.body.loan_id);
+    const { loan_id } = req.body;
 
-    if (!result.success) {
-      return res.redirect(
-        `/api/loans?errorMessage=${encodeURIComponent(result.message)}`
-      );
+    if (!loan_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Thiếu thông tin loan_id",
+      });
     }
 
-    res.redirect("/api/loans?successMessage=Trả sách thành công!");
+    const result = await loanService.returnBook(loan_id);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.message,
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Trả sách thành công",
+      loan: result.loan,
+    });
   } catch (error) {
-    res.redirect(
-      `/api/loans?errorMessage=Lỗi khi trả sách: ${encodeURIComponent(
-        error.message
-      )}`
-    );
+    res.status(500).json({
+      success: false,
+      message: "Có lỗi trong quá trình trả sách: " + error.message,
+    });
   }
 };
 
-//  Lấy danh sách loan chưa trả
+// API lấy sách đang mượn
 const getCurrentLoans = async (req, res) => {
   try {
-    const { memberId } = req.params;
+    const memberId = req.params.memberId;
 
     if (!memberId) {
-      return res.status(400).json({ message: "Thiếu memberId!" });
+      return res.status(400).json({
+        success: false,
+        message: "Thiếu thông tin member_id",
+      });
     }
 
-    let result = await loanService.getLoansByMemberId(memberId);
+    const loans = await loanService.getCurrentLoansByMemberId(memberId);
 
-    if (!result.success) {
-      return res.status(404).json({ message: result.message });
-    }
-
-    res.status(200).json(result.loans);
+    return res.json(loans);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Lỗi khi lấy danh sách loan!", error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Có lỗi trong quá trình lấy sách đang mượn: " + error.message,
+    });
   }
 };
 
-//  Yêu cầu gia hạn sách
-const requestRenewLoan = async (req, res) => {
-  try {
-    let result = await loanService.requestRenewLoan(req.body.loan_id);
-
-    if (!result.success) {
-      return res.redirect(
-        `/api/loans?errorMessage=${encodeURIComponent(result.message)}`
-      );
-    }
-
-    res.redirect(
-      `/api/loans?successMessage=${encodeURIComponent(result.message)}`
-    );
-  } catch (error) {
-    res.redirect(
-      `/api/loans?errorMessage=Lỗi khi yêu cầu gia hạn: ${encodeURIComponent(
-        error.message
-      )}`
-    );
-  }
-};
-
-// Phê duyệt yêu cầu gia hạn
-const approveRenewLoan = async (req, res) => {
-  try {
-    const { loan_id, action } = req.body;
-    let result = await loanService.approveRenewLoan(
-      loan_id,
-      action === "approve"
-    );
-
-    if (!result.success) {
-      return res.redirect(
-        `/api/loans?errorMessage=${encodeURIComponent(result.message)}`
-      );
-    }
-
-    res.redirect(
-      `/api/loans?successMessage=${encodeURIComponent(result.message)}`
-    );
-  } catch (error) {
-    res.redirect(
-      `/api/loans?errorMessage=Lỗi khi xử lý yêu cầu gia hạn: ${encodeURIComponent(
-        error.message
-      )}`
-    );
-  }
-};
-
-// Lấy lịch sử mượn sách
+// API lấy lịch sử mượn sách
 const getLoanHistory = async (req, res) => {
   try {
-    const { memberId } = req.params;
-    if (!memberId) return res.status(400).json({ message: "Thiếu memberId!" });
+    const memberId = req.params.memberId;
 
-    let result = await loanService.getLoanHistory(memberId);
+    if (!memberId) {
+      return res.status(400).json({
+        success: false,
+        message: "Thiếu thông tin member_id",
+      });
+    }
 
-    if (!result.success)
-      return res.status(404).json({ message: result.message });
+    const history = await loanService.getLoanHistoryByMemberId(memberId);
 
-    res.status(200).json(result.data);
+    return res.json(history);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Lỗi khi lấy lịch sử mượn!", error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Có lỗi trong quá trình lấy lịch sử mượn sách: " + error.message,
+    });
+  }
+};
+
+// API yêu cầu gia hạn
+const requestRenewLoan = async (req, res) => {
+  try {
+    const { loan_id } = req.body;
+
+    if (!loan_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Thiếu thông tin loan_id",
+      });
+    }
+
+    const result = await loanService.requestRenewLoan(loan_id);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.message,
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Yêu cầu gia hạn thành công",
+      loan: result.loan,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Có lỗi trong quá trình yêu cầu gia hạn: " + error.message,
+    });
+  }
+};
+
+// API duyệt yêu cầu gia hạn
+const approveRenewLoan = async (req, res) => {
+  try {
+    const { loan_id } = req.body;
+
+    if (!loan_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Thiếu thông tin loan_id",
+      });
+    }
+
+    const result = await loanService.approveRenewLoan(loan_id);
+
+    if (!result || !result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result?.message || "Không thể duyệt yêu cầu gia hạn",
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Duyệt gia hạn thành công",
+      loan: result.loan,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Có lỗi trong quá trình duyệt gia hạn: " + error.message,
+    });
   }
 };
 
 export default {
+  showLoanPage,
   getAllLoans,
   borrowBook,
   returnBook,
   getCurrentLoans,
+  getLoanHistory,
   requestRenewLoan,
   approveRenewLoan,
-  getLoanHistory,
 };

@@ -4,6 +4,7 @@ import bookService from "../../services/bookservice";
 import { getBookIdFromSlug } from "../../utils/slugify";
 import { motion } from "framer-motion";
 import { useLoan } from "../../contexts/LoanContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSpinner,
@@ -21,6 +22,7 @@ import {
   faUserPen,
   faInfoCircle,
   faExclamationTriangle,
+  faSignInAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
 const BookDetail = () => {
@@ -30,6 +32,7 @@ const BookDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { borrowBook, borrowLoading, borrowError } = useLoan();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -148,10 +151,13 @@ const BookDetail = () => {
     if (!book || borrowLoading) return;
     try {
       await borrowBook(book_id);
-      console.log("Mượn sách thành công cho sách ID:", book_id);
     } catch (error) {
       console.error("Lỗi khi thực hiện mượn sách:", error);
     }
+  };
+
+  const handleLoginToBorrow = () => {
+    window.location.href = "/login";
   };
 
   const DetailItem = ({
@@ -366,37 +372,54 @@ const BookDetail = () => {
                 <motion.div variants={itemVariants} className="mt-auto pt-4">
                   {" "}
                   {/* Adjusted padding */}
-                  <motion.button
-                    className={`w-full md:w-auto flex items-center justify-center bg-lightGreen hover:bg-opacity-80 text-[#1E293B] font-bold py-3 px-8 rounded-lg shadow-md hover:shadow-lg text-lg transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed`}
-                    whileHover={{ scale: 1.03, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleBorrowClick}
-                    disabled={borrowLoading || book.status !== "available"}
-                  >
-                    {borrowLoading ? (
-                      <>
-                        <FontAwesomeIcon
-                          icon={faSpinner}
-                          spin
-                          className="mr-2"
-                        />
-                        Đang xử lý...
-                      </>
-                    ) : book.status === "available" ? (
-                      <>
-                        <FontAwesomeIcon icon={faBookOpen} className="mr-2" />
-                        Mượn Sách
-                      </>
+                  <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4">
+                    {currentUser ? (
+                      <button
+                        onClick={handleBorrowClick}
+                        disabled={borrowLoading}
+                        className={`${
+                          book.available_copies > 0
+                            ? "bg-lightGreen hover:bg-green-700"
+                            : "bg-gray-500 cursor-not-allowed"
+                        } text-white py-3 px-6 rounded-md shadow-lg transition-all duration-300 text-base font-medium flex items-center justify-center space-x-2 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-20 w-full sm:w-auto`}
+                      >
+                        {borrowLoading ? (
+                          <>
+                            <FontAwesomeIcon
+                              icon={faSpinner}
+                              spin
+                              className="mr-2"
+                            />
+                            <span>Đang xử lý...</span>
+                          </>
+                        ) : book.available_copies > 0 ? (
+                          <>
+                            <FontAwesomeIcon
+                              icon={faBookOpen}
+                              className="mr-2"
+                            />
+                            <span>Mượn sách</span>
+                          </>
+                        ) : (
+                          <>
+                            <FontAwesomeIcon
+                              icon={faCircleXmark}
+                              className="mr-2"
+                            />
+                            <span>Hết sách</span>
+                          </>
+                        )}
+                      </button>
                     ) : (
-                      <>
-                        <FontAwesomeIcon
-                          icon={faCircleXmark}
-                          className="mr-2"
-                        />
-                        Đã Hết Sách
-                      </>
+                      <button
+                        onClick={handleLoginToBorrow}
+                        className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md shadow-lg transition-all duration-300 text-base font-medium flex items-center justify-center space-x-2 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-20 w-full sm:w-auto"
+                      >
+                        <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
+                        <span>Đăng nhập để mượn</span>
+                      </button>
                     )}
-                  </motion.button>
+                  </div>
                   {borrowError && (
                     <motion.p
                       initial={{ opacity: 0, y: 10 }}

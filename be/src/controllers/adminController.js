@@ -1,54 +1,116 @@
 import adminService from "../services/adminService.js";
 
-//  Hiển thị danh sách admin
-const getDisplayAdmin = async (req, res) => {
+// Lấy thống kê dành cho trang dashboard admin
+const getAdminStats = async (req, res) => {
   try {
-    await adminService.syncAdminFromUsers();
-    let data = await adminService.getAllAdmins();
-    res.render("adminPage", {
-      dataTable: data,
-      successMessage: req.query.successMessage || null,
-      errorMessage: req.query.errorMessage || null,
+    // Lấy tất cả thông tin thống kê cần thiết
+    const adminCount = await adminService.getAdminCount();
+    const recentAdmins = await adminService.getRecentAdmins();
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        adminCount,
+        recentAdmins,
+      },
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
+      success: false,
+      message: "Có lỗi xảy ra khi lấy thống kê admin: " + error.message,
+    });
+  }
+};
+
+// Lấy danh sách admin
+const getAllAdmins = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const data = await adminService.getAllAdminsWithPagination(page, limit);
+
+    return res.status(200).json({
+      success: true,
+      data: data.admins,
+      totalPages: data.totalPages,
+      currentPage: page,
+      totalItems: data.totalItems,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
       message: "Có lỗi xảy ra khi lấy danh sách admin: " + error.message,
     });
   }
 };
 
-//  Cập nhật admin
+// Lấy thông tin chi tiết một admin
+const getAdminById = async (req, res) => {
+  try {
+    const adminId = req.params.id;
+    const admin = await adminService.getAdminById(adminId);
+
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy admin",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: admin,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Có lỗi xảy ra khi lấy thông tin admin: " + error.message,
+    });
+  }
+};
+
+// Cập nhật admin
 const updateAdmin = async (req, res) => {
   try {
-    await adminService.updateAdmin(req.body);
-    let updatedData = await adminService.getAllAdmins();
+    const updatedAdmin = await adminService.updateAdmin(req.body);
 
-    res.redirect("/api/admin?successMessage=Cập nhật admin thành công!");
+    return res.status(200).json({
+      success: true,
+      message: "Cập nhật admin thành công",
+      data: updatedAdmin,
+    });
   } catch (error) {
-    res.redirect(
-      `/api/admin?errorMessage=Có lỗi xảy ra khi cập nhật admin: ${encodeURIComponent(
-        error.message
-      )}`
-    );
+    return res.status(500).json({
+      success: false,
+      message: "Có lỗi xảy ra khi cập nhật admin: " + error.message,
+    });
   }
 };
 
 // Xóa admin
 const deleteAdmin = async (req, res) => {
   try {
-    if (!req.query.id) {
-      return res.status(400).json({ message: "Thiếu ID admin" });
-    }
-    await adminService.deleteAdminById(req.query.id);
-    const data = await adminService.getAllAdmins();
+    const adminId = req.params.id || req.body.id;
 
-    res.redirect("/api/admin?successMessage=Xóa admin thành công!");
+    if (!adminId) {
+      return res.status(400).json({
+        success: false,
+        message: "Thiếu ID admin",
+      });
+    }
+
+    await adminService.deleteAdminById(adminId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Xóa admin thành công",
+    });
   } catch (error) {
-    res.redirect(
-      `/api/admin?errorMessage=Có lỗi xảy ra khi xóa admin: ${encodeURIComponent(
-        error.message
-      )}`
-    );
+    return res.status(500).json({
+      success: false,
+      message: "Có lỗi xảy ra khi xóa admin: " + error.message,
+    });
   }
 };
 
@@ -58,21 +120,29 @@ const syncAdmin = async (req, res) => {
     const syncResult = await adminService.syncAdminFromUsers();
 
     if (!syncResult.success) {
-      return res.status(400).json({ message: syncResult.message });
+      return res.status(400).json({
+        success: false,
+        message: syncResult.message,
+      });
     }
 
-    res.redirect("/api/admin?successMessage=Đồng bộ admin thành công!");
+    return res.status(200).json({
+      success: true,
+      message: "Đồng bộ admin thành công",
+      data: syncResult.data,
+    });
   } catch (error) {
-    res.redirect(
-      `/api/admin?errorMessage=Có lỗi xảy ra khi đồng bộ admin: ${encodeURIComponent(
-        error.message
-      )}`
-    );
+    return res.status(500).json({
+      success: false,
+      message: "Có lỗi xảy ra khi đồng bộ admin: " + error.message,
+    });
   }
 };
 
 export default {
-  getDisplayAdmin,
+  getAdminStats,
+  getAllAdmins,
+  getAdminById,
   updateAdmin,
   deleteAdmin,
   syncAdmin,

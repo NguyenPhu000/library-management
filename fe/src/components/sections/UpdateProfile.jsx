@@ -62,20 +62,20 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
       isOpen={isOpen}
       onRequestClose={onClose}
       contentLabel="Cập nhật thông tin"
-      className="bg-gray-900 p-12 rounded-lg w-full max-w-2xl"
+      className="bg-gray-900 p-6 rounded-lg w-full max-w-xl mx-auto my-8"
       overlayClassName="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
       ariaHideApp={false}
     >
-      <h2 className="text-lightGreen text-3xl mb-8 text-center">
+      <h2 className="text-lightGreen text-xl mb-4 text-center">
         Cập nhật thông tin
       </h2>
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-2 gap-x-8 gap-y-6"
+        className="grid grid-cols-2 gap-x-4 gap-y-3"
       >
         <div>
           <label
-            className="block text-lightGreen text-sm font-bold mb-2"
+            className="block text-lightGreen text-xs font-medium mb-1"
             htmlFor="username"
           >
             Tên đăng nhập:
@@ -87,12 +87,12 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
             value={formData.username}
             onChange={handleInputChange}
             placeholder={userData?.username ? "" : "Nhập tên đăng nhập"}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen"
+            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
           />
         </div>
         <div>
           <label
-            className="block text-lightGreen text-sm font-bold mb-2"
+            className="block text-lightGreen text-xs font-medium mb-1"
             htmlFor="password"
           >
             Mật khẩu mới:
@@ -104,13 +104,13 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
             value={formData.password}
             onChange={handleInputChange}
             placeholder="Để trống nếu không đổi"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen"
+            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
             autoComplete="new-password"
           />
         </div>
         <div>
           <label
-            className="block text-lightGreen text-sm font-bold mb-2"
+            className="block text-lightGreen text-xs font-medium mb-1"
             htmlFor="first_name"
           >
             Họ:
@@ -122,12 +122,12 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
             value={formData.first_name}
             onChange={handleInputChange}
             placeholder={userData?.first_name ? "" : "Nhập họ"}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen"
+            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
           />
         </div>
         <div>
           <label
-            className="block text-lightGreen text-sm font-bold mb-2"
+            className="block text-lightGreen text-xs font-medium mb-1"
             htmlFor="last_name"
           >
             Tên:
@@ -139,12 +139,12 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
             value={formData.last_name}
             onChange={handleInputChange}
             placeholder={userData?.last_name ? "" : "Nhập tên"}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen"
+            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
           />
         </div>
         <div>
           <label
-            className="block text-lightGreen text-sm font-bold mb-2"
+            className="block text-lightGreen text-xs font-medium mb-1"
             htmlFor="gender"
           >
             Giới tính:
@@ -154,7 +154,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
             name="gender"
             value={formData.gender}
             onChange={handleInputChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen"
+            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
           >
             <option value="0">Nữ</option>
             <option value="1">Nam</option>
@@ -162,7 +162,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
         </div>
         <div>
           <label
-            className="block text-lightGreen text-sm font-bold mb-2"
+            className="block text-lightGreen text-xs font-medium mb-1"
             htmlFor="email"
           >
             Email:
@@ -174,12 +174,12 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
             value={formData.email}
             onChange={handleInputChange}
             placeholder={userData?.email ? "" : "Nhập email"}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen"
+            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
           />
         </div>
         <div className="col-span-2">
           <label
-            className="block text-lightGreen text-sm font-bold mb-2"
+            className="block text-lightGreen text-xs font-medium mb-1"
             htmlFor="phone"
           >
             Số điện thoại:
@@ -191,12 +191,12 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
             value={formData.phone}
             onChange={handleInputChange}
             placeholder={userData?.phone ? "" : "Nhập số điện thoại"}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen"
+            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
           />
         </div>
         <div className="col-span-2">
           <label
-            className="block text-lightGreen text-sm font-bold mb-2"
+            className="block text-lightGreen text-xs font-medium mb-1"
             htmlFor="address"
           >
             Địa chỉ:
@@ -208,20 +208,20 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
             value={formData.address}
             onChange={handleInputChange}
             placeholder={userData?.address ? "" : "Nhập địa chỉ"}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen"
+            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
           />
         </div>
-        <div className="col-span-2 flex justify-center mt-6">
+        <div className="col-span-2 flex justify-center mt-4">
           <button
             type="submit"
-            className="bg-lightGreen text-gray-900 font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline text-lg hover:bg-opacity-90 transition duration-200"
+            className="bg-lightGreen text-gray-900 font-medium py-1.5 px-4 rounded focus:outline-none focus:shadow-outline text-sm hover:bg-opacity-90 transition duration-200"
           >
             Cập nhật
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="ml-4 bg-gray-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline text-lg hover:bg-gray-500 transition duration-200"
+            className="ml-4 bg-gray-600 text-white font-medium py-1.5 px-4 rounded focus:outline-none focus:shadow-outline text-sm hover:bg-gray-500 transition duration-200"
           >
             Hủy
           </button>
@@ -246,14 +246,11 @@ const UpdateProfileButton = () => {
     <>
       <button
         onClick={openModal}
-        className="bg-lightGreen text-gray-900 font-bold py-2 px-4 rounded hover:bg-opacity-90 focus:outline-none focus:shadow-outline transition duration-200"
+        className="bg-lightGreen text-gray-900 font-medium py-1.5 px-3 rounded hover:bg-opacity-90 focus:outline-none focus:shadow-outline transition duration-200 text-sm"
       >
-        Cập nhật thông tin thành viên
+        Cập nhật thông tin
       </button>
-
-      {modalIsOpen && (
-        <UpdateProfileModal isOpen={modalIsOpen} onClose={closeModal} />
-      )}
+      <UpdateProfileModal isOpen={modalIsOpen} onClose={closeModal} />
     </>
   );
 };

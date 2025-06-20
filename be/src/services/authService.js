@@ -10,6 +10,7 @@ const login = async (username, password) => {
         username,
         is_active: true,
       },
+      attributes: { exclude: ["password"] }, // Loại bỏ password khỏi kết quả trả về
     });
 
     if (!user) {
@@ -19,7 +20,12 @@ const login = async (username, password) => {
       };
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Lấy lại user có password để kiểm tra
+    const userWithPassword = await User.findOne({
+      where: { username, is_active: true },
+    });
+
+    const isMatch = await bcrypt.compare(password, userWithPassword.password);
     if (!isMatch) {
       return {
         success: false,
@@ -27,7 +33,17 @@ const login = async (username, password) => {
       };
     }
 
-    return { success: true, user };
+    // Tạo đối tượng user trả về không chứa password
+    const userObj = {
+      id: user.user_id,
+      username: user.username,
+      email: user.email,
+      fullName: user.full_name,
+      role: user.role || "member",
+      isActive: user.is_active,
+    };
+
+    return { success: true, user: userObj };
   } catch (error) {
     console.error("Lỗi đăng nhập:", error);
     return { success: false, message: "Lỗi hệ thống!" };
@@ -37,9 +53,13 @@ const login = async (username, password) => {
 // Hàm đăng xuất
 const logout = async (req) => {
   return new Promise((resolve) => {
-    req.session.destroy(() => {
+    if (req.session) {
+      req.session.destroy(() => {
+        resolve({ success: true, message: "Đăng xuất thành công!" });
+      });
+    } else {
       resolve({ success: true, message: "Đăng xuất thành công!" });
-    });
+    }
   });
 };
 
@@ -53,16 +73,56 @@ const register = async (data) => {
       return { success: false, message: "Tên đăng nhập đã tồn tại!" };
     }
 
-    await userService.createNewUser(data);
+    const newUser = await userService.createNewUser(data);
 
-    return { success: true, message: "Đăng ký thành công!" };
+    // Trả về user mới tạo nhưng không có password
+    const userObj = {
+      id: newUser.user_id,
+      username: newUser.username,
+      email: newUser.email,
+      fullName: newUser.full_name,
+      role: newUser.role || "member",
+      isActive: newUser.is_active,
+    };
+
+    return { success: true, message: "Đăng ký thành công!", user: userObj };
   } catch (error) {
     console.error("Lỗi đăng ký:", error);
     return { success: false, message: "Lỗi hệ thống!" };
   }
 };
 
-// Hàm lấy thông tin người dùng hiện tại
+// Hàm lấy thông tin người dùng theo ID (cho JWT)
+const getUserById = async (userId) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        user_id: userId,
+        is_active: true,
+      },
+      attributes: { exclude: ["password"] }, // Loại bỏ password
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    // Trả về đối tượng user với tên trường chuẩn hóa
+    return {
+      id: user.user_id,
+      username: user.username,
+      email: user.email,
+      fullName: user.full_name,
+      role: user.role || "member",
+      isActive: user.is_active,
+    };
+  } catch (error) {
+    console.error("Lỗi lấy thông tin user:", error);
+    return null;
+  }
+};
+
+// Hàm lấy thông tin người dùng hiện tại từ session (cho backward compatibility)
 const getCurrentUser = async (req) => {
   if (!req.session?.user) {
     return { success: false, message: "Chưa đăng nhập" };
@@ -73,6 +133,7 @@ const getCurrentUser = async (req) => {
       user_id: req.session.user.user_id,
       is_active: true,
     },
+    attributes: { exclude: ["password"] },
   });
 
   if (!user) {
@@ -85,4 +146,4 @@ const getCurrentUser = async (req) => {
   return { success: true, user: req.session.user };
 };
 
-export default { login, logout, getCurrentUser, register };
+export default { login, logout, getCurrentUser, register, getUserById };

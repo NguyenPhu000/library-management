@@ -17,6 +17,7 @@
           <th>Sách</th>
           <th>Ngày mượn</th>
           <th>Hạn trả</th>
+          <th>Ngày trả</th>
           <th>Phí phạt</th>
           <th>Trạng thái</th>
           <th>Gia hạn</th>
@@ -25,6 +26,7 @@
         </tr>
       </thead>
       <tbody>
+        <!-- mã sắp xếp dataTable theo trạng thái gia hạn, ưu tiên các khoản vay đang chờ gia hạn, sau đó là các khoản vay quá hạn chưa trả, và cuối cùng là các khoản vay đã trả -->
         <% dataTable.sort((a, b) => { const isARenewalPending = a.renewal_status
         === "pending"; const isBRenewalPending = b.renewal_status === "pending";
         const isADueAndNotReturned = new Date(a.due_date) < new Date() &&
@@ -55,6 +57,11 @@
             <%=
             loan.due_date.toISOString().split('T')[0].split('-').reverse().join('/')
             %>
+          </td>
+          <td>
+            <%= loan.returned ?
+            loan.return_date.toISOString().split('T')[0].split('-').reverse().join('/')
+            : "N/A" %>
           </td>
           <td><%= loan.fine_amount ? loan.fine_amount : "0" %></td>
           <td>

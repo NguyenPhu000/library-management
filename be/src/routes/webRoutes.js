@@ -3,26 +3,44 @@ import homeRoutes from "./homeRoutes.js";
 import userRoutes from "./userRoutes.js";
 import bookRoutes from "./bookRoutes.js";
 import categoryRoutes from "./categoryRoutes.js";
-import adminRoutes from "./adminRoutes.js";
 import memberRoutes from "./memberRoutes.js";
 import authRoutes from "./authRoutes.js";
 import loanRoutes from "./loanRoutes.js";
 import paymentRoutes from "./paymentRoutes.js";
+import adminRoutes from "./adminRoutes.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
+
 let router = express.Router();
 
+// Public routes (không yêu cầu đăng nhập)
 router.use("/api", authRoutes);
-
-router.use(authMiddleware);
-
+router.use("/api", bookRoutes); // API sách là công khai
+router.use("/api", categoryRoutes); // API danh mục là công khai
 router.use("/api", homeRoutes);
+router.use("/api", memberRoutes); // API member là công khai
+
+// API routes yêu cầu xác thực
+router.use("/api/user", authMiddleware.verifyToken);
+router.use("/api/loan", authMiddleware.verifyToken);
+router.use("/api/payment", authMiddleware.verifyToken);
+router.use("/api/me", authMiddleware.verifyToken);
+router.use("/api/admin", authMiddleware.verifyAdmin);
+
+// Các API route sau khi đã xác thực
 router.use("/api", userRoutes);
-router.use("/api", bookRoutes);
-router.use("/api", categoryRoutes);
-router.use("/api", adminRoutes);
-router.use("/api", memberRoutes);
 router.use("/api", loanRoutes);
 router.use("/api", paymentRoutes);
+router.use("/", adminRoutes);
+
+// Xử lý chuyển hướng đến frontend cho các route không phải API
+router.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api")) {
+    next();
+  } else {
+    res.redirect("/");
+  }
+});
+
 const initWebRoutes = (app) => {
   app.use("/", router);
 };

@@ -19,7 +19,7 @@ const SearchBar = () => {
     }
 
     try {
-      const criteria = "title";
+      const criteria = "all";
       await searchBooks(criteria, searchQuery);
       resetCategory();
       navigate(`/books?q=${searchQuery}`);
@@ -28,15 +28,28 @@ const SearchBar = () => {
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSearchSubmit(event);
+    }
+  };
+
   return (
     <form onSubmit={handleSearchSubmit} className="relative">
       <input
         type="text"
-        placeholder="Tìm kiếm..."
+        placeholder="Tìm kiếm sách..."
         className="bg-gray-800 border border-gray-700 text-white rounded-full px-5 py-2 pl-10 w-48 focus:w-64 focus:ring-2 focus:ring-lightGreen focus:border-lightGreen outline-none transition-all"
         value={searchQuery}
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
       />
+      <button
+        type="submit"
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-lightGreen transition-colors"
+      >
+        <FaSearch className="text-lg" />
+      </button>
       <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
     </form>
   );

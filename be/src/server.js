@@ -6,34 +6,65 @@ import connectDB from "./config/connectDB";
 import sessionConfig from "./config/sessionConfig";
 import dotenv from "dotenv";
 import cors from "cors";
+import path from "path";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
 const app = express();
-// Connect frontend
+
+// Cấu hình CORS cho phép React Frontend gọi API
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: ["http://localhost:5137", "http://localhost:3000"], // Các cổng phát triển React
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
 
 // Connect to the database
 connectDB();
 
-// Config Session
+// Sử dụng cookie-parser để xử lý JWT trong cookies
+app.use(cookieParser());
+
+// Config Session - giữ lại cho backward compatibility
 sessionConfig(app);
 
 // Configure view engine
 viewEngine(app);
 
-// Configure app
+// Configure app middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-//routes init
+
+// Serve static files
+app.use(express.static(path.join(__dirname, "public")));
+
+// Initialize routes
 initWebRoutes(app);
-// Set the port
-const port = process.env.PORT || 6549;
+
+// Middleware xử lý lỗi
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: "Đã xảy ra lỗi máy chủ",
+    error: process.env.NODE_ENV === "production" ? null : err.message,
+  });
+});
+
+// Fallback route to index.html for React Router (SPA)
+app.get("*", (req, res) => {
+  if (req.path.startsWith("/api")) {
+    return res.status(404).json({ success: false, message: "API not found" });
+  }
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// Set the port (thay đổi cổng để tránh xung đột)
+const port = process.env.PORT || 8081;
 
 // Start the server
 app.listen(port, () => {
