@@ -21,7 +21,6 @@ import BookManagePage from "./admin/pages/BookManagePage";
 import BookForm from "./admin/pages/BookForm";
 import BookView from "./admin/pages/BookView";
 import AdminPage from "./admin/pages/AdminPage";
-import AdminLogin from "./admin/pages/AdminLogin";
 import AdminRoute from "./admin/components/auth/AdminRoute";
 
 function App() {
@@ -46,8 +45,11 @@ function App() {
           </Route>
         </Route>
 
-        {/* Admin routes */}
-        <Route path="/admin/login" element={<AdminLogin />} />
+        {/* Chuyển hướng /admin/login sang /login với tham số admin=true */}
+        <Route
+          path="/admin/login"
+          element={<Navigate to="/login?admin=true" replace />}
+        />
 
         <Route
           path="/admin"
