@@ -1,26 +1,87 @@
-import api from "../../services/api";
+import { AdminAPI } from "../../services/api";
 
-class AdminCategoryService {
-  getAllCategories() {
-    return api.get("/api/admin/categories");
-  }
+const adminCategoryService = {
+  // Lấy danh sách tất cả danh mục
+  getAllCategories: async () => {
+    try {
+      const response = await AdminAPI.get("/categories");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching categories for admin:", error);
+      throw error;
+    }
+  },
 
-  getCategoryById(id) {
-    return api.get(`/api/admin/categories/${id}`);
-  }
+  // Lấy thông tin chi tiết của một danh mục
+  getCategoryById: async (categoryId) => {
+    try {
+      const response = await AdminAPI.get(`/categories/${categoryId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching category ${categoryId} for admin:`, error);
+      throw error;
+    }
+  },
 
-  createCategory(data) {
-    return api.post("/api/admin/categories", data);
-  }
+  // Tạo danh mục mới
+  createCategory: async (categoryData) => {
+    try {
+      const response = await AdminAPI.post("/categories", categoryData);
+      return response.data;
+    } catch (error) {
+      console.error("Error creating category for admin:", error);
+      throw error;
+    }
+  },
 
-  updateCategory(id, data) {
-    return api.put(`/api/admin/categories/${id}`, data);
-  }
+  // Cập nhật thông tin danh mục
+  updateCategory: async (categoryId, categoryData) => {
+    try {
+      const response = await AdminAPI.put(
+        `/categories/${categoryId}`,
+        categoryData
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating category ${categoryId} for admin:`, error);
+      throw error;
+    }
+  },
 
-  deleteCategory(id) {
-    return api.delete(`/api/admin/categories/${id}`);
-  }
-}
+  // Xóa danh mục
+  deleteCategory: async (categoryId) => {
+    try {
+      const response = await AdminAPI.delete(`/categories/${categoryId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error deleting category ${categoryId} for admin:`, error);
+      throw error;
+    }
+  },
 
-const adminCategoryService = new AdminCategoryService();
+  // Tìm kiếm danh mục
+  searchCategories: async (query) => {
+    try {
+      const response = await AdminAPI.get("/categories/search", {
+        params: { q: query },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error searching categories for admin:", error);
+      throw error;
+    }
+  },
+
+  // Lấy thống kê về danh mục
+  getCategoryStats: async () => {
+    try {
+      const response = await AdminAPI.get("/categories/stats");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching category stats for admin:", error);
+      throw error;
+    }
+  },
+};
+
 export default adminCategoryService;

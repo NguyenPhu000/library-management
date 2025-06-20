@@ -2,25 +2,25 @@ import express from "express";
 import bookController from "../controllers/bookController.js";
 import upload from "../config/multerConfig.js";
 
-let router = express.Router();
+const router = express.Router();
 
-// book routes
-router.get("/books", bookController.getDisplayBooks);
+// GET  /api/books   → danh sách sách (with optional query params)
+router.get("/books", bookController.listBooks);
 
-router.get("/books/create", bookController.getCreateBooks);
-router.post(
-  "/books/create",
-  upload.single("cover_image"),
-  bookController.postCreateBooks
-);
+// POST /api/books   → tạo sách mới (multipart)
+router.post("/books", upload.single("cover_image"), bookController.createBook);
 
+// POST /api/books/update   → cập nhật sách
 router.post(
   "/books/update",
   upload.single("cover_image"),
   bookController.updateBook
 );
 
-router.get("/books/delete", bookController.deleteBook);
+// POST /api/books/delete   → xoá sách
+router.post("/books/delete", bookController.deleteBook);
+
 router.get("/books/:bookId", bookController.getBookById);
 router.get("/books/category/:categoryId", bookController.getBookByCategory);
+
 export default router;

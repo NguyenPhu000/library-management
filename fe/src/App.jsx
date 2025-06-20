@@ -21,6 +21,8 @@ import BookManagePage from "./admin/pages/BookManagePage";
 import BookForm from "./admin/pages/BookForm";
 import BookView from "./admin/pages/BookView";
 import AdminPage from "./admin/pages/AdminPage";
+import UserManagePage from "./admin/pages/UserManagePage";
+import CategoryManagePage from "./admin/pages/CategoryManagePage";
 import AdminRoute from "./admin/components/auth/AdminRoute";
 
 function App() {
@@ -67,11 +69,8 @@ function App() {
           <Route path="members" element={<AdminPage />} />
 
           {/* Add other admin routes here */}
-          <Route
-            path="categories"
-            element={<div>Trang quản lý danh mục</div>}
-          />
-          <Route path="users" element={<div>Trang quản lý người dùng</div>} />
+          <Route path="categories" element={<CategoryManagePage />} />
+          <Route path="users" element={<UserManagePage />} />
           <Route path="loans" element={<div>Trang quản lý mượn sách</div>} />
           <Route
             path="payments"

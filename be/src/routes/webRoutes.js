@@ -19,17 +19,12 @@ router.use("/api", categoryRoutes); // API danh mục là công khai
 router.use("/api", homeRoutes);
 router.use("/api", memberRoutes); // API member là công khai
 
-// API routes yêu cầu xác thực
-router.use("/api/user", authMiddleware.verifyToken);
-router.use("/api/loan", authMiddleware.verifyToken);
-router.use("/api/payment", authMiddleware.verifyToken);
-router.use("/api/me", authMiddleware.verifyToken);
-router.use("/api/admin", authMiddleware.verifyAdmin);
-
 // Các API route sau khi đã xác thực
 router.use("/api", userRoutes);
 router.use("/api", loanRoutes);
 router.use("/api", paymentRoutes);
+
+// Admin routes với middleware xác thực được tích hợp sẵn
 router.use("/", adminRoutes);
 
 // Xử lý chuyển hướng đến frontend cho các route không phải API

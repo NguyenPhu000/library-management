@@ -26,6 +26,8 @@ const AdminAPI = axios.create({
   ...baseConfig,
 });
 
+console.log("AdminAPI configured with baseURL:", "/api/admin");
+
 // Thêm token Authorization vào header nếu có
 const addAuthToken = (config) => {
   const token = localStorage.getItem("auth_token");
@@ -52,7 +54,14 @@ const handleResponse = (response) => {
 
 // Xử lý lỗi chung
 const handleError = (error) => {
-  console.error("API Error:", error);
+  console.error("API Error details:", {
+    message: error.message,
+    status: error.response?.status,
+    statusText: error.response?.statusText,
+    url: error.config?.url,
+    method: error.config?.method,
+    data: error.response?.data,
+  });
 
   // Xử lý lỗi xác thực
   if (error?.response?.status === 401) {
@@ -67,7 +76,7 @@ const handleError = (error) => {
     // Chuyển hướng đến trang đăng nhập phù hợp
     if (currentPath.startsWith("/admin")) {
       console.log("Redirecting to admin login");
-      window.location.href = "/admin/login";
+      window.location.href = "/login?admin=true";
     } else if (!currentPath.includes("/login")) {
       console.log("Redirecting to user login");
       window.location.href = "/login";
@@ -81,6 +90,12 @@ const handleError = (error) => {
 API.interceptors.response.use(handleResponse, handleError);
 PublicAPI.interceptors.response.use(handleResponse, handleError);
 AdminAPI.interceptors.response.use(handleResponse, handleError);
+
+// Kiểm tra auth token
+console.log("Auth token:", localStorage.getItem("auth_token"));
+
+// Kiểm tra current user
+console.log("Current path:", window.location.pathname);
 
 export { API, PublicAPI, AdminAPI };
 export default API;

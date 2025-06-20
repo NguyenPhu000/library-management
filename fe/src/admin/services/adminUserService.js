@@ -28,7 +28,7 @@ const adminUserService = {
   // Tạo người dùng mới
   createUser: async (userData) => {
     try {
-      const response = await AdminAPI.post("/users", userData);
+      const response = await AdminAPI.post("/users/create", userData);
       return response.data;
     } catch (error) {
       console.error("Error creating user for admin:", error);
@@ -39,7 +39,10 @@ const adminUserService = {
   // Cập nhật thông tin người dùng
   updateUser: async (userId, userData) => {
     try {
-      const response = await AdminAPI.put(`/users/${userId}`, userData);
+      const response = await AdminAPI.post("/users/update", {
+        ...userData,
+        id: userId,
+      });
       return response.data;
     } catch (error) {
       console.error(`Error updating user ${userId} for admin:`, error);
@@ -50,7 +53,7 @@ const adminUserService = {
   // Xóa người dùng
   deleteUser: async (userId) => {
     try {
-      const response = await AdminAPI.delete(`/users/${userId}`);
+      const response = await AdminAPI.post("/users/delete", { id: userId });
       return response.data;
     } catch (error) {
       console.error(`Error deleting user ${userId} for admin:`, error);
@@ -71,31 +74,6 @@ const adminUserService = {
     }
   },
 
-  // Thay đổi vai trò của người dùng
-  changeUserRole: async (userId, role) => {
-    try {
-      const response = await AdminAPI.patch(`/users/${userId}/role`, { role });
-      return response.data;
-    } catch (error) {
-      console.error(`Error changing role for user ${userId} by admin:`, error);
-      throw error;
-    }
-  },
-
-  // Reset mật khẩu của người dùng
-  resetUserPassword: async (userId) => {
-    try {
-      const response = await AdminAPI.post(`/users/${userId}/reset-password`);
-      return response.data;
-    } catch (error) {
-      console.error(
-        `Error resetting password for user ${userId} by admin:`,
-        error
-      );
-      throw error;
-    }
-  },
-
   // Lấy thống kê về người dùng
   getUserStats: async () => {
     try {
@@ -103,6 +81,30 @@ const adminUserService = {
       return response.data;
     } catch (error) {
       console.error("Error fetching user stats for admin:", error);
+      throw error;
+    }
+  },
+
+  // Bật/tắt trạng thái hoạt động của người dùng
+  toggleUserActive: async (userId) => {
+    try {
+      const response = await AdminAPI.post("/users/toggle-active", {
+        id: userId,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Error toggling active status for user ${userId}:`, error);
+      throw error;
+    }
+  },
+
+  // Đồng bộ dữ liệu người dùng
+  syncUsers: async () => {
+    try {
+      const response = await AdminAPI.post("/users/sync");
+      return response.data;
+    } catch (error) {
+      console.error("Error syncing users:", error);
       throw error;
     }
   },

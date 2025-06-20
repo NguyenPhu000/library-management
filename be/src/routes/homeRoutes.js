@@ -2,7 +2,7 @@ import express from "express";
 import homeController from "../controllers/homeController.js";
 
 const router = express.Router();
-// home route
-router.get("/", homeController.getHomePage);
+// Dashboard data (GET /api/dashboard)
+router.get("/dashboard", homeController.getDashboard);
 
 export default router;

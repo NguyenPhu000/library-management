@@ -1,17 +1,14 @@
 import memberService from "../services/memberService.js";
 
-// Hàm này lấy danh sách thành viên và hiển thị
-const getDisplayMember = async (req, res) => {
+// GET /api/members
+const listMembers = async (_req, res) => {
   try {
     await memberService.syncMembersFromUsers();
     const result = await memberService.getAllMembers();
-    res.render("memberPage", {
-      dataTable: result.members,
-      successMessage: req.query.successMessage || null,
-      errorMessage: req.query.errorMessage || null,
-    });
+    return res.json({ success: true, members: result.members });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi server: " + error.message });
+    console.error("Lỗi khi lấy danh sách member:", error);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -37,7 +34,7 @@ const getMemberByUserId = async (req, res) => {
   }
 };
 
-// Hàm này cập nhật thông tin thành viên
+// POST /api/members/update
 const updateMember = async (req, res) => {
   try {
     const updateResult = await memberService.updateMember(req.body);
@@ -48,28 +45,24 @@ const updateMember = async (req, res) => {
         .json({ success: false, message: updateResult.message });
     }
 
-    if (req.headers.accept?.includes("application/json")) {
-      return res.json({ success: true, message: updateResult.message });
-    }
-
-    res.redirect("/api/members?successMessage=Cập nhật thành công!");
+    return res.json({ success: true, message: updateResult.message });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Lỗi server: " + error.message });
+    console.error("Lỗi khi cập nhật member:", error);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Hàm này xóa thành viên theo ID
+// POST /api/members/delete
 const deleteMember = async (req, res) => {
   try {
-    if (!req.query.id) {
+    const { id } = req.body;
+    if (!id) {
       return res
         .status(400)
         .json({ success: false, message: "Thiếu ID thành viên" });
     }
 
-    const deleteResult = await memberService.deleteMemberById(req.query.id);
+    const deleteResult = await memberService.deleteMemberById(id);
 
     if (!deleteResult.success) {
       return res
@@ -77,21 +70,15 @@ const deleteMember = async (req, res) => {
         .json({ success: false, message: deleteResult.message });
     }
 
-    const result = await memberService.getAllMembers();
-    if (req.headers.accept?.includes("application/json")) {
-      return res.json({ success: true, message: deleteResult.message });
-    }
-
-    res.redirect("/api/members?successMessage=Xóa thành công!");
+    return res.json({ success: true, message: deleteResult.message });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Lỗi server: " + error.message });
+    console.error("Lỗi khi xóa member:", error);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Hàm này đồng bộ hóa thành viên từ người dùng
-const syncMember = async (req, res) => {
+// POST /api/members/sync
+const syncMember = async (_req, res) => {
   try {
     const syncResult = await memberService.syncMembersFromUsers();
 
@@ -101,13 +88,10 @@ const syncMember = async (req, res) => {
         .json({ success: false, message: syncResult.message });
     }
 
-    res.redirect("/api/members?successMessage=Đồng bộ hóa thành công!");
+    return res.json({ success: true, message: syncResult.message });
   } catch (error) {
-    res.redirect(
-      `/api/members?errorMessage=Có lỗi xảy ra khi đồng bộ hóa thành viên: ${encodeURIComponent(
-        error.message
-      )}`
-    );
+    console.error("Lỗi khi đồng bộ member:", error);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -135,7 +119,7 @@ const getMemberIdByUserId = async (req, res) => {
 };
 
 export default {
-  getDisplayMember,
+  listMembers,
   getMemberByUserId,
   updateMember,
   deleteMember,

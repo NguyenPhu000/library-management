@@ -1,37 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaBell, FaEnvelope, FaUser, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaUser,
+  FaSignOutAlt,
+  FaSearch,
+  FaBell,
+  FaTimes,
+} from "react-icons/fa";
 import { useAuth } from "../../../contexts/AuthContext";
 
 const Header = ({ user }) => {
   const { logout } = useAuth();
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const toggleSearch = () => {
+    setShowSearch(!showSearch);
+    if (!showSearch) {
+      setSearchTerm("");
+    }
+  };
 
   return (
     <header className="bg-white shadow-sm z-10">
       <div className="px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center">
-          <h1 className="text-2xl font-bold text-gray-800">
-            Quản lý thư viện SERN
-          </h1>
-        </div>
+        <div className="flex-1"></div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
+          {/* Nút tìm kiếm và input */}
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={toggleSearch}
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              {showSearch ? (
+                <FaTimes className="text-gray-600" />
+              ) : (
+                <FaSearch className="text-gray-600" />
+              )}
+            </button>
+
+            {/* Search input - hiện kế bên khi click */}
+            {showSearch && (
+              <div className="transition-all duration-300 ease-in-out">
+                <input
+                  type="text"
+                  placeholder="Tìm kiếm..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-64 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  autoFocus
+                />
+              </div>
+            )}
+          </div>
+
           {/* Thông báo */}
           <div className="relative">
             <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
               <FaBell className="text-gray-600" />
               <span className="absolute top-0 right-0 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
                 3
-              </span>
-            </button>
-          </div>
-
-          {/* Tin nhắn */}
-          <div className="relative">
-            <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-              <FaEnvelope className="text-gray-600" />
-              <span className="absolute top-0 right-0 bg-blue-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
-                5
               </span>
             </button>
           </div>

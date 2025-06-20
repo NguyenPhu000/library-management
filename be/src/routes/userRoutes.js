@@ -1,15 +1,18 @@
 import express from "express";
 import userController from "../controllers/userController.js";
 
-let router = express.Router();
+const router = express.Router();
 
-//user route
-router.get("/users", userController.getDisplayUser);
-router.get("/users/create", userController.getCreateUser);
-router.post("/users/create", userController.postCreateUser);
+// User routes (JSON-only)
+router.get("/users", userController.listUsers);
+router.post("/users", userController.createUser);
 router.post("/users/update", userController.updateUser);
-router.get("/users/delete", userController.deleteUser);
-router.get("/users/toggle-active", userController.toggleActive);
+router.post("/users/delete", userController.deleteUser);
+router.post("/users/toggle-active", userController.toggleActive);
+router.get("/users/stats", userController.getUserStats);
+router.post("/users/sync", userController.syncUsers);
+
 router.get("/users/:userId", userController.getUserById);
 router.post("/users/update-profile/:userId", userController.updateUserProfile);
+
 export default router;
