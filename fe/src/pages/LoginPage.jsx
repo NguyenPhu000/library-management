@@ -23,6 +23,10 @@ const LoginPage = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
+  // Kiểm tra nếu đang đăng nhập từ trang admin
+  const isAdminLogin =
+    from.startsWith("/admin") || location.search === "?admin=true";
+
   const [activeTab, setActiveTab] = useState("login"); // login hoặc register
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -62,10 +66,29 @@ const LoginPage = () => {
           timer: 1500,
         });
 
-        if (result.redirectUrl) {
-          navigate(result.redirectUrl, { replace: true });
+        // Kiểm tra nếu đăng nhập từ trang admin
+        if (isAdminLogin) {
+          // Kiểm tra quyền admin
+          if (result.user && result.user.role === "admin") {
+            // Nếu là admin, chuyển đến trang admin
+            navigate("/admin", { replace: true });
+          } else {
+            // Nếu không phải admin, hiển thị thông báo lỗi
+            Swal.fire({
+              icon: "error",
+              title: "Không có quyền truy cập",
+              text: "Bạn không có quyền truy cập vào trang quản trị",
+            });
+            // Chuyển về trang chủ
+            navigate("/", { replace: true });
+          }
         } else {
-          navigate(from, { replace: true });
+          // Đăng nhập thông thường
+          if (result.redirectUrl) {
+            navigate(result.redirectUrl, { replace: true });
+          } else {
+            navigate(from, { replace: true });
+          }
         }
       } else {
         Swal.fire({
@@ -176,17 +199,20 @@ const LoginPage = () => {
               <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
               Đăng nhập
             </button>
-            <button
-              className={`px-8 py-4 text-center font-medium transition-all duration-300 ${
-                activeTab === "register"
-                  ? "bg-lightGreen text-black shadow-inner"
-                  : "text-white hover:bg-gray-800 hover:bg-opacity-40"
-              }`}
-              onClick={() => setActiveTab("register")}
-            >
-              <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
-              Đăng ký
-            </button>
+            {/* Chỉ hiển thị tab đăng ký nếu không phải đăng nhập admin */}
+            {!isAdminLogin && (
+              <button
+                className={`px-8 py-4 text-center font-medium transition-all duration-300 ${
+                  activeTab === "register"
+                    ? "bg-lightGreen text-black shadow-inner"
+                    : "text-white hover:bg-gray-800 hover:bg-opacity-40"
+                }`}
+                onClick={() => setActiveTab("register")}
+              >
+                <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
+                Đăng ký
+              </button>
+            )}
           </div>
         </div>
 
@@ -195,11 +221,13 @@ const LoginPage = () => {
             <div className="max-w-xs h-1 mx-auto bg-gradient-to-r from-transparent via-lightGreen to-transparent rounded mb-8"></div>
 
             <h2 className="text-2xl font-bold text-center text-lightGreen mb-6 flex items-center justify-center text-shadow-glow">
-              Đăng Nhập Thư Viện{" "}
+              {isAdminLogin ? "Đăng Nhập Quản Trị" : "Đăng Nhập Thư Viện"}{" "}
               <FontAwesomeIcon icon={faSignInAlt} className="ml-2" />
             </h2>
             <p className="text-white text-opacity-90 text-center mb-8">
-              Vui lòng nhập thông tin đăng nhập để vào thư viện.
+              {isAdminLogin
+                ? "Vui lòng nhập thông tin đăng nhập để vào trang quản trị."
+                : "Vui lòng nhập thông tin đăng nhập để vào thư viện."}
             </p>
 
             <form
@@ -269,13 +297,15 @@ const LoginPage = () => {
                 >
                   Quên mật khẩu?
                 </a>
-                <button
-                  type="button"
-                  className="text-lightGreen hover:text-green-300 transition-all duration-300 hover:underline"
-                  onClick={() => setActiveTab("register")}
-                >
-                  Chưa có tài khoản? Đăng ký ngay
-                </button>
+                {!isAdminLogin && (
+                  <button
+                    type="button"
+                    className="text-lightGreen hover:text-green-300 transition-all duration-300 hover:underline"
+                    onClick={() => setActiveTab("register")}
+                  >
+                    Chưa có tài khoản? Đăng ký ngay
+                  </button>
+                )}
               </div>
 
               <button
@@ -292,6 +322,18 @@ const LoginPage = () => {
                 {submitting ? "Đang xử lý..." : "Đăng Nhập"}
               </button>
             </form>
+
+            {/* Thêm nút quay về trang chủ khi đăng nhập admin */}
+            {isAdminLogin && (
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => navigate("/")}
+                  className="text-lightGreen hover:text-green-300 transition-all duration-300 hover:underline"
+                >
+                  Quay lại trang chủ thư viện
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="bg-black bg-opacity-50 backdrop-blur-lg shadow-2xl rounded-xl px-8 pt-6 pb-8 mb-4 transform transition-all duration-500 hover:scale-[1.01] border border-gray-800 border-opacity-60">

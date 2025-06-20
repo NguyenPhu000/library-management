@@ -21,14 +21,18 @@ const AdminRoute = ({ children }) => {
 
   // Kiểm tra người dùng đã đăng nhập và có quyền admin
   if (!currentUser) {
-    // Chuyển hướng đến trang đăng nhập admin với thông tin về trang đang cố gắng truy cập
-    return <Navigate to="/admin/login" state={{ from: location }} replace />;
+    // Chuyển hướng đến trang đăng nhập chung với tham số admin=true và thông tin về trang đang cố gắng truy cập
+    return (
+      <Navigate to="/login?admin=true" state={{ from: location }} replace />
+    );
   }
 
   // Kiểm tra role admin
   if (currentUser.role !== "admin") {
-    // Nếu đã đăng nhập nhưng không phải admin, chuyển về trang đăng nhập admin
-    return <Navigate to="/admin/login" state={{ from: location }} replace />;
+    // Nếu đã đăng nhập nhưng không phải admin, chuyển về trang đăng nhập chung với tham số admin=true
+    return (
+      <Navigate to="/login?admin=true" state={{ from: location }} replace />
+    );
   }
 
   // Nếu là admin, hiển thị nội dung được bảo vệ
