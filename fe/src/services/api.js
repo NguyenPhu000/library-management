@@ -8,25 +8,25 @@ const baseConfig = {
 // API instance với xác thực (dùng cho các tính năng yêu cầu đăng nhập)
 const API = axios.create({
   baseURL: "/api",
-  withCredentials: true,
+  withCredentials: true, // Quan trọng: cho phép gửi cookies
   ...baseConfig,
 });
 
 // API instance không yêu cầu xác thực (dùng cho các trang công khai)
 const PublicAPI = axios.create({
   baseURL: "/api",
-  withCredentials: false,
+  withCredentials: true, // Vẫn cần cookies cho consistency
   ...baseConfig,
 });
 
 // API instance cho trang quản trị
 const AdminAPI = axios.create({
   baseURL: "/api/admin",
-  withCredentials: true,
+  withCredentials: true, // Quan trọng: cho phép gửi cookies
   ...baseConfig,
 });
 
-console.log("AdminAPI configured with baseURL:", "/api/admin");
+console.log("API configured with httpOnly cookies");
 
 // Thêm token Authorization vào header nếu có
 const addAuthToken = (config) => {
@@ -44,10 +44,10 @@ AdminAPI.interceptors.request.use(addAuthToken);
 
 // Xử lý response thành công
 const handleResponse = (response) => {
-  // Nếu response chứa token, lưu vào localStorage
+  // Nếu response chứa token, lưu vào localStorage như backup
   if (response.data && response.data.token) {
     localStorage.setItem("auth_token", response.data.token);
-    console.log("Token saved from response");
+    console.log("Token saved to localStorage as backup");
   }
   return response;
 };
@@ -65,7 +65,7 @@ const handleError = (error) => {
 
   // Xử lý lỗi xác thực
   if (error?.response?.status === 401) {
-    console.log("Authentication error (401), clearing token");
+    console.log("Authentication error (401), clearing token and redirecting");
 
     // Xóa token không hợp lệ
     localStorage.removeItem("auth_token");
@@ -90,9 +90,6 @@ const handleError = (error) => {
 API.interceptors.response.use(handleResponse, handleError);
 PublicAPI.interceptors.response.use(handleResponse, handleError);
 AdminAPI.interceptors.response.use(handleResponse, handleError);
-
-// Kiểm tra auth token
-console.log("Auth token:", localStorage.getItem("auth_token"));
 
 // Kiểm tra current user
 console.log("Current path:", window.location.pathname);

@@ -1,18 +1,35 @@
 import express from "express";
 import categoryController from "../controllers/categoryController.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// GET  /api/category   → danh sách
+// Admin Category routes (cần xác thực admin)
+router.get(
+  "/admin/categories",
+  authMiddleware.verifyAdmin,
+  categoryController.listCategories
+);
+router.post(
+  "/admin/categories",
+  authMiddleware.verifyAdmin,
+  categoryController.createCategory
+);
+router.post(
+  "/admin/categories/update",
+  authMiddleware.verifyAdmin,
+  categoryController.updateCategory
+);
+router.post(
+  "/admin/categories/delete",
+  authMiddleware.verifyAdmin,
+  categoryController.deleteCategory
+);
+
+// Category routes công khai
 router.get("/category", categoryController.listCategories);
-
-// POST /api/category  → tạo mới
 router.post("/category", categoryController.createCategory);
-
-// POST /api/category/update  → cập nhật
 router.post("/category/update", categoryController.updateCategory);
-
-// POST /api/category/delete  → xoá
 router.post("/category/delete", categoryController.deleteCategory);
 
 export default router;

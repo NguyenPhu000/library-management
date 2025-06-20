@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import viewEngine from "./config/viewEngine";
 import initWebRoutes from "./routes/webRoutes";
 import connectDB from "./config/connectDB";
-import sessionConfig from "./config/sessionConfig";
 import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
@@ -28,9 +27,6 @@ connectDB();
 
 // Sử dụng cookie-parser để xử lý JWT trong cookies
 app.use(cookieParser());
-
-// Config Session - giữ lại cho backward compatibility
-sessionConfig(app);
 
 // Configure view engine
 viewEngine(app);

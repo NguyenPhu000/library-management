@@ -50,17 +50,9 @@ const login = async (username, password) => {
   }
 };
 
-// Hàm đăng xuất
+// Hàm đăng xuất (JWT không cần xử lý server-side, chỉ xóa cookie)
 const logout = async (req) => {
-  return new Promise((resolve) => {
-    if (req.session) {
-      req.session.destroy(() => {
-        resolve({ success: true, message: "Đăng xuất thành công!" });
-      });
-    } else {
-      resolve({ success: true, message: "Đăng xuất thành công!" });
-    }
-  });
+  return { success: true, message: "Đăng xuất thành công!" };
 };
 
 // Hàm đăng ký
@@ -122,28 +114,4 @@ const getUserById = async (userId) => {
   }
 };
 
-// Hàm lấy thông tin người dùng hiện tại từ session (cho backward compatibility)
-const getCurrentUser = async (req) => {
-  if (!req.session?.user) {
-    return { success: false, message: "Chưa đăng nhập" };
-  }
-
-  const user = await User.findOne({
-    where: {
-      user_id: req.session.user.user_id,
-      is_active: true,
-    },
-    attributes: { exclude: ["password"] },
-  });
-
-  if (!user) {
-    return {
-      success: false,
-      message: "Tài khoản không tồn tại hoặc đã bị khóa",
-    };
-  }
-
-  return { success: true, user: req.session.user };
-};
-
-export default { login, logout, getCurrentUser, register, getUserById };
+export default { login, logout, register, getUserById };

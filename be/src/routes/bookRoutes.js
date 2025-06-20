@@ -1,23 +1,42 @@
 import express from "express";
 import bookController from "../controllers/bookController.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 import upload from "../config/multerConfig.js";
 
 const router = express.Router();
 
-// GET  /api/books   → danh sách sách (with optional query params)
+// Admin Book routes (cần xác thực admin)
+router.get(
+  "/admin/books",
+  authMiddleware.verifyAdmin,
+  bookController.listBooks
+);
+router.post(
+  "/admin/books",
+  authMiddleware.verifyAdmin,
+  upload.single("cover_image"),
+  bookController.createBook
+);
+router.post(
+  "/admin/books/update",
+  authMiddleware.verifyAdmin,
+  upload.single("cover_image"),
+  bookController.updateBook
+);
+router.post(
+  "/admin/books/delete",
+  authMiddleware.verifyAdmin,
+  bookController.deleteBook
+);
+
+// Book routes công khai
 router.get("/books", bookController.listBooks);
-
-// POST /api/books   → tạo sách mới (multipart)
 router.post("/books", upload.single("cover_image"), bookController.createBook);
-
-// POST /api/books/update   → cập nhật sách
 router.post(
   "/books/update",
   upload.single("cover_image"),
   bookController.updateBook
 );
-
-// POST /api/books/delete   → xoá sách
 router.post("/books/delete", bookController.deleteBook);
 
 router.get("/books/:bookId", bookController.getBookById);
