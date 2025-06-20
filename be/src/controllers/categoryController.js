@@ -1,102 +1,68 @@
 import categoryService from "../services/categoryService.js";
 
-const getCreateCategory = (req, res) => {
-  res.render("partials/createCategory");
+// GET /api/category
+const listCategories = async (_req, res) => {
+  try {
+    const categories = await categoryService.getAllCategory();
+    return res.json({ success: true, categories });
+  } catch (error) {
+    console.error("Lỗi khi lấy danh mục:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
 };
 
+// POST /api/category (create new)
 const createCategory = async (req, res) => {
   try {
-    let newCategoryData = {
-      category_id: req.body.category_id,
-      name: req.body.name,
-      description: req.body.description,
-    };
-
-    await categoryService.createNewCategory(newCategoryData);
-    let data = await categoryService.getAllCategory();
-
-    res.redirect("/api/category?successMessage=Tạo danh mục thành công!");
+    const { category_id, name, description } = req.body;
+    await categoryService.createNewCategory({ category_id, name, description });
+    return res.json({ success: true, message: "Tạo danh mục thành công!" });
   } catch (error) {
     console.error("Lỗi khi tạo danh mục:", error);
-    res.redirect(
-      `/api/category?errorMessage=${encodeURIComponent(error.message)}`
-    );
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 
-const displayCategory = async (req, res) => {
-  try {
-    let data = await categoryService.getAllCategory();
-
-    if (req.headers.accept?.includes("application/json")) {
-      return res.status(200).json({
-        success: true,
-        categories: data,
-      });
-    }
-
-    res.render("categoryPage", {
-      dataTable: data,
-      currentPage: "category",
-      successMessage: req.query.successMessage || null,
-      errorMessage: req.query.errorMessage || null,
-    });
-  } catch (error) {
-    console.error("Lỗi khi hiển thị danh mục:", error);
-    if (req.headers.accept?.includes("application/json")) {
-      return res.status(500).json({
-        success: false,
-        message: "Lỗi khi tải danh mục",
-        categories: [],
-      });
-    }
-    res.status(500).json({ lỗi: error.message });
-  }
-};
-
+// POST /api/category/update
 const updateCategory = async (req, res) => {
   try {
-    let categoryId = req.body.category_id;
-    console.log("Cập nhật danh mục ID:", categoryId);
-
-    let categoryData = {
-      name: req.body.name,
-      description: req.body.description,
-    };
-
-    await categoryService.updateCategory(categoryId, categoryData);
-    let data = await categoryService.getAllCategory();
-
-    res.redirect("/api/category?successMessage=Cập nhật danh mục thành công!");
+    const { category_id, name, description } = req.body;
+    if (!category_id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Category ID is required" });
+    }
+    await categoryService.updateCategory(category_id, { name, description });
+    return res.json({
+      success: true,
+      message: "Cập nhật danh mục thành công!",
+    });
   } catch (error) {
     console.error("Lỗi khi cập nhật danh mục:", error);
-    res.redirect(
-      `/api/category?errorMessage=${encodeURIComponent(error.message)}`
-    );
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 
+// POST /api/category/delete
 const deleteCategory = async (req, res) => {
   try {
-    const categoryId = req.query.category;
-    await categoryService.deleteCategory(categoryId);
-    const data = await categoryService.getAllCategory();
-
-    res.redirect("/api/category?successMessage=Xóa danh mục thành công!");
+    const { category_id } = req.body;
+    if (!category_id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Category ID is required" });
+    }
+    await categoryService.deleteCategory(category_id);
+    return res.json({ success: true, message: "Xóa danh mục thành công!" });
   } catch (error) {
     console.error("Lỗi khi xóa danh mục:", error);
-    res.redirect(
-      `/api/category?errorMessage=Không thể xóa danh mục: ${encodeURIComponent(
-        error.message
-      )}`
-    );
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 
 export default {
-  getCreateCategory,
+  listCategories,
   createCategory,
-  displayCategory,
   updateCategory,
   deleteCategory,
 };

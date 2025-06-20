@@ -1,9 +1,9 @@
-import { Admin, User } from "../models";
+import db from "../models/index.js";
 
 let getAllAdmins = async () => {
   try {
-    let admins = await Admin.findAll({
-      include: [{ model: User, attributes: ["username"] }],
+    let admins = await db.Admin.findAll({
+      include: [{ model: db.User, attributes: ["username"] }],
     });
     return admins;
   } catch (error) {
@@ -13,9 +13,9 @@ let getAllAdmins = async () => {
 
 let syncAdminFromUsers = async () => {
   try {
-    let users = await User.findAll({ where: { role: "admin" } });
+    let users = await db.User.findAll({ where: { role: "admin" } });
 
-    let existingAdmins = await Admin.findAll({ attributes: ["user_id"] });
+    let existingAdmins = await db.Admin.findAll({ attributes: ["user_id"] });
     let existingUserIds = existingAdmins.map((admin) => admin.user_id);
 
     let newAdmins = users
@@ -29,7 +29,7 @@ let syncAdminFromUsers = async () => {
       }));
 
     if (newAdmins.length > 0) {
-      await Admin.bulkCreate(newAdmins);
+      await db.Admin.bulkCreate(newAdmins);
     }
 
     return {
@@ -45,10 +45,10 @@ let syncAdminFromUsers = async () => {
 };
 let updateAdmin = async (data) => {
   try {
-    let admin = await Admin.findByPk(data.admin_id);
+    let admin = await db.Admin.findByPk(data.admin_id);
     if (!admin) throw new Error("Không tìm thấy Admin");
 
-    let user = await User.findByPk(admin.user_id);
+    let user = await db.User.findByPk(admin.user_id);
     if (!user || user.role !== "admin")
       throw new Error("User này không phải Admin");
 
@@ -65,9 +65,73 @@ let updateAdmin = async (data) => {
   }
 };
 
+let getAdminById = async (admin_id) => {
+  try {
+    const admin = await db.Admin.findByPk(admin_id, {
+      include: [
+        {
+          model: db.User,
+          attributes: ["username", "email", "first_name", "last_name"],
+        },
+      ],
+    });
+    return admin;
+  } catch (error) {
+    throw new Error("Lỗi lấy thông tin admin: " + error.message);
+  }
+};
+
+let getAdminCount = async () => {
+  try {
+    return await db.Admin.count();
+  } catch (error) {
+    throw new Error("Lỗi đếm số admin: " + error.message);
+  }
+};
+
+let getRecentAdmins = async (limit = 5) => {
+  try {
+    return await db.Admin.findAll({
+      include: [
+        { model: db.User, attributes: ["username", "first_name", "last_name"] },
+      ],
+      order: [["created_at", "DESC"]],
+      limit: limit,
+    });
+  } catch (error) {
+    throw new Error("Lỗi lấy admin gần đây: " + error.message);
+  }
+};
+
+let getAllAdminsWithPagination = async (page = 1, limit = 10) => {
+  try {
+    const offset = (page - 1) * limit;
+    const { count, rows } = await db.Admin.findAndCountAll({
+      include: [
+        {
+          model: db.User,
+          attributes: ["username", "email", "first_name", "last_name"],
+        },
+      ],
+      limit: parseInt(limit),
+      offset: offset,
+      order: [["created_at", "DESC"]],
+    });
+
+    return {
+      admins: rows,
+      totalItems: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: parseInt(page),
+    };
+  } catch (error) {
+    throw new Error("Lỗi lấy danh sách admin với pagination: " + error.message);
+  }
+};
+
 let deleteAdminById = async (admin_id) => {
   try {
-    const admin = await Admin.findByPk(admin_id);
+    const admin = await db.Admin.findByPk(admin_id);
     if (!admin) throw new Error("Không tìm thấy Admin");
 
     await admin.destroy();
@@ -76,8 +140,13 @@ let deleteAdminById = async (admin_id) => {
     throw new Error("Lỗi xóa admin: " + error.message);
   }
 };
-module.exports = {
+
+export default {
   getAllAdmins,
+  getAdminById,
+  getAdminCount,
+  getRecentAdmins,
+  getAllAdminsWithPagination,
   syncAdminFromUsers,
   updateAdmin,
   deleteAdminById,

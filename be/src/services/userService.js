@@ -251,6 +251,99 @@ let updateUserProfile = async (userId, data) => {
   }
 };
 
+// Hàm lấy danh sách user với pagination (cho admin)
+let getUsersWithPagination = async (
+  page = 1,
+  limit = 10,
+  search = "",
+  status = "all"
+) => {
+  try {
+    let whereClause = {};
+
+    // Thêm điều kiện tìm kiếm
+    if (search) {
+      whereClause[Op.or] = [
+        { first_name: { [Op.like]: `%${search}%` } },
+        { last_name: { [Op.like]: `%${search}%` } },
+        { username: { [Op.like]: `%${search}%` } },
+        { email: { [Op.like]: `%${search}%` } },
+      ];
+    }
+
+    // Thêm điều kiện trạng thái
+    if (status === "active") {
+      whereClause.is_active = true;
+    } else if (status === "inactive") {
+      whereClause.is_active = false;
+    }
+
+    // Đếm tổng số users
+    const totalUsers = await db.User.count({ where: whereClause });
+
+    // Tính toán pagination
+    const offset = (page - 1) * limit;
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    // Lấy users với pagination
+    const users = await db.User.findAll({
+      where: whereClause,
+      limit: parseInt(limit),
+      offset: offset,
+      order: [["create_at", "DESC"]],
+      raw: true,
+    });
+
+    return {
+      users,
+      totalUsers,
+      totalPages,
+      currentPage: parseInt(page),
+      limit: parseInt(limit),
+    };
+  } catch (error) {
+    throw new Error(
+      "Lỗi khi lấy danh sách người dùng với pagination: " + error.message
+    );
+  }
+};
+
+// Hàm đồng bộ dữ liệu users (placeholder)
+let syncUsers = async () => {
+  try {
+    // Logic đồng bộ có thể được implement ở đây
+    // Ví dụ: refresh cache, validate data, etc.
+    const totalUsers = await db.User.count();
+    return {
+      message: "Đồng bộ dữ liệu thành công",
+      totalUsers,
+    };
+  } catch (error) {
+    throw new Error("Lỗi khi đồng bộ dữ liệu: " + error.message);
+  }
+};
+
+// Hàm lấy thống kê users (cho admin dashboard)
+let getUserStats = async () => {
+  try {
+    const totalUsers = await db.User.count();
+    const activeUsers = await db.User.count({ where: { is_active: true } });
+    const inactiveUsers = await db.User.count({ where: { is_active: false } });
+    const adminUsers = await db.User.count({ where: { role: "admin" } });
+    const memberUsers = await db.User.count({ where: { role: "member" } });
+
+    return {
+      totalUsers,
+      activeUsers,
+      inactiveUsers,
+      adminUsers,
+      memberUsers,
+    };
+  } catch (error) {
+    throw new Error("Lỗi khi lấy thống kê người dùng: " + error.message);
+  }
+};
+
 export default {
   createNewUser,
   getAllUser,
@@ -260,4 +353,7 @@ export default {
   toggleActive,
   searchUser,
   updateUserProfile,
+  getUsersWithPagination,
+  syncUsers,
+  getUserStats,
 };

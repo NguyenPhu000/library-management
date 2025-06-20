@@ -1,25 +1,23 @@
 import homeService from "../services/homeService.js";
 
-const getHomePage = async (req, res) => {
+// GET  /api/dashboard
+const getDashboard = async (req, res) => {
   try {
     const dashboardData = await homeService.getDashboardData();
     const loansByMonth = await homeService.getLoansByMonth();
     const memberStatus = await homeService.getMemberStatus();
     const activeMembers = await homeService.getActiveMembers();
 
-    res.render("homePage", {
-      dashboardData,
-      loansByMonth,
-      memberStatus,
-      activeMembers,
-      successMessage: req.query.successMessage || null,
-      errorMessage: req.query.errorMessage || null,
+    return res.json({
+      success: true,
+      data: { dashboardData, loansByMonth, memberStatus, activeMembers },
     });
   } catch (error) {
-    res.status(500).send("Có lỗi xảy ra khi tải trang chủ");
+    return res.status(500).json({
+      success: false,
+      message: "Có lỗi xảy ra khi tải dữ liệu dashboard: " + error.message,
+    });
   }
 };
 
-export default {
-  getHomePage,
-};
+export default { getDashboard };

@@ -4,6 +4,7 @@ import authMiddleware from "../middlewares/authMiddleware.js";
 import userController from "../controllers/userController.js";
 import bookController from "../controllers/bookController.js";
 import categoryController from "../controllers/categoryController.js";
+import upload from "../config/multerConfig.js";
 
 let router = express.Router();
 
@@ -15,17 +16,60 @@ router.get(
   adminController.getAdminStats
 );
 
-// Quản lý Admin
+// Quản lý User (từ admin) - đặt trước admin routes để tránh conflict
+router.get(
+  "/api/admin/users",
+  authMiddleware.verifyAdmin,
+  userController.listUsers
+);
+
+router.get(
+  "/api/admin/users/stats",
+  authMiddleware.verifyAdmin,
+  userController.getUserStats
+);
+
+router.get(
+  "/api/admin/users/:id",
+  authMiddleware.verifyAdmin,
+  userController.getUserById
+);
+
+router.post(
+  "/api/admin/users/create",
+  authMiddleware.verifyAdmin,
+  userController.createUser
+);
+
+router.post(
+  "/api/admin/users/update",
+  authMiddleware.verifyAdmin,
+  userController.updateUser
+);
+
+router.post(
+  "/api/admin/users/delete",
+  authMiddleware.verifyAdmin,
+  userController.deleteUser
+);
+
+router.post(
+  "/api/admin/users/toggle-active",
+  authMiddleware.verifyAdmin,
+  userController.toggleActive
+);
+
+router.post(
+  "/api/admin/users/sync",
+  authMiddleware.verifyAdmin,
+  userController.syncUsers
+);
+
+// Quản lý Admin - đặt sau user routes để tránh conflict
 router.get(
   "/api/admin/list",
   authMiddleware.verifyAdmin,
   adminController.getAllAdmins
-);
-
-router.get(
-  "/api/admin/:id",
-  authMiddleware.verifyAdmin,
-  adminController.getAdminById
 );
 
 router.post(
@@ -34,64 +78,47 @@ router.post(
   adminController.updateAdmin
 );
 
-router.delete(
-  "/api/admin/:id",
-  authMiddleware.verifyAdmin,
-  adminController.deleteAdmin
-);
-
 router.post(
   "/api/admin/sync",
   authMiddleware.verifyAdmin,
   adminController.syncAdmin
 );
 
-// Quản lý User (từ admin)
 router.get(
-  "/api/admin/users",
+  "/api/admin/:id",
   authMiddleware.verifyAdmin,
-  userController.getDisplayUser
-);
-
-router.post(
-  "/api/admin/users",
-  authMiddleware.verifyAdmin,
-  userController.postCreateUser
-);
-
-router.put(
-  "/api/admin/users/:id",
-  authMiddleware.verifyAdmin,
-  userController.updateUser
+  adminController.getAdminById
 );
 
 router.delete(
-  "/api/admin/users/:id",
+  "/api/admin/:id",
   authMiddleware.verifyAdmin,
-  userController.deleteUser
+  adminController.deleteAdmin
 );
 
 // Quản lý Book (từ admin)
 router.get(
   "/api/admin/books",
   authMiddleware.verifyAdmin,
-  bookController.getDisplayBooks
+  bookController.listBooks
 );
 
 router.post(
   "/api/admin/books",
   authMiddleware.verifyAdmin,
-  bookController.postCreateBooks
+  upload.single("cover_image"),
+  bookController.createBook
 );
 
-router.put(
-  "/api/admin/books/:id",
+router.post(
+  "/api/admin/books/update",
   authMiddleware.verifyAdmin,
+  upload.single("cover_image"),
   bookController.updateBook
 );
 
-router.delete(
-  "/api/admin/books/:id",
+router.post(
+  "/api/admin/books/delete",
   authMiddleware.verifyAdmin,
   bookController.deleteBook
 );
@@ -100,7 +127,7 @@ router.delete(
 router.get(
   "/api/admin/categories",
   authMiddleware.verifyAdmin,
-  categoryController.displayCategory
+  categoryController.listCategories
 );
 
 router.post(
@@ -109,14 +136,14 @@ router.post(
   categoryController.createCategory
 );
 
-router.put(
-  "/api/admin/categories/:id",
+router.post(
+  "/api/admin/categories/update",
   authMiddleware.verifyAdmin,
   categoryController.updateCategory
 );
 
-router.delete(
-  "/api/admin/categories/:id",
+router.post(
+  "/api/admin/categories/delete",
   authMiddleware.verifyAdmin,
   categoryController.deleteCategory
 );

@@ -1,87 +1,89 @@
 import bookService from "../services/bookService.js";
-import categoryService from "../services/categoryService.js";
 
-const getCreateBooks = (req, res) => {
-  res.render("partials/createBook");
-};
-
-const postCreateBooks = async (req, res) => {
+// GET /api/books
+const listBooks = async (req, res) => {
   try {
-    await bookService.createNewBooks(req);
-    let data = await bookService.getAllBooks();
-    let categories = await categoryService.getAllCategory();
-
-    if (req.headers.accept?.includes("application/json")) {
-      return res.json({ message: "Thêm sách thành công!" });
-    }
-
-    res.redirect("/api/books?successMessage=Thêm sách thành công!");
-  } catch (error) {
-    console.error("Lỗi khi tạo sách:", error);
-    res.redirect(
-      `/api/books?errorMessage=${encodeURIComponent(error.message)}`
-    );
-  }
-};
-
-const getDisplayBooks = async (req, res) => {
-  try {
-    let { criteria, query } = req.query;
-    let books =
+    const { criteria, query } = req.query;
+    const books =
       criteria && query
         ? await bookService.searchBook({ criteria, query })
         : await bookService.getAllBooks();
-    let categories = await categoryService.getAllCategory();
 
-    if (req.headers.accept?.includes("application/json")) {
-      return res.status(200).json({
-        success: true,
-        books,
-      });
-    }
-
-    res.render("bookPage", {
-      dataTable: books,
-      categories,
-      currentPage: "books",
-      criteria: criteria || "",
-      query: query || "",
-      successMessage: req.query.successMessage || null,
-      errorMessage: req.query.errorMessage || null,
-    });
+    return res.json({ success: true, books });
   } catch (error) {
-    console.error("Lỗi khi hiển thị sách:", error);
-    if (req.headers.accept?.includes("application/json")) {
-      return res.status(500).json({
-        success: false,
-        message: "Lỗi khi tải danh sách sách",
-        books: [],
-      });
-    }
-    res.status(500).json({ lỗi: "Lỗi hệ thống, vui lòng thử lại!" });
+    console.error("Lỗi khi lấy danh sách sách:", error);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
+// POST /api/books (create new)
+const createBook = async (req, res) => {
+  try {
+    await bookService.createNewBooks(req);
+    return res.json({ success: true, message: "Thêm sách thành công!" });
+  } catch (error) {
+    console.error("Lỗi khi tạo sách:", error);
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+// POST /api/books/update
 const updateBook = async (req, res) => {
   try {
-    if (!req.body.book_id) {
-      return res.status(400).json({ error: "Book ID is required!" });
-    }
+    if (!req.body.book_id)
+      return res
+        .status(400)
+        .json({ success: false, message: "Book ID is required" });
 
     await bookService.updateBook(req);
-    let data = await bookService.getAllBooks();
-    let categories = await categoryService.getAllCategory();
-
-    if (req.headers.accept?.includes("application/json")) {
-      return res.json({ message: "Cập nhật sách thành công!" });
-    }
-
-    res.redirect("/api/books?successMessage=Cập nhật sách thành công!");
+    return res.json({ success: true, message: "Cập nhật thành công!" });
   } catch (error) {
     console.error("Lỗi khi cập nhật sách:", error);
-    res.redirect(
-      `/api/books?errorMessage=${encodeURIComponent(error.message)}`
-    );
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+// POST /api/books/delete
+const deleteBook = async (req, res) => {
+  try {
+    const { book_id } = req.body;
+    if (!book_id)
+      return res
+        .status(400)
+        .json({ success: false, message: "Book ID is required" });
+
+    await bookService.deleteBook(book_id);
+    return res.json({ success: true, message: "Xóa sách thành công!" });
+  } catch (error) {
+    console.error("Lỗi khi xóa sách:", error);
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+const getBookById = async (req, res) => {
+  try {
+    let bookId = req.params.bookId;
+    let book = await bookService.getBookById(bookId);
+
+    if (!book) {
+      return res.status(404).json({
+        success: false,
+        message: "Sách không tồn tại!",
+        book: null,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      book,
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy sách!!!:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+      book: null,
+    });
   }
 };
 
@@ -120,51 +122,6 @@ const getBookByCategory = async (req, res) => {
   }
 };
 
-const getBookById = async (req, res) => {
-  try {
-    let bookId = req.params.bookId;
-    let book = await bookService.getBookById(bookId);
-
-    if (!book) {
-      return res.status(404).json({
-        success: false,
-        message: "Sách không tồn tại!",
-        book: null,
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      book,
-    });
-  } catch (error) {
-    console.error("Lỗi khi lấy sách!!!:", error);
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-      book: null,
-    });
-  }
-};
-
-const deleteBook = async (req, res) => {
-  try {
-    const bookId = req.query.book_id;
-    await bookService.deleteBook(bookId);
-    let data = await bookService.getAllBooks();
-    let categories = await categoryService.getAllCategory();
-
-    res.redirect("/api/books?successMessage=Xóa sách thành công!");
-  } catch (error) {
-    console.error("Lỗi khi xóa sách:", error);
-    res.redirect(
-      `/api/books?errorMessage=Không thể xóa sách: ${encodeURIComponent(
-        error.message
-      )}`
-    );
-  }
-};
-
 const searchBooks = async (req, res) => {
   try {
     let filters = {
@@ -188,12 +145,11 @@ const searchBooks = async (req, res) => {
 };
 
 export default {
-  getCreateBooks,
-  postCreateBooks,
-  getDisplayBooks,
-  getBookById,
+  listBooks,
+  createBook,
   updateBook,
   deleteBook,
+  getBookById,
   getBookByCategory,
   searchBooks,
 };

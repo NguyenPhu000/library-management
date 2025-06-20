@@ -1,13 +1,18 @@
 import express from "express";
 import categoryController from "../controllers/categoryController.js";
 
-let router = express.Router();
+const router = express.Router();
 
-router.get("/category", categoryController.displayCategory);
+// GET  /api/category   → danh sách
+router.get("/category", categoryController.listCategories);
 
-router.get("/category/create", categoryController.getCreateCategory);
-router.post("/category/create", categoryController.createCategory);
+// POST /api/category  → tạo mới
+router.post("/category", categoryController.createCategory);
+
+// POST /api/category/update  → cập nhật
 router.post("/category/update", categoryController.updateCategory);
-router.get("/category/delete", categoryController.deleteCategory);
+
+// POST /api/category/delete  → xoá
+router.post("/category/delete", categoryController.deleteCategory);
 
 export default router;

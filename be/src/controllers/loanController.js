@@ -1,16 +1,13 @@
 import loanService from "../services/loanService.js";
 
-// Hiển thị trang mượn sách
-const showLoanPage = async (req, res) => {
+// GET /api/loans
+const listLoans = async (_req, res) => {
   try {
     const loans = await loanService.getAllLoans();
-    res.render("loanPage", {
-      loans: loans,
-      successMessage: req.query.successMessage,
-      errorMessage: req.query.errorMessage,
-    });
+    return res.json({ success: true, loans });
   } catch (error) {
-    res.status(500).render("error", { message: error.message });
+    console.error("Lỗi khi lấy danh sách loan:", error);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -207,7 +204,7 @@ const approveRenewLoan = async (req, res) => {
 };
 
 export default {
-  showLoanPage,
+  listLoans,
   getAllLoans,
   borrowBook,
   returnBook,
