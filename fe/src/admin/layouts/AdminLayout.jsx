@@ -82,11 +82,23 @@ const AdminLayout = () => {
 
   const handleLogout = async () => {
     try {
-      await logout();
-      // Chuyển hướng về trang đăng nhập admin
-      window.location.href = "/admin/login";
+      const result = await Swal.fire({
+        title: "Đăng xuất?",
+        text: "Bạn có chắc chắn muốn đăng xuất khỏi hệ thống quản trị?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Đăng xuất",
+        cancelButtonText: "Hủy",
+        confirmButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        console.log("AdminLayout: Starting logout process...");
+        await logout();
+        console.log("AdminLayout: Logout completed");
+      }
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error("AdminLayout: Logout error:", error);
       Swal.fire({
         icon: "error",
         title: "Lỗi đăng xuất",

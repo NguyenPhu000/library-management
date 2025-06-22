@@ -5,6 +5,7 @@ import {
   FaClock,
   FaCheck,
   FaExclamationTriangle,
+  FaUserTag,
 } from "react-icons/fa";
 import {
   MemberAdminProvider,
@@ -16,14 +17,8 @@ import MemberForm from "../components/member/MemberForm";
 import MemberPagination from "../components/member/MemberPagination";
 
 const MemberManageContent = () => {
-  const {
-    allMembers,
-    totalMembers,
-    loading,
-    error,
-    fetchMembers,
-    syncMembers,
-  } = useMemberAdmin();
+  const { members, totalMembers, loading, error, fetchMembers, syncMembers } =
+    useMemberAdmin();
 
   useEffect(() => {
     fetchMembers();
@@ -33,15 +28,18 @@ const MemberManageContent = () => {
     await syncMembers();
   };
 
-  // Calculate stats
-  const activeMembers = allMembers.filter((m) => m.status === "Active").length;
-  const expiredMembers = allMembers.filter((m) => {
+  // Calculate stats - ensure members is array
+  const membersArray = Array.isArray(members) ? members : [];
+  const activeMembers = membersArray.filter(
+    (m) => m.status === "Active"
+  ).length;
+  const expiredMembers = membersArray.filter((m) => {
     if (!m.expiryDate) return false;
     const expiry = new Date(m.expiryDate);
     const today = new Date();
     return expiry < today;
   }).length;
-  const expiringSoonMembers = allMembers.filter((m) => {
+  const expiringSoonMembers = membersArray.filter((m) => {
     if (!m.expiryDate) return false;
     const expiry = new Date(m.expiryDate);
     const today = new Date();
@@ -67,7 +65,7 @@ const MemberManageContent = () => {
               <button
                 onClick={handleSyncMembers}
                 disabled={loading}
-                className="inline-flex items-center px-3 lg:px-4 py-2 bg-green-600 text-white text-xs lg:text-sm font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
+                className="inline-flex items-center px-3 lg:px-4 py-2 bg-green-600 text-white text-xs lg:text-sm font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <FaSync
                   className={`mr-1 lg:mr-2 h-3 lg:h-4 w-3 lg:w-4 ${
@@ -87,7 +85,7 @@ const MemberManageContent = () => {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="w-6 lg:w-8 h-6 lg:h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <FaUsers className="w-3 lg:w-4 xl:w-5 h-3 lg:h-4 xl:h-5 text-purple-600" />
+                  <FaUserTag className="w-3 lg:w-4 xl:w-5 h-3 lg:h-4 xl:h-5 text-purple-600" />
                 </div>
               </div>
               <div className="ml-2 lg:ml-3 xl:ml-4 min-w-0 flex-1">
@@ -188,14 +186,6 @@ const MemberManageContent = () => {
                 </h3>
                 <div className="mt-2 text-sm text-red-700">
                   <p>{error}</p>
-                  <p className="mt-2">
-                    💡 <strong>Hướng dẫn khắc phục:</strong>
-                  </p>
-                  <ul className="list-disc list-inside mt-1 space-y-1">
-                    <li>Kiểm tra kết nối mạng của bạn</li>
-                    <li>Thử làm mới trang (F5)</li>
-                    <li>Nếu vẫn lỗi, liên hệ quản trị viên hệ thống</li>
-                  </ul>
                 </div>
               </div>
             </div>

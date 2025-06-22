@@ -96,15 +96,39 @@ const register = async (username, password, email, fullName) => {
   }
 };
 
-// Hàm đăng xuất
+// Hàm đăng xuất - cải thiện để đảm bảo clear tất cả
 const logout = async () => {
   try {
-    // Gọi API logout ở server để xóa httpOnly cookie
-    await API.get("/logout");
-    console.log("Logout successful, cookie cleared");
+    console.log("Starting logout process...");
+
+    // 1. Gọi API logout ở server để xóa httpOnly cookie
+    try {
+      await API.get("/logout");
+      console.log("Server logout successful");
+    } catch (error) {
+      console.warn(
+        "Server logout failed, continuing with client cleanup:",
+        error
+      );
+    }
+
+    // 2. Xóa token backup trong localStorage (nếu có)
+    localStorage.removeItem("auth_token");
+    console.log("LocalStorage token cleared");
+
+    // 3. Clear tất cả storage khác nếu có
+    sessionStorage.clear();
+
+    console.log("Logout process completed successfully");
+    return { success: true };
   } catch (error) {
     console.error("Logout error:", error);
-    // Không cần xử lý gì thêm vì cookie sẽ được server xóa
+
+    // Dù có lỗi, vẫn clear client-side data
+    localStorage.removeItem("auth_token");
+    sessionStorage.clear();
+
+    return { success: false, message: error.message };
   }
 };
 

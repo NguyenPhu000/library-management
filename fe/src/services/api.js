@@ -5,28 +5,43 @@ const baseConfig = {
   timeout: 15000, // Timeout 15s cho tất cả các request
 };
 
+// Determine base URL based on environment
+const getBaseURL = () => {
+  // In production, use relative URLs (same domain)
+  if (process.env.NODE_ENV === "production") {
+    return "/api";
+  }
+
+  // In development, use the backend server URL
+  return "http://localhost:8081/api";
+};
+
+const baseURL = getBaseURL();
+
 // API instance với xác thực (dùng cho các tính năng yêu cầu đăng nhập)
 const API = axios.create({
-  baseURL: "/api",
+  baseURL,
   withCredentials: true, // Quan trọng: cho phép gửi cookies
   ...baseConfig,
 });
 
 // API instance không yêu cầu xác thực (dùng cho các trang công khai)
 const PublicAPI = axios.create({
-  baseURL: "/api",
+  baseURL,
   withCredentials: true, // Vẫn cần cookies cho consistency
   ...baseConfig,
 });
 
 // API instance cho trang quản trị
 const AdminAPI = axios.create({
-  baseURL: "/api/admin",
+  baseURL: `${baseURL}/admin`,
   withCredentials: true, // Quan trọng: cho phép gửi cookies
   ...baseConfig,
 });
 
 console.log("API configured with httpOnly cookies");
+console.log("Base URL:", baseURL);
+console.log("Admin API URL:", `${baseURL}/admin`);
 
 // Thêm token Authorization vào header nếu có
 const addAuthToken = (config) => {

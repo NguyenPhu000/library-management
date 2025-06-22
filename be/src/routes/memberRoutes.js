@@ -16,11 +16,6 @@ router.post(
   memberController.updateMember
 );
 router.post(
-  "/admin/members/delete",
-  authMiddleware.verifyAdmin,
-  memberController.deleteMember
-);
-router.post(
   "/admin/members/sync",
   authMiddleware.verifyAdmin,
   memberController.syncMember

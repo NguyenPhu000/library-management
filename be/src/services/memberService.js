@@ -1,26 +1,56 @@
 import { Member, User, Loan } from "../models";
+import { Op } from "sequelize";
 
-// Lấy tất cả member với pagination
+// Lấy tất cả member với pagination và search
 const getAllMembers = async (options = {}) => {
   try {
-    const { page = 1, limit = 10 } = options;
+    const { page = 1, limit = 10, search = "" } = options;
     const offset = (page - 1) * limit;
+
+    // Tạo điều kiện search
+    let whereCondition = {};
+    let userWhereCondition = { role: "member" };
+
+    if (search) {
+      // Search trong member fields
+      whereCondition = {
+        [Op.or]: [
+          { member_code: { [Op.like]: `%${search}%` } },
+          { status: { [Op.like]: `%${search}%` } },
+        ],
+      };
+
+      // Search trong user fields
+      userWhereCondition = {
+        ...userWhereCondition,
+        [Op.or]: [
+          { username: { [Op.like]: `%${search}%` } },
+          { email: { [Op.like]: `%${search}%` } },
+          { first_name: { [Op.like]: `%${search}%` } },
+          { last_name: { [Op.like]: `%${search}%` } },
+          { phone: { [Op.like]: `%${search}%` } },
+        ],
+      };
+    }
 
     // Đếm tổng số members
     const total = await Member.count({
+      where: whereCondition,
       include: [
         {
           model: User,
-          where: { role: "member" },
+          where: userWhereCondition,
         },
       ],
     });
 
     // Lấy members với pagination
     const members = await Member.findAll({
+      where: whereCondition,
       include: [
         {
           model: User,
+          where: userWhereCondition,
         },
       ],
       limit: parseInt(limit),
@@ -36,6 +66,7 @@ const getAllMembers = async (options = {}) => {
       limit: parseInt(limit),
     };
   } catch (error) {
+    console.error("Error in getAllMembers:", error);
     return {
       success: false,
       message: "Lỗi lấy danh sách Member: " + error.message,
@@ -46,6 +77,22 @@ const getAllMembers = async (options = {}) => {
 // Lấy thông tin member theo user ID
 const getMemberByUserId = async (userId) => {
   try {
+    // Đầu tiên kiểm tra user có tồn tại và có role member không
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return {
+        success: false,
+        message: "Không tìm thấy người dùng",
+      };
+    }
+
+    if (user.role !== "member") {
+      return {
+        success: false,
+        message: "Người dùng này không phải là thành viên",
+      };
+    }
+
     const member = await Member.findOne({
       where: { user_id: userId },
       include: [
@@ -165,9 +212,23 @@ const deleteMemberById = async (member_id) => {
     return { success: false, message: "Lỗi xóa Member: " + error.message };
   }
 };
+
 // Lấy member_id từ user_id
 const getMemberIdByUserId = async (user_id) => {
   try {
+    // Đầu tiên kiểm tra user có tồn tại và có role member không
+    const user = await User.findByPk(user_id);
+    if (!user) {
+      return { success: false, message: "Không tìm thấy người dùng" };
+    }
+
+    if (user.role !== "member") {
+      return {
+        success: false,
+        message: "Người dùng này không phải là thành viên",
+      };
+    }
+
     const member = await Member.findOne({ where: { user_id } });
     if (!member) {
       return { success: false, message: "Không tìm thấy Member" };

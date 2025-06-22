@@ -114,15 +114,38 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    console.log("AuthContext: Starting logout...");
     setLoading(true);
+
     try {
-      await authService.logout();
+      // 1. Call logout service để clear server-side data
+      const result = await authService.logout();
+      console.log("AuthContext: Service logout result:", result);
+
+      // 2. Reset tất cả state ngay lập tức
       setCurrentUser(null);
       setError(null);
+      console.log("AuthContext: State cleared");
+
+      // 3. Force reload page để đảm bảo clear tất cả cached data
+      setTimeout(() => {
+        console.log("AuthContext: Reloading page to ensure clean state");
+        window.location.reload();
+      }, 100);
+
       return { success: true };
     } catch (error) {
-      console.error("Logout error:", error);
-      setError(error.message);
+      console.error("AuthContext: Logout error:", error);
+
+      // Dù có lỗi vẫn reset state
+      setCurrentUser(null);
+      setError(null);
+
+      // Force reload để đảm bảo clean state
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+
       return { success: false, message: error.message };
     } finally {
       setLoading(false);

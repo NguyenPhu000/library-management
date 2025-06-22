@@ -24,6 +24,7 @@ import AdminPage from "./admin/pages/AdminPage";
 import UserManagePage from "./admin/pages/UserManagePage";
 import CategoryManagePage from "./admin/pages/CategoryManagePage";
 import AdminRoute from "./admin/components/auth/AdminRoute";
+import MemberManagePage from "./admin/pages/MemberManagePage";
 
 function App() {
   return (
@@ -66,7 +67,7 @@ function App() {
           <Route path="books/create" element={<BookForm />} />
           <Route path="books/edit/:id" element={<BookForm />} />
           <Route path="books/view/:id" element={<BookView />} />
-          <Route path="members" element={<AdminPage />} />
+          <Route path="members" element={<MemberManagePage />} />
 
           {/* Add other admin routes here */}
           <Route path="categories" element={<CategoryManagePage />} />
