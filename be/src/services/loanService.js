@@ -1,4 +1,4 @@
-import { Loan, Book, Member, sequelize } from "../models";
+import { Loan, Book, Member, Category, sequelize } from "../models";
 const fineAmount = 1000;
 
 // Hàm lấy danh sách tất cả lượt mượn
@@ -167,7 +167,28 @@ const getCurrentLoansByMemberId = async (member_id) => {
     const loans = await Loan.findAll({
       where: { member_id, returned: false }, // Chỉ lấy sách chưa trả
       include: [
-        { model: Book, attributes: ["title", "author", "cover_image"] }, // Lấy thông tin sách
+        {
+          model: Book,
+          attributes: [
+            "book_id",
+            "title",
+            "author",
+            "isbn",
+            "publisher",
+            "publication_year",
+            "cover_image",
+            "total_copies",
+            "available_copies",
+          ],
+          include: [
+            {
+              model: Category,
+              as: "categories",
+              attributes: ["category_id", "name"],
+              through: { attributes: [] }, // Không lấy attributes từ bảng trung gian
+            },
+          ],
+        }, // Lấy thông tin sách đầy đủ
         { model: Member, attributes: ["member_code"] }, // Lấy mã thành viên
       ],
       attributes: [
@@ -178,8 +199,6 @@ const getCurrentLoansByMemberId = async (member_id) => {
         "renewal_status",
       ],
       order: [["loan_date", "DESC"]], // Sắp xếp theo ngày mượn mới nhất
-      raw: true, // Trả về dữ liệu dạng plain object thay vì instance
-      nest: true, // Lồng các mối quan hệ vào object
     });
 
     return loans;
