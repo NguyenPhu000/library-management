@@ -1,17 +1,24 @@
 import memberService from "../services/memberService.js";
 
-// GET /api/admin/members - với pagination
+// GET /api/admin/members - với pagination và search
 const listMembers = async (req, res) => {
   try {
     // Lấy pagination parameters
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+
+    console.log("listMembers params:", { page, limit, search });
 
     // Sync members trước khi lấy data
     await memberService.syncMembersFromUsers();
 
-    // Lấy members với pagination
-    const result = await memberService.getAllMembers({ page, limit });
+    // Lấy members với pagination và search
+    const result = await memberService.getAllMembers({
+      page,
+      limit,
+      search,
+    });
 
     if (!result.success) {
       return res.status(400).json({
@@ -59,7 +66,7 @@ const getMemberByUserId = async (req, res) => {
   }
 };
 
-// POST /api/members/update
+// POST /api/admin/members/update
 const updateMember = async (req, res) => {
   try {
     const updateResult = await memberService.updateMember(req.body);
@@ -77,7 +84,7 @@ const updateMember = async (req, res) => {
   }
 };
 
-// POST /api/members/delete
+// POST /api/admin/members/delete
 const deleteMember = async (req, res) => {
   try {
     const { id } = req.body;
@@ -102,7 +109,7 @@ const deleteMember = async (req, res) => {
   }
 };
 
-// POST /api/members/sync
+// POST /api/admin/members/sync
 const syncMember = async (_req, res) => {
   try {
     const syncResult = await memberService.syncMembersFromUsers();

@@ -32,16 +32,33 @@ export const MemberProvider = ({ children }) => {
         return;
       }
 
+      // CHỈ FETCH MEMBER DATA KHI USER CÓ ROLE 'member'
+      if (currentUser.role !== "member") {
+        console.log(
+          "MemberContext: User is not a member, skipping member data fetch"
+        );
+        setMemberData(null);
+        setMemberId(null);
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       setError(null);
       try {
+        console.log(
+          "MemberContext: Fetching member data for user ID:",
+          currentUser.id
+        );
         const member = await getCurrentMemberInfo(currentUser.id);
         setMemberData(member);
 
         const id = await getMemberIdByUserId(currentUser.id);
         setMemberId(id);
+        console.log("MemberContext: Member data fetched successfully");
       } catch (error) {
-        // Chỉ hiển thị thông báo lỗi nếu người dùng đã đăng nhập
+        console.error("MemberContext: Error fetching member data:", error);
+        // Chỉ hiển thị thông báo lỗi nếu người dùng là member
         setError("Không thể tải thông tin thành viên");
       } finally {
         setLoading(false);

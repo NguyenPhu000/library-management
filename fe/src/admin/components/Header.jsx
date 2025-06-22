@@ -21,10 +21,14 @@ const Header = ({ onMenuButtonClick }) => {
       });
 
       if (result.isConfirmed) {
+        console.log("Header: Starting logout process...");
         await logout();
-        navigate("/login");
+        console.log(
+          "Header: Logout completed, AuthContext will handle redirect"
+        );
       }
     } catch (error) {
+      console.error("Header: Logout error:", error);
       Swal.fire({
         icon: "error",
         title: "Lỗi",

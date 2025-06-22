@@ -70,17 +70,34 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    // Xóa cookie chứa token
-    res.clearCookie("auth_token");
+    // Xóa cookie chứa token với cùng options như khi set
+    res.clearCookie("auth_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
+
+    console.log("Backend: Cookie cleared");
 
     // Xử lý logout trong service
     const result = await authService.logout(req);
+    console.log("Backend: Service logout completed");
 
     return req.headers.accept?.includes("application/json")
       ? res.json({ success: true, message: "Đăng xuất thành công" })
       : res.redirect("/api/login");
   } catch (error) {
-    console.error("Lỗi logout:", error);
+    console.error("Backend: Logout error:", error);
+
+    // Dù có lỗi vẫn clear cookie
+    res.clearCookie("auth_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
+
     return res.status(500).json({
       success: false,
       message: "Lỗi khi đăng xuất!",
