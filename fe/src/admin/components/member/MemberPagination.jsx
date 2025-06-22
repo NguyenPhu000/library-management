@@ -64,10 +64,10 @@ const MemberPagination = () => {
   }
 
   return (
-    <div className="bg-white px-3 lg:px-4 xl:px-6 py-3 lg:py-4 border-t border-gray-200">
+    <div className="bg-white dark:bg-gray-800 px-3 lg:px-4 xl:px-6 py-3 lg:py-4 border-t border-gray-200 dark:border-gray-700">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         {/* Results info */}
-        <div className="text-xs lg:text-sm text-gray-700">
+        <div className="text-xs lg:text-sm text-gray-700 dark:text-gray-300">
           Hiển thị <span className="font-medium">{startItem}</span> -{" "}
           <span className="font-medium">{endItem}</span> trong tổng số{" "}
           <span className="font-medium">{totalMembers}</span> thành viên
@@ -79,7 +79,7 @@ const MemberPagination = () => {
           <button
             onClick={goToFirstPage}
             disabled={currentPage === 1}
-            className="inline-flex items-center px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             title="Trang đầu"
           >
             <FaAngleDoubleLeft className="h-3 lg:h-4 w-3 lg:w-4" />
@@ -90,7 +90,7 @@ const MemberPagination = () => {
           <button
             onClick={goToPrevPage}
             disabled={currentPage === 1}
-            className="inline-flex items-center px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             title="Trang trước"
           >
             <FaChevronLeft className="h-3 lg:h-4 w-3 lg:w-4" />
@@ -102,14 +102,16 @@ const MemberPagination = () => {
             {getPageNumbers().map((page, index) => (
               <React.Fragment key={index}>
                 {page === "..." ? (
-                  <span className="px-3 py-2 text-sm text-gray-500">...</span>
+                  <span className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
+                    ...
+                  </span>
                 ) : (
                   <button
                     onClick={() => goToPage(page)}
                     className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                       currentPage === page
                         ? "text-white bg-purple-600 border border-purple-600 hover:bg-purple-700"
-                        : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700"
+                        : "text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:text-gray-700 dark:hover:text-gray-200"
                     }`}
                   >
                     {page}
@@ -120,7 +122,7 @@ const MemberPagination = () => {
           </div>
 
           {/* Mobile page indicator */}
-          <div className="sm:hidden px-3 py-2 text-xs font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-lg">
+          <div className="sm:hidden px-3 py-2 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
             {currentPage}/{totalPages}
           </div>
 
@@ -128,7 +130,7 @@ const MemberPagination = () => {
           <button
             onClick={goToNextPage}
             disabled={currentPage === totalPages}
-            className="inline-flex items-center px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             title="Trang sau"
           >
             <span className="hidden sm:mr-1 sm:inline">Sau</span>
@@ -139,7 +141,7 @@ const MemberPagination = () => {
           <button
             onClick={goToLastPage}
             disabled={currentPage === totalPages}
-            className="inline-flex items-center px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             title="Trang cuối"
           >
             <span className="hidden sm:mr-1 sm:inline">Cuối</span>

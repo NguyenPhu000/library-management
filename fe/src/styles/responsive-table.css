@@ -1,0 +1,167 @@
+/* Responsive Table Utilities */
+
+/* Base responsive table wrapper */
+.responsive-table-wrapper {
+  @apply overflow-hidden rounded-lg shadow-sm border border-gray-200 dark:border-gray-700;
+}
+
+/* Horizontal scroll for mobile */
+.responsive-table-scroll {
+  @apply overflow-x-auto;
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+}
+
+.responsive-table-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.responsive-table-scroll::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+.responsive-table-scroll::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+.responsive-table-scroll::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Table base styles */
+.responsive-table {
+  @apply min-w-full divide-y divide-gray-200 dark:divide-gray-700;
+  min-width: 800px; /* Ensure minimum width */
+}
+
+/* Mobile scroll hint */
+.mobile-scroll-hint {
+  @apply block md:hidden bg-blue-50 dark:bg-blue-900/20 px-4 py-2 text-sm text-blue-800 dark:text-blue-300 border-b border-blue-200 dark:border-blue-800;
+}
+
+/* Responsive column sizing */
+.responsive-table th,
+.responsive-table td {
+  @apply px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-4;
+}
+
+/* Hide columns on smaller screens */
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hide-tablet {
+    display: none;
+  }
+}
+
+/* Compact table for mobile */
+.table-compact th,
+.table-compact td {
+  @apply px-2 py-1 text-xs sm:px-3 sm:py-2 sm:text-sm;
+}
+
+/* Card-based layout for very small screens */
+@media (max-width: 640px) {
+  .table-to-cards {
+    display: none;
+  }
+
+  .cards-layout {
+    display: block;
+  }
+}
+
+@media (min-width: 641px) {
+  .table-to-cards {
+    display: table;
+  }
+
+  .cards-layout {
+    display: none;
+  }
+}
+
+/* Card component styles */
+.responsive-card {
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4;
+}
+
+.responsive-card-header {
+  @apply flex justify-between items-center mb-3 pb-2 border-b border-gray-200 dark:border-gray-600;
+}
+
+.responsive-card-content {
+  @apply space-y-2;
+}
+
+.responsive-card-field {
+  @apply flex justify-between items-center text-sm;
+}
+
+.responsive-card-label {
+  @apply font-medium text-gray-500 dark:text-gray-400;
+}
+
+.responsive-card-value {
+  @apply text-gray-900 dark:text-white;
+}
+
+.responsive-card-actions {
+  @apply flex justify-end space-x-2 mt-4 pt-3 border-t border-gray-200 dark:border-gray-600;
+}
+
+/* Responsive text sizes */
+.text-responsive {
+  @apply text-xs sm:text-sm;
+}
+
+.text-responsive-base {
+  @apply text-sm sm:text-base;
+}
+
+/* Responsive button sizing */
+.btn-responsive {
+  @apply px-2 py-1 text-xs sm:px-3 sm:py-2 sm:text-sm;
+}
+
+/* Mobile-first truncation */
+.truncate-mobile {
+  @apply max-w-[100px] sm:max-w-[150px] lg:max-w-none truncate;
+}
+
+/* Status badges responsive */
+.status-badge {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+/* Action buttons responsive */
+.action-buttons {
+  @apply flex items-center justify-center space-x-1 sm:space-x-2;
+}
+
+.action-btn {
+  @apply p-1 sm:p-2 text-sm sm:text-base rounded transition-colors;
+}
+
+/* Avatar responsive */
+.avatar-responsive {
+  @apply h-8 w-8 sm:h-10 sm:w-10;
+}
+
+/* Responsive margins and padding */
+.spacing-responsive {
+  @apply space-y-2 sm:space-y-3 lg:space-y-4;
+}
+
+.padding-responsive {
+  @apply p-2 sm:p-4 lg:p-6;
+}
+
+.margin-responsive {
+  @apply m-2 sm:m-4 lg:m-6;
+}

@@ -25,7 +25,7 @@ router.use("/api", loanRoutes);
 router.use("/api", paymentRoutes);
 
 // Admin routes với middleware xác thực được tích hợp sẵn
-router.use("/", adminRoutes);
+router.use("/api", adminRoutes); // Mount tại /api để match với frontend
 
 // Xử lý chuyển hướng đến frontend cho các route không phải API
 router.get("*", (req, res, next) => {

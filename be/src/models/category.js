@@ -11,6 +11,12 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: "book_id",
         as: "books",
       });
+
+      // 1-N với BookCategory để đếm số sách
+      Category.hasMany(models.BookCategory, {
+        foreignKey: "category_id",
+        as: "bookCategories",
+      });
     }
   }
   Category.init(

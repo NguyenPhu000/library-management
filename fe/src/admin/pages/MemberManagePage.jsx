@@ -12,7 +12,7 @@ import {
   useMemberAdmin,
 } from "../contexts/MemberAdminContext";
 import MemberSearchForm from "../components/member/MemberSearchForm";
-import MemberTable from "../components/member/MemberTable";
+import ResponsiveMemberTable from "../components/member/ResponsiveMemberTable";
 import MemberForm from "../components/member/MemberForm";
 import MemberPagination from "../components/member/MemberPagination";
 
@@ -48,173 +48,177 @@ const MemberManageContent = () => {
   }).length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="w-full px-3 sm:px-4 lg:px-6 xl:px-8 py-4 lg:py-6 xl:py-8">
-        {/* Page Header */}
-        <div className="mb-4 lg:mb-6 xl:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="min-w-0 flex-1">
-              <h1 className="text-xl sm:text-2xl xl:text-3xl font-bold text-gray-900 truncate">
-                Quản lý Thành viên
-              </h1>
-              <p className="mt-1 lg:mt-2 text-sm text-gray-600">
-                Quản lý {totalMembers} thành viên trong hệ thống thư viện
+    <div className="p-6">
+      {/* Page Header */}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-6 mb-6">
+        <div className="flex flex-col space-y-4 lg:flex-row lg:justify-between lg:items-center lg:space-y-0">
+          <div className="flex-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center">
+              <FaUserTag className="mr-2 sm:mr-3 text-pink-600 dark:text-pink-400 text-xl sm:text-2xl" />
+              <span className="hidden sm:inline">Quản lý thành viên</span>
+              <span className="sm:hidden">Thành viên</span>
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm sm:text-base">
+              Tổng số: {totalMembers} thành viên
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 sm:gap-3">
+            <button
+              onClick={handleSyncMembers}
+              disabled={loading}
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center disabled:opacity-50 text-sm sm:text-base"
+            >
+              <FaSync
+                className={`mr-1 sm:mr-2 text-sm ${
+                  loading ? "animate-spin" : ""
+                }`}
+              />
+              <span className="hidden sm:inline">Đồng bộ</span>
+              <span className="sm:hidden">Sync</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center">
+            <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+              <FaUserTag
+                className="text-purple-600 dark:text-purple-400"
+                size={20}
+              />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Tổng thành viên
+              </p>
+              <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                {totalMembers}
               </p>
             </div>
-            <div className="flex items-center space-x-2 lg:space-x-3 flex-shrink-0">
-              <button
-                onClick={handleSyncMembers}
-                disabled={loading}
-                className="inline-flex items-center px-3 lg:px-4 py-2 bg-green-600 text-white text-xs lg:text-sm font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
-              >
-                <FaSync
-                  className={`mr-1 lg:mr-2 h-3 lg:h-4 w-3 lg:w-4 ${
-                    loading ? "animate-spin" : ""
-                  }`}
-                />
-                <span className="hidden sm:inline">Đồng bộ thành viên</span>
-                <span className="sm:hidden">Đồng bộ</span>
-              </button>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center">
+            <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+              <FaCheck
+                className="text-green-600 dark:text-green-400"
+                size={20}
+              />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Đang hoạt động
+              </p>
+              <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                {activeMembers}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 xl:gap-6 mb-4 lg:mb-6 xl:mb-8">
-          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-3 lg:p-4 xl:p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-6 lg:w-8 h-6 lg:h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <FaUserTag className="w-3 lg:w-4 xl:w-5 h-3 lg:h-4 xl:h-5 text-purple-600" />
-                </div>
-              </div>
-              <div className="ml-2 lg:ml-3 xl:ml-4 min-w-0 flex-1">
-                <p className="text-xs lg:text-sm font-medium text-gray-500 truncate">
-                  Tổng thành viên
-                </p>
-                <p className="text-lg lg:text-xl xl:text-2xl font-semibold text-gray-900">
-                  {totalMembers}
-                </p>
-              </div>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center">
+            <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+              <FaClock
+                className="text-yellow-600 dark:text-yellow-400"
+                size={20}
+              />
             </div>
-          </div>
-
-          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-3 lg:p-4 xl:p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-6 lg:w-8 h-6 lg:h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                  <FaCheck className="w-3 lg:w-4 xl:w-5 h-3 lg:h-4 xl:h-5 text-green-600" />
-                </div>
-              </div>
-              <div className="ml-2 lg:ml-3 xl:ml-4 min-w-0 flex-1">
-                <p className="text-xs lg:text-sm font-medium text-gray-500 truncate">
-                  Đang hoạt động
-                </p>
-                <p className="text-lg lg:text-xl xl:text-2xl font-semibold text-gray-900">
-                  {activeMembers}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-3 lg:p-4 xl:p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-6 lg:w-8 h-6 lg:h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
-                  <FaClock className="w-3 lg:w-4 xl:w-5 h-3 lg:h-4 xl:h-5 text-yellow-600" />
-                </div>
-              </div>
-              <div className="ml-2 lg:ml-3 xl:ml-4 min-w-0 flex-1">
-                <p className="text-xs lg:text-sm font-medium text-gray-500 truncate">
-                  Sắp hết hạn
-                </p>
-                <p className="text-lg lg:text-xl xl:text-2xl font-semibold text-gray-900">
-                  {expiringSoonMembers}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-3 lg:p-4 xl:p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-6 lg:w-8 h-6 lg:h-8 bg-red-100 rounded-lg flex items-center justify-center">
-                  <FaExclamationTriangle className="w-3 lg:w-4 xl:w-5 h-3 lg:h-4 xl:h-5 text-red-600" />
-                </div>
-              </div>
-              <div className="ml-2 lg:ml-3 xl:ml-4 min-w-0 flex-1">
-                <p className="text-xs lg:text-sm font-medium text-gray-500 truncate">
-                  Đã hết hạn
-                </p>
-                <p className="text-lg lg:text-xl xl:text-2xl font-semibold text-gray-900">
-                  {expiredMembers}
-                </p>
-              </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Sắp hết hạn
+              </p>
+              <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                {expiringSoonMembers}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Search and Filters */}
-        <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 p-3 lg:p-4 xl:p-6 mb-3 lg:mb-4 xl:mb-6">
-          <MemberSearchForm />
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center">
+            <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-lg">
+              <FaExclamationTriangle
+                className="text-red-600 dark:text-red-400"
+                size={20}
+              />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Đã hết hạn
+              </p>
+              <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                {expiredMembers}
+              </p>
+            </div>
+          </div>
         </div>
+      </div>
 
-        {/* Error Display */}
-        {error && !loading && (
-          <div className="bg-red-50 border border-red-200 rounded-lg lg:rounded-xl p-3 lg:p-4 xl:p-6 mb-3 lg:mb-4 xl:mb-6">
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-red-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
+      {/* Search and Filters */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
+        <MemberSearchForm />
+      </div>
+
+      {/* Error Display */}
+      {error && !loading && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-red-600 dark:text-red-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
               </div>
-              <div className="ml-4">
-                <h3 className="text-sm font-medium text-red-800">
-                  Có lỗi xảy ra
-                </h3>
-                <div className="mt-2 text-sm text-red-700">
-                  <p>{error}</p>
-                </div>
+            </div>
+            <div className="ml-4">
+              <h3 className="text-sm font-medium text-red-800 dark:text-red-300">
+                Có lỗi xảy ra
+              </h3>
+              <div className="mt-2 text-sm text-red-700 dark:text-red-400">
+                <p>{error}</p>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content Card */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center py-16">
+            <div className="flex flex-col items-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                Đang tải dữ liệu...
+              </p>
             </div>
           </div>
         )}
 
-        {/* Main Content Card */}
-        <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          {/* Loading State */}
-          {loading && (
-            <div className="flex justify-center items-center py-16">
-              <div className="flex flex-col items-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-                <p className="mt-4 text-sm text-gray-500">
-                  Đang tải dữ liệu...
-                </p>
-              </div>
-            </div>
-          )}
+        {/* Table */}
+        {!loading && <ResponsiveMemberTable />}
 
-          {/* Table */}
-          {!loading && <MemberTable />}
-
-          {/* Pagination */}
-          {!loading && <MemberPagination />}
-        </div>
+        {/* Pagination */}
+        {!loading && <MemberPagination />}
       </div>
 
-      {/* Modals */}
+      {/* Modal */}
       <MemberForm />
     </div>
   );

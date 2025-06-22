@@ -60,9 +60,53 @@ const deleteCategory = async (req, res) => {
   }
 };
 
+// RESTful PUT /admin/categories/:id
+const updateCategoryRESTful = async (req, res) => {
+  try {
+    const categoryId = req.params.id;
+    const { name, description } = req.body;
+
+    if (!categoryId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Category ID is required" });
+    }
+
+    await categoryService.updateCategory(categoryId, { name, description });
+    return res.json({
+      success: true,
+      message: "Cập nhật danh mục thành công!",
+    });
+  } catch (error) {
+    console.error("Lỗi khi cập nhật danh mục:", error);
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+// RESTful DELETE /admin/categories/:id
+const deleteCategoryRESTful = async (req, res) => {
+  try {
+    const categoryId = req.params.id;
+
+    if (!categoryId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Category ID is required" });
+    }
+
+    await categoryService.deleteCategory(categoryId);
+    return res.json({ success: true, message: "Xóa danh mục thành công!" });
+  } catch (error) {
+    console.error("Lỗi khi xóa danh mục:", error);
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
 export default {
   listCategories,
   createCategory,
   updateCategory,
   deleteCategory,
+  updateCategoryRESTful,
+  deleteCategoryRESTful,
 };

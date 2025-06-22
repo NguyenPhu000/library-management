@@ -25,17 +25,19 @@ const MemberTable = () => {
   const getStatusBadge = (status) => {
     const statusConfig = {
       Active: {
-        className: "bg-green-100 text-green-800",
+        className:
+          "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200",
         label: "Hoạt động",
       },
       Inactive: {
-        className: "bg-red-100 text-red-800",
+        className: "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200",
         label: "Không hoạt động",
       },
     };
 
     const config = statusConfig[status] || {
-      className: "bg-gray-100 text-gray-800",
+      className:
+        "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200",
       label: status || "N/A",
     };
 
@@ -80,10 +82,12 @@ const MemberTable = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="p-8 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-500">Đang tải dữ liệu...</p>
+          <p className="mt-4 text-gray-500 dark:text-gray-400">
+            Đang tải dữ liệu...
+          </p>
         </div>
       </div>
     );
@@ -92,7 +96,7 @@ const MemberTable = () => {
   return (
     <div className="overflow-hidden">
       {/* Mobile scroll hint */}
-      <div className="lg:hidden mb-3 mx-3 px-3 py-2 bg-purple-50 border border-purple-200 rounded-lg text-purple-700 text-xs">
+      <div className="lg:hidden mb-3 mx-3 px-3 py-2 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 rounded-lg text-purple-700 dark:text-purple-300 text-xs">
         <div className="flex items-center">
           <svg
             className="w-4 h-4 mr-2 flex-shrink-0"
@@ -111,40 +115,40 @@ const MemberTable = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-        <table className="min-w-[800px] lg:min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+        <table className="min-w-[800px] lg:min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider text-center w-12 lg:w-16">
+              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider text-center w-12 lg:w-16">
                 #
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[150px] lg:min-w-[180px]">
+              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider min-w-[150px] lg:min-w-[180px]">
                 Thành viên
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[120px] lg:min-w-[140px]">
+              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider min-w-[120px] lg:min-w-[140px]">
                 Mã thành viên
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[100px] lg:min-w-[120px]">
+              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider min-w-[100px] lg:min-w-[120px]">
                 Ngày tham gia
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[120px] lg:min-w-[140px]">
+              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider min-w-[120px] lg:min-w-[140px]">
                 Ngày hết hạn
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider text-center w-20 lg:w-24">
+              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider text-center w-20 lg:w-24">
                 Mượn tối đa
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider text-center w-20 lg:w-24">
+              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider text-center w-20 lg:w-24">
                 Đang mượn
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider text-center w-24 lg:w-28">
+              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider text-center w-24 lg:w-28">
                 Trạng thái
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider text-center w-28 lg:w-32">
+              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider text-center w-28 lg:w-32">
                 Thao tác
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {members && members.length > 0 ? (
               [...members].reverse().map((member, index) => {
                 const displayIndex = members.length - index;
@@ -153,9 +157,9 @@ const MemberTable = () => {
                 return (
                   <tr
                     key={member.id}
-                    className="hover:bg-gray-50 transition-colors border-b border-gray-100"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700"
                   >
-                    <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-xs lg:text-sm text-gray-500 text-center font-medium">
+                    <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-xs lg:text-sm text-gray-500 dark:text-gray-400 text-center font-medium">
                       {displayIndex}
                     </td>
                     <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4">
@@ -170,14 +174,14 @@ const MemberTable = () => {
                           </div>
                         </div>
                         <div className="ml-2 lg:ml-3 xl:ml-4 min-w-0 flex-1">
-                          <div className="text-xs lg:text-sm font-semibold text-gray-900 truncate">
+                          <div className="text-xs lg:text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
                             {member.user?.lastName} {member.user?.firstName}
                           </div>
-                          <div className="text-xs lg:text-sm text-gray-500 truncate">
+                          <div className="text-xs lg:text-sm text-gray-500 dark:text-gray-400 truncate">
                             @{member.user?.username}
                           </div>
                           {member.user?.email && (
-                            <div className="text-xs text-gray-400 truncate">
+                            <div className="text-xs text-gray-400 dark:text-gray-500 truncate">
                               {member.user.email}
                             </div>
                           )}
@@ -186,25 +190,30 @@ const MemberTable = () => {
                     </td>
                     <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4">
                       <div className="flex items-center">
-                        <FaIdCard className="w-3 h-3 text-gray-400 mr-2 flex-shrink-0" />
-                        <span className="text-xs lg:text-sm text-gray-900 font-mono">
+                        <FaIdCard className="w-3 h-3 text-gray-400 dark:text-gray-500 mr-2 flex-shrink-0" />
+                        <span className="text-xs lg:text-sm text-gray-900 dark:text-gray-100 font-mono">
                           {member.memberCode}
                         </span>
                       </div>
                     </td>
                     <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4">
                       <div className="flex items-center">
-                        <FaCalendarAlt className="w-3 h-3 text-gray-400 mr-2 flex-shrink-0" />
-                        <span className="text-xs lg:text-sm text-gray-900">
+                        <FaCalendarAlt className="w-3 h-3 text-gray-400 dark:text-gray-500 mr-2 flex-shrink-0" />
+                        <span className="text-xs lg:text-sm text-gray-900 dark:text-gray-100">
                           {formatDate(member.joinDate)}
                         </span>
                       </div>
                     </td>
                     <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4">
                       <div className="flex items-center">
-                        <FaCalendarAlt className="w-3 h-3 text-gray-400 mr-2 flex-shrink-0" />
+                        <FaCalendarAlt className="w-3 h-3 text-gray-400 dark:text-gray-500 mr-2 flex-shrink-0" />
                         <div
-                          className={`text-xs lg:text-sm ${expiryStatus.color} font-medium`}
+                          className={`text-xs lg:text-sm ${
+                            expiryStatus.color
+                          } dark:${expiryStatus.color.replace(
+                            "text-",
+                            "text-"
+                          )} font-medium`}
                         >
                           {formatDate(member.expiryDate)}
                         </div>
@@ -212,14 +221,21 @@ const MemberTable = () => {
                       {expiryStatus.label && (
                         <div className="flex items-center text-xs mt-1">
                           <FaClock className="mr-1 h-3 w-3" />
-                          <span className={expiryStatus.color}>
+                          <span
+                            className={`${
+                              expiryStatus.color
+                            } dark:${expiryStatus.color.replace(
+                              "text-",
+                              "text-"
+                            )}`}
+                          >
                             {expiryStatus.label}
                           </span>
                         </div>
                       )}
                     </td>
                     <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-center">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
                         {member.maxLoans}
                       </span>
                     </td>
@@ -227,8 +243,8 @@ const MemberTable = () => {
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           member.currentLoans > 0
-                            ? "bg-orange-100 text-orange-800"
-                            : "bg-gray-100 text-gray-800"
+                            ? "bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200"
+                            : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                         }`}
                       >
                         {member.currentLoans}
@@ -240,7 +256,7 @@ const MemberTable = () => {
                     <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-center">
                       <button
                         onClick={() => openEditModal(member)}
-                        className="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 text-xs lg:text-sm font-medium rounded-lg border border-blue-200 hover:bg-blue-100 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
+                        className="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs lg:text-sm font-medium rounded-lg border border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
                         title="Chỉnh sửa thành viên"
                       >
                         <FaEdit className="mr-1 h-3 w-3" />
@@ -254,19 +270,19 @@ const MemberTable = () => {
               <tr>
                 <td
                   colSpan="9"
-                  className="px-6 py-16 text-center text-gray-500"
+                  className="px-6 py-16 text-center text-gray-500 dark:text-gray-400"
                 >
                   <div className="flex flex-col items-center">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                      <FaUser className="w-8 h-8 text-gray-400" />
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                      <FaUser className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                       Không có thành viên nào
                     </h3>
-                    <p className="text-gray-500 mb-4">
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">
                       Hiện tại chưa có thành viên nào trong hệ thống.
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-400 dark:text-gray-500">
                       Hãy thử đồng bộ dữ liệu hoặc kiểm tra kết nối.
                     </p>
                   </div>

@@ -11,6 +11,7 @@ import {
   FiList,
   FiPhone,
   FiLogIn,
+  FiSettings,
 } from "react-icons/fi";
 import SearchBar from "../sections/SearchBar";
 import { useAuth } from "../../contexts/AuthContext";
@@ -138,6 +139,12 @@ const Header = () => {
           {/* Updated Icon */}
           Liên Hệ
         </NavLink>
+        {/* Admin-only navigation link */}
+        {currentUser && currentUser.role === "admin" && (
+          <NavLink to="/admin" icon={FiSettings}>
+            Quản lý
+          </NavLink>
+        )}
       </nav>
 
       {/* Search & User */}
@@ -172,19 +179,35 @@ const Header = () => {
                 aria-labelledby="user-menu-button"
               >
                 <div className="py-1" role="none">
-                  <DropdownItem to="/profile" icon={FiUser}>
-                    Hồ sơ
-                  </DropdownItem>
-                  <DropdownItem to="/loans" icon={FiBook}>
-                    Sách đang mượn
-                  </DropdownItem>
-                  <DropdownItem to="/history" icon={FiClock}>
-                    Lịch sử Mượn
-                  </DropdownItem>
-                  <DropdownItem to="/payments" icon={FiCreditCard}>
-                    Thanh toán
-                  </DropdownItem>
-                  <div className="border-t border-gray-700 my-1"></div>
+                  {/* Admin-only link */}
+                  {currentUser.role === "admin" && (
+                    <>
+                      <DropdownItem to="/admin" icon={FiSettings}>
+                        Quản lý thư viện
+                      </DropdownItem>
+                      <div className="border-t border-gray-700 my-1"></div>
+                    </>
+                  )}
+
+                  {/* Member-only links */}
+                  {currentUser.role === "member" && (
+                    <>
+                      <DropdownItem to="/profile" icon={FiUser}>
+                        Hồ sơ
+                      </DropdownItem>
+                      <DropdownItem to="/loans" icon={FiBook}>
+                        Sách đang mượn
+                      </DropdownItem>
+                      <DropdownItem to="/history" icon={FiClock}>
+                        Lịch sử Mượn
+                      </DropdownItem>
+                      <DropdownItem to="/payments" icon={FiCreditCard}>
+                        Thanh toán
+                      </DropdownItem>
+                      <div className="border-t border-gray-700 my-1"></div>
+                    </>
+                  )}
+
                   <DropdownItem
                     onClick={handleLogout}
                     icon={FiLogOut}
