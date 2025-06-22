@@ -15,6 +15,18 @@ router.post(
   authMiddleware.verifyAdmin,
   categoryController.createCategory
 );
+router.put(
+  "/admin/categories/:id",
+  authMiddleware.verifyAdmin,
+  categoryController.updateCategoryRESTful
+);
+router.delete(
+  "/admin/categories/:id",
+  authMiddleware.verifyAdmin,
+  categoryController.deleteCategoryRESTful
+);
+
+// Legacy POST routes for backward compatibility
 router.post(
   "/admin/categories/update",
   authMiddleware.verifyAdmin,

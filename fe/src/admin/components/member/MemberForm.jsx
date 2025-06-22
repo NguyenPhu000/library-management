@@ -127,15 +127,15 @@ const MemberForm = () => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h5 className="text-lg font-semibold text-gray-900">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          <h5 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Chỉnh Sửa Thành Viên
           </h5>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           >
             <FaTimes className="h-5 w-5" />
           </button>
@@ -149,20 +149,20 @@ const MemberForm = () => {
 
             {/* Username - Disabled giống EJS */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Username
               </label>
               <input
                 type="text"
                 value={formData.username}
                 disabled
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 cursor-not-allowed"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
               />
             </div>
 
             {/* Member Code */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Mã Thành Viên
               </label>
               <input
@@ -170,14 +170,14 @@ const MemberForm = () => {
                 name="member_code"
                 value={formData.member_code}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.member_code
-                    ? "border-red-300 focus:ring-red-500"
-                    : "border-gray-300"
+                    ? "border-red-300 dark:border-red-600 focus:ring-red-500"
+                    : "border-gray-300 dark:border-gray-600"
                 }`}
               />
               {errors.member_code && (
-                <p className="mt-1 text-sm text-red-600">
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                   {errors.member_code}
                 </p>
               )}
@@ -185,20 +185,20 @@ const MemberForm = () => {
 
             {/* Join Date - Disabled giống EJS */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Ngày Tham Gia
               </label>
               <input
                 type="date"
                 value={formData.join_date}
                 disabled
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 cursor-not-allowed"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
               />
             </div>
 
             {/* Expiry Date */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Ngày Hết Hạn
               </label>
               <input
@@ -206,14 +206,14 @@ const MemberForm = () => {
                 name="expiry_date"
                 value={formData.expiry_date}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.expiry_date
-                    ? "border-red-300 focus:ring-red-500"
-                    : "border-gray-300"
+                    ? "border-red-300 dark:border-red-600 focus:ring-red-500"
+                    : "border-gray-300 dark:border-gray-600"
                 }`}
               />
               {errors.expiry_date && (
-                <p className="mt-1 text-sm text-red-600">
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                   {errors.expiry_date}
                 </p>
               )}
@@ -221,7 +221,7 @@ const MemberForm = () => {
 
             {/* Max Loans */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Số Lượng Mượn Tối Đa
               </label>
               <input
@@ -230,50 +230,54 @@ const MemberForm = () => {
                 value={formData.max_loans}
                 onChange={handleChange}
                 min="1"
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.max_loans
-                    ? "border-red-300 focus:ring-red-500"
-                    : "border-gray-300"
+                    ? "border-red-300 dark:border-red-600 focus:ring-red-500"
+                    : "border-gray-300 dark:border-gray-600"
                 }`}
               />
               {errors.max_loans && (
-                <p className="mt-1 text-sm text-red-600">{errors.max_loans}</p>
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {errors.max_loans}
+                </p>
               )}
             </div>
 
             {/* Current Loans - Disabled giống EJS */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Số Lượng Mượn Hiện Tại
               </label>
               <input
                 type="number"
                 value={formData.current_loans}
                 disabled
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 cursor-not-allowed"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
               />
             </div>
 
             {/* Status */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Trạng Thái
               </label>
               <select
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.status
-                    ? "border-red-300 focus:ring-red-500"
-                    : "border-gray-300"
+                    ? "border-red-300 dark:border-red-600 focus:ring-red-500"
+                    : "border-gray-300 dark:border-gray-600"
                 }`}
               >
                 <option value="Active">Hoạt Động</option>
                 <option value="Inactive">Không Hoạt Động</option>
               </select>
               {errors.status && (
-                <p className="mt-1 text-sm text-red-600">{errors.status}</p>
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {errors.status}
+                </p>
               )}
             </div>
 
@@ -282,7 +286,7 @@ const MemberForm = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? "Đang lưu..." : "Lưu Thay Đổi"}
               </button>

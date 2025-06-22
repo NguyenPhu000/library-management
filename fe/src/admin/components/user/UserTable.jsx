@@ -27,109 +27,90 @@ const UserTable = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-500">Đang tải dữ liệu...</p>
-        </div>
+      <div className="p-8 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-500 dark:text-gray-400">
+          Đang tải dữ liệu...
+        </p>
       </div>
     );
   }
 
   return (
     <div className="overflow-hidden">
-      {/* Mobile scroll hint */}
-      <div className="lg:hidden mb-3 mx-3 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-700 text-xs">
-        <div className="flex items-center">
-          <svg
-            className="w-4 h-4 mr-2 flex-shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M7 16l4-4m0 0l4-4m-4 4H3"
-            />
-          </svg>
-          <span>Vuốt ngang để xem đầy đủ thông tin</span>
-        </div>
-      </div>
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-        <table className="min-w-[700px] lg:min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider text-center w-12 lg:w-16">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider text-center">
                 #
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[120px] lg:min-w-[140px]">
-                Người dùng
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Tài khoản
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider text-center w-20 lg:w-24">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider text-center">
                 Vai trò
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[150px] lg:min-w-[200px]">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Liên hệ
               </th>
-              <th className="hidden lg:table-cell px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider max-w-[150px] lg:max-w-[200px]">
+              <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Địa chỉ
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider text-center w-24 lg:w-28">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider text-center">
                 Trạng thái
               </th>
-              <th className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider text-center w-28 lg:w-32">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider text-center">
                 Thao tác
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {users.length > 0 ? (
               users.map((user, index) => (
                 <tr
                   key={user.id}
-                  className="hover:bg-gray-50 transition-colors border-b border-gray-100"
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-xs lg:text-sm text-gray-500 text-center font-medium">
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 text-center font-medium">
                     {getDisplayIndex(index)}
                   </td>
-                  <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4">
+                  <td className="px-6 py-4">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-8 lg:h-10 w-8 lg:w-10">
-                        <div className="h-8 lg:h-10 w-8 lg:w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                          <span className="text-white font-semibold text-xs lg:text-sm">
+                      <div className="flex-shrink-0 h-10 w-10">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                          <span className="text-white font-semibold text-sm">
                             {user.firstName?.charAt(0) ||
                               user.username?.charAt(0)}
                           </span>
                         </div>
                       </div>
-                      <div className="ml-2 lg:ml-3 xl:ml-4 min-w-0 flex-1">
-                        <div className="text-xs lg:text-sm font-semibold text-gray-900 truncate">
+                      <div className="ml-4 min-w-0 flex-1">
+                        <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                           {user.lastName} {user.firstName}
                         </div>
-                        <div className="text-xs lg:text-sm text-gray-500 truncate">
+                        <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
                           @{user.username}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-center">
+                  <td className="px-6 py-4 text-center">
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         user.role === "admin"
-                          ? "bg-purple-100 text-purple-800"
-                          : "bg-blue-100 text-blue-800"
+                          ? "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300"
+                          : "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300"
                       }`}
                     >
                       {user.role === "admin" ? "Admin" : "Member"}
                     </span>
                   </td>
-                  <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4">
+                  <td className="px-6 py-4">
                     <div className="space-y-1">
-                      <div className="flex items-center text-xs lg:text-sm text-gray-900">
+                      <div className="flex items-center text-sm text-gray-900 dark:text-white">
                         <svg
-                          className="w-3 lg:w-4 h-3 lg:h-4 mr-1 lg:mr-2 text-gray-400 flex-shrink-0"
+                          className="w-4 h-4 mr-2 text-gray-400 dark:text-gray-500 flex-shrink-0"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -143,14 +124,14 @@ const UserTable = () => {
                         </svg>
                         <a
                           href={`mailto:${user.email}`}
-                          className="hover:text-blue-600 transition-colors truncate"
+                          className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate"
                         >
                           {user.email}
                         </a>
                       </div>
-                      <div className="flex items-center text-xs lg:text-sm text-gray-500">
+                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <svg
-                          className="w-3 lg:w-4 h-3 lg:h-4 mr-1 lg:mr-2 text-gray-400 flex-shrink-0"
+                          className="w-4 h-4 mr-2 text-gray-400 dark:text-gray-500 flex-shrink-0"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -164,20 +145,12 @@ const UserTable = () => {
                         </svg>
                         <span className="truncate">{user.phone}</span>
                       </div>
-                      <div className="lg:hidden mt-1">
-                        <div
-                          className="text-xs text-gray-500 truncate"
-                          title={user.address}
-                        >
-                          📍 {user.address}
-                        </div>
-                      </div>
-                      <div className="flex items-center text-xs lg:text-sm text-gray-500">
+                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <span
-                          className={`inline-flex items-center px-1.5 lg:px-2 py-0.5 rounded text-xs font-medium ${
+                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                             formatGender(user.gender) === "Nam"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-pink-100 text-pink-800"
+                              ? "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300"
+                              : "bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300"
                           }`}
                         >
                           {formatGender(user.gender)}
@@ -185,47 +158,53 @@ const UserTable = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="hidden lg:table-cell px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-xs lg:text-sm text-gray-900 max-w-[150px] lg:max-w-[200px]">
-                    <div className="truncate" title={user.address}>
+                  <td className="hidden lg:table-cell px-6 py-4 text-sm text-gray-900 dark:text-white">
+                    <div
+                      className="truncate max-w-[200px]"
+                      title={user.address}
+                    >
                       {user.address}
                     </div>
                   </td>
-                  <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-center">
+                  <td className="px-6 py-4 text-center">
                     <button
                       onClick={() =>
                         toggleUserStatus(user.id, user.isActive, user.username)
                       }
                       className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                         user.isActive
-                          ? "bg-green-100 text-green-800 hover:bg-green-200"
-                          : "bg-red-100 text-red-800 hover:bg-red-200"
+                          ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50"
+                          : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/50"
                       }`}
                     >
-                      <div
-                        className={`w-2 h-2 rounded-full mr-2 ${
-                          user.isActive ? "bg-green-400" : "bg-red-400"
-                        }`}
-                      ></div>
-                      {user.isActive ? "Hoạt động" : "Tạm khóa"}
+                      {user.isActive ? (
+                        <>
+                          <FaToggleOn className="mr-1" />
+                          Hoạt động
+                        </>
+                      ) : (
+                        <>
+                          <FaToggleOff className="mr-1" />
+                          Tạm khóa
+                        </>
+                      )}
                     </button>
                   </td>
-                  <td className="px-2 lg:px-4 xl:px-6 py-2 lg:py-3 xl:py-4 text-center">
-                    <div className="flex items-center justify-center space-x-1 lg:space-x-2">
+                  <td className="px-6 py-4 text-center">
+                    <div className="flex items-center justify-center space-x-2">
                       <button
                         onClick={() => openEditModal(user)}
-                        className="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors border border-blue-200"
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
                         title="Chỉnh sửa"
                       >
-                        <FaEdit className="lg:mr-1 h-3 w-3" />
-                        <span className="hidden lg:inline">Sửa</span>
+                        <FaEdit />
                       </button>
                       <button
                         onClick={() => deleteUser(user.id, user.username)}
-                        className="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 bg-red-50 text-red-700 text-xs font-medium rounded-lg hover:bg-red-100 transition-colors border border-red-200"
+                        className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
                         title="Xóa"
                       >
-                        <FaTrash className="lg:mr-1 h-3 w-3" />
-                        <span className="hidden lg:inline">Xóa</span>
+                        <FaTrash />
                       </button>
                     </div>
                   </td>
@@ -234,12 +213,12 @@ const UserTable = () => {
             ) : (
               <tr>
                 <td
-                  colSpan="6"
-                  className="px-6 py-16 text-center text-gray-500"
+                  colSpan="7"
+                  className="px-6 py-12 text-center text-gray-500 dark:text-gray-400"
                 >
                   <div className="flex flex-col items-center">
                     <svg
-                      className="w-16 h-16 text-gray-400 mb-4"
+                      className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -247,17 +226,14 @@ const UserTable = () => {
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth="1"
-                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                        strokeWidth="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                       />
                     </svg>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      Không có dữ liệu
-                    </h3>
-                    <p className="text-gray-500">
-                      Không tìm thấy người dùng nào phù hợp với tiêu chí tìm
-                      kiếm.
+                    <p className="text-lg font-medium">
+                      Không có tài khoản nào
                     </p>
+                    <p className="text-sm">Hãy thêm tài khoản đầu tiên</p>
                   </div>
                 </td>
               </tr>

@@ -1,26 +1,64 @@
 import bookService from "../services/bookService.js";
 
-// GET /api/books
+// GET /api/books và /api/admin/books
 const listBooks = async (req, res) => {
   try {
-    const { criteria, query } = req.query;
-    const books =
+    const { criteria, query, page = 1, limit = 10 } = req.query;
+
+    // Lấy danh sách sách
+    let books =
       criteria && query
         ? await bookService.searchBook({ criteria, query })
         : await bookService.getAllBooks();
 
-    return res.json({ success: true, books });
+    // Kiểm tra nếu là admin route (có pagination)
+    const isAdminRoute = req.path.includes("/admin/");
+
+    if (isAdminRoute) {
+      // Admin route: trả về format với pagination
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + parseInt(limit);
+      const paginatedBooks = books.slice(startIndex, endIndex);
+      const totalPages = Math.ceil(books.length / limit);
+
+      return res.json({
+        success: true,
+        data: paginatedBooks, // Admin frontend expect 'data'
+        totalPages,
+        currentPage: parseInt(page),
+        totalItems: books.length,
+      });
+    } else {
+      // Public route: trả về format cũ
+      return res.json({ success: true, books });
+    }
   } catch (error) {
     console.error("Lỗi khi lấy danh sách sách:", error);
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+      data: [],
+    });
   }
 };
 
-// POST /api/books (create new)
+// POST /api/books và /api/admin/books (create new)
 const createBook = async (req, res) => {
   try {
-    await bookService.createNewBooks(req);
-    return res.json({ success: true, message: "Thêm sách thành công!" });
+    const result = await bookService.createNewBooks(req);
+
+    // Kiểm tra nếu là admin route
+    const isAdminRoute = req.path.includes("/admin/");
+
+    if (isAdminRoute) {
+      return res.json({
+        success: true,
+        message: "Thêm sách thành công!",
+        data: result, // Return the created book data for admin
+      });
+    } else {
+      return res.json({ success: true, message: "Thêm sách thành công!" });
+    }
   } catch (error) {
     console.error("Lỗi khi tạo sách:", error);
     return res.status(400).json({ success: false, message: error.message });

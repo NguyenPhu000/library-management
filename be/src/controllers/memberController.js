@@ -8,8 +8,6 @@ const listMembers = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const search = req.query.search || "";
 
-    console.log("listMembers params:", { page, limit, search });
-
     // Sync members trước khi lấy data
     await memberService.syncMembersFromUsers();
 

@@ -88,8 +88,47 @@ let updateBook = async (req) => {
   }
   const existingBook = await getBookById(bookId);
 
-  let coverImage =
-    req.file?.filename || req.body.current_cover || existingBook.cover_image;
+  // Xử lý current_cover - có thể là array hoặc string
+  let currentCover = req.body.current_cover;
+  if (Array.isArray(currentCover)) {
+    currentCover = currentCover[0]; // Lấy phần tử đầu tiên
+  }
+  // Nếu currentCover vẫn là string có dạng "[filename,filename]", parse nó
+  if (
+    typeof currentCover === "string" &&
+    currentCover.startsWith("[") &&
+    currentCover.endsWith("]")
+  ) {
+    try {
+      const parsed = JSON.parse(currentCover);
+      currentCover = Array.isArray(parsed) ? parsed[0] : parsed;
+    } catch (e) {
+      // Nếu không parse được, extract filename bằng regex
+      const match = currentCover.match(/\[([^,\]]+)/);
+      currentCover = match ? match[1] : currentCover;
+    }
+  }
+
+  // Xử lý existingBook.cover_image tương tự
+  let existingCover = existingBook.cover_image;
+  if (Array.isArray(existingCover)) {
+    existingCover = existingCover[0];
+  }
+  if (
+    typeof existingCover === "string" &&
+    existingCover.startsWith("[") &&
+    existingCover.endsWith("]")
+  ) {
+    try {
+      const parsed = JSON.parse(existingCover);
+      existingCover = Array.isArray(parsed) ? parsed[0] : parsed;
+    } catch (e) {
+      const match = existingCover.match(/\[([^,\]]+)/);
+      existingCover = match ? match[1] : existingCover;
+    }
+  }
+
+  let coverImage = req.file?.filename || currentCover || existingCover;
 
   let allCategories = await db.Category.findAll({
     attributes: ["category_id"],

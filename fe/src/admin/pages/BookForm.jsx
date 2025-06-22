@@ -72,7 +72,7 @@ const BookForm = () => {
         });
 
         if (book.cover_image) {
-          setImagePreview(`/uploads/${book.cover_image}`);
+          setImagePreview(book.cover_image);
         }
       } catch (error) {
         console.error("Error fetching book details:", error);

@@ -18,6 +18,7 @@ import BookDetail from "./components/sections/BookDetail";
 import AdminLayout from "./admin/layouts/AdminLayout";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import BookManagePage from "./admin/pages/BookManagePage";
+import BookManageTablePage from "./admin/pages/BookManageTablePage";
 import BookForm from "./admin/pages/BookForm";
 import BookView from "./admin/pages/BookView";
 import AdminPage from "./admin/pages/AdminPage";
@@ -63,7 +64,12 @@ function App() {
           }
         >
           <Route index element={<AdminDashboard />} />
-          <Route path="books" element={<BookManagePage />} />
+          <Route
+            path="books"
+            element={<Navigate to="/admin/books/table" replace />}
+          />
+          <Route path="books/grid" element={<BookManagePage />} />
+          <Route path="books/table" element={<BookManageTablePage />} />
           <Route path="books/create" element={<BookForm />} />
           <Route path="books/edit/:id" element={<BookForm />} />
           <Route path="books/view/:id" element={<BookView />} />
