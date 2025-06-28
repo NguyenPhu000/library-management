@@ -26,6 +26,7 @@ import UserManagePage from "./admin/pages/UserManagePage";
 import CategoryManagePage from "./admin/pages/CategoryManagePage";
 import AdminRoute from "./admin/components/auth/AdminRoute";
 import MemberManagePage from "./admin/pages/MemberManagePage";
+import LoanManagePage from "./admin/pages/LoanManagePage";
 
 function App() {
   return (
@@ -78,7 +79,7 @@ function App() {
           {/* Add other admin routes here */}
           <Route path="categories" element={<CategoryManagePage />} />
           <Route path="users" element={<UserManagePage />} />
-          <Route path="loans" element={<div>Trang quản lý mượn sách</div>} />
+          <Route path="loans" element={<LoanManagePage />} />
           <Route
             path="payments"
             element={<div>Trang quản lý thanh toán</div>}

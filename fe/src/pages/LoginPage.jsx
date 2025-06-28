@@ -274,6 +274,7 @@ const LoginPage = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="current-password"
                     className="appearance-none bg-gray-900 bg-opacity-60 border border-gray-700 border-opacity-50 rounded-lg w-full py-3 px-4 pl-10 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-lightGreen focus:border-transparent transition-all duration-300"
                     placeholder="Nhập mật khẩu"
                   />
@@ -464,6 +465,7 @@ const LoginPage = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="current-password"
                     className="appearance-none bg-gray-900 bg-opacity-60 border border-gray-700 border-opacity-50 rounded-lg w-full py-3 px-4 pl-10 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-lightGreen focus:border-transparent transition-all duration-300"
                     placeholder="Nhập mật khẩu"
                   />

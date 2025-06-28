@@ -1,56 +1,29 @@
 import React, { useContext, useEffect, useState } from "react";
 import { LoanContext } from "../contexts/LoanContext";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBook,
   faRedo,
-  faReply,
   faCalendarAlt,
   faExclamationTriangle,
   faCheckCircle,
   faClock,
   faChevronDown,
   faChevronUp,
+  faTicket,
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 
 const LoanPage = () => {
-  const { loans, loading, error, returnLoan, requestRenewLoan, fetchLoans } =
+  const { loans, loading, error, requestRenewLoan, fetchLoans } =
     useContext(LoanContext);
   const [expandedCard, setExpandedCard] = useState(null);
-  const [filter, setFilter] = useState("all"); // all, overdue, normal, pending
+  const [filter, setFilter] = useState("all"); // all, overdue, normal, pending, pickup
 
   useEffect(() => {
     fetchLoans();
   }, []);
-
-  const handleReturnBook = async (loanId, title) => {
-    try {
-      const confirmResult = await Swal.fire({
-        title: "Xác nhận trả sách",
-        html: `Bạn có chắc chắn muốn trả sách <br/><strong>"${title}"</strong>?`,
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Trả sách",
-        cancelButtonText: "Hủy",
-        confirmButtonColor: "#ef4444",
-        cancelButtonColor: "#6b7280",
-        background: "#1f2937",
-        color: "#ffffff",
-      });
-
-      if (!confirmResult.isConfirmed) return;
-      await returnLoan(loanId);
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Lỗi",
-        text: `Lỗi khi trả sách: ${error.message}`,
-        background: "#1f2937",
-        color: "#ffffff",
-      });
-    }
-  };
 
   const handleRenewBook = async (loanId, title) => {
     try {
@@ -126,78 +99,240 @@ const LoanPage = () => {
     );
   }
 
-  // Sắp xếp và lọc loans
+  // Sắp xếp theo priority: quá hạn > chờ nhận > đang mượn > đã trả
   const sortedLoans = loans.sort((a, b) => {
-    const isAOverdue = new Date(a.due_date) < new Date();
-    const isBOverdue = new Date(b.due_date) < new Date();
-    return isAOverdue === isBOverdue ? 0 : isAOverdue ? -1 : 1;
+    // Priority order: 1=overdue, 2=pending_pickup, 3=borrowed, 4=returned, 5=other
+    const getPriority = (loan) => {
+      if (
+        loan.status === "borrowed" &&
+        loan.due_date &&
+        new Date(loan.due_date) < new Date()
+      )
+        return 1; // Quá hạn
+      if (loan.status === "pending_pickup") return 2; // Chờ nhận
+      if (loan.status === "borrowed") return 3; // Đang mượn
+      if (loan.status === "returned") return 5; // Đã trả
+      return 4; // Khác
+    };
+
+    const priorityA = getPriority(a);
+    const priorityB = getPriority(b);
+
+    if (priorityA !== priorityB) return priorityA - priorityB;
+
+    // Cùng priority thì sort theo date mới nhất
+    const dateA = new Date(a.request_date || a.loan_date || 0);
+    const dateB = new Date(b.request_date || b.loan_date || 0);
+    return dateB - dateA;
   });
 
   const filteredLoans = sortedLoans.filter((loan) => {
     if (filter === "all") return true;
-    if (filter === "overdue") return new Date(loan.due_date) < new Date();
-    if (filter === "pending") return loan.renewal_status === "pending";
-    if (filter === "normal")
+
+    if (filter === "overdue") {
+      // Quá hạn: chỉ status="borrowed" và past due date
       return (
-        new Date(loan.due_date) >= new Date() &&
-        loan.renewal_status !== "pending"
+        loan.status === "borrowed" &&
+        loan.due_date &&
+        new Date(loan.due_date) < new Date()
       );
+    }
+
+    if (filter === "pickup") {
+      // Chờ nhận sách: status="pending_pickup" (có pickup_code)
+      return loan.status === "pending_pickup";
+    }
+
+    if (filter === "pending") {
+      // Chờ duyệt: yêu cầu gia hạn (không có "requested" trong new workflow)
+      return (
+        loan.renewal_status === "pending" || loan.renewal_status === "requested"
+      );
+    }
+
+    if (filter === "normal") {
+      // Bình thường: đang mượn không quá hạn, không chờ duyệt gia hạn
+      return (
+        loan.status === "borrowed" &&
+        loan.due_date &&
+        new Date(loan.due_date) >= new Date() &&
+        loan.renewal_status !== "pending" &&
+        loan.renewal_status !== "requested"
+      );
+    }
+
     return true;
   });
 
+  // Hàm lấy thông tin trạng thái với colors và icons
   const getStatusInfo = (loan) => {
-    const isOverdue = new Date(loan.due_date) < new Date();
-    const isNearDue =
-      new Date(loan.due_date) - new Date() <= 2 * 24 * 60 * 60 * 1000;
+    const now = new Date();
+    const dueDate = loan.due_date ? new Date(loan.due_date) : null;
+    const holdUntil = loan.hold_until ? new Date(loan.hold_until) : null;
+    const isOverdue = dueDate && now > dueDate && loan.status === "borrowed";
 
-    if (isOverdue)
+    // Enhanced status logic với thêm thông tin chi tiết
+    if (loan.status === "requested") {
       return {
-        color: "text-red-400",
-        bg: "bg-red-900/30",
-        border: "border-red-500/50",
-        text: "Quá hạn",
+        status: "Chờ duyệt",
+        detail: `Yêu cầu ngày ${new Date(loan.request_date).toLocaleDateString(
+          "vi-VN"
+        )}`,
+        color: "bg-blue-100 text-blue-800 border-blue-200",
+        icon: faClock,
+        iconColor: "text-blue-600",
+        priority: 3,
       };
-    if (loan.renewal_status === "pending")
+    }
+
+    if (loan.status === "approved") {
+      const daysLeft = holdUntil
+        ? Math.ceil((holdUntil - now) / (1000 * 60 * 60 * 24))
+        : 0;
       return {
-        color: "text-yellow-400",
-        bg: "bg-yellow-900/30",
-        border: "border-yellow-500/50",
-        text: "Chờ duyệt",
+        status: "Đã duyệt",
+        detail: `Còn ${daysLeft} ngày để nhận sách`,
+        color: "bg-green-100 text-green-800 border-green-200",
+        icon: faCheckCircle,
+        iconColor: "text-green-600",
+        priority: 2,
       };
-    if (loan.renewal_status === "approved")
+    }
+
+    if (loan.status === "pending_pickup") {
+      const daysLeft = holdUntil
+        ? Math.ceil((holdUntil - now) / (1000 * 60 * 60 * 24))
+        : 0;
       return {
-        color: "text-lightGreen",
-        bg: "bg-green-900/30",
-        border: "border-lightGreen/50",
-        text: "Đã gia hạn",
+        status: "Chờ nhận sách",
+        detail: loan.pickup_code
+          ? `Mã nhận: ${loan.pickup_code} (còn ${daysLeft} ngày)`
+          : `Còn ${daysLeft} ngày để nhận`,
+        color: "bg-purple-100 text-purple-800 border-purple-200",
+        icon: faTicket,
+        iconColor: "text-purple-600",
+        priority: 1,
+        showPickupCode: true,
       };
-    if (loan.renewal_status === "rejected")
+    }
+
+    if (loan.status === "borrowed") {
+      if (isOverdue) {
+        const overdueDays = Math.ceil((now - dueDate) / (1000 * 60 * 60 * 24));
+        const fineAmount = parseFloat(loan.fine_amount || 0);
+        return {
+          status: "Quá hạn",
+          detail: `Trễ ${overdueDays} ngày${
+            fineAmount > 0
+              ? ` - Phạt: ${fineAmount.toLocaleString("vi-VN")}đ`
+              : ""
+          }`,
+          color: "bg-red-100 text-red-800 border-red-200",
+          icon: faExclamationTriangle,
+          iconColor: "text-red-600",
+          priority: 0,
+        };
+      } else {
+        const daysLeft = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+        const renewalInfo =
+          loan.renewal_status === "requested"
+            ? " (Chờ gia hạn)"
+            : loan.renew_count > 0
+            ? ` (Đã gia hạn ${loan.renew_count} lần)`
+            : "";
+        return {
+          status: "Đang mượn",
+          detail: `Còn ${daysLeft} ngày${renewalInfo}`,
+          color: "bg-yellow-100 text-yellow-800 border-yellow-200",
+          icon: faBook,
+          iconColor: "text-yellow-600",
+          priority: 4,
+        };
+      }
+    }
+
+    if (loan.status === "returned") {
+      const returnDate = loan.return_date
+        ? new Date(loan.return_date).toLocaleDateString("vi-VN")
+        : "N/A";
+      const fineAmount = parseFloat(loan.fine_amount || 0);
       return {
-        color: "text-red-400",
-        bg: "bg-red-900/30",
-        border: "border-red-500/50",
-        text: "Từ chối gia hạn",
+        status: "Đã trả",
+        detail: `Trả ngày ${returnDate}${
+          fineAmount > 0
+            ? ` - Phạt: ${fineAmount.toLocaleString("vi-VN")}đ`
+            : ""
+        }`,
+        color: "bg-gray-100 text-gray-800 border-gray-200",
+        icon: faCheckCircle,
+        iconColor: "text-gray-600",
+        priority: 6,
       };
-    if (isNearDue)
+    }
+
+    if (loan.status === "rejected") {
       return {
-        color: "text-yellow-400",
-        bg: "bg-yellow-900/30",
-        border: "border-yellow-500/50",
-        text: "Sắp hết hạn",
+        status: "Bị từ chối",
+        detail: loan.rejection_reason || "Không có lý do cụ thể",
+        color: "bg-red-100 text-red-800 border-red-200",
+        icon: faExclamationTriangle,
+        iconColor: "text-red-600",
+        priority: 5,
       };
+    }
+
+    // Default fallback
     return {
-      color: "text-blue-400",
-      bg: "bg-blue-900/30",
-      border: "border-blue-500/50",
-      text: "Bình thường",
+      status: loan.status || "Không xác định",
+      detail: "Trạng thái không rõ",
+      color: "bg-gray-100 text-gray-800 border-gray-200",
+      icon: faClock,
+      iconColor: "text-gray-600",
+      priority: 7,
     };
   };
 
+  // Enhanced pickup code copy function
+  const copyPickupCode = async (pickupCode) => {
+    try {
+      await navigator.clipboard.writeText(pickupCode);
+      Swal.fire({
+        icon: "success",
+        title: "Đã sao chép!",
+        text: `Mã nhận sách "${pickupCode}" đã được sao chép`,
+        timer: 2000,
+        showConfirmButton: false,
+        background: "#1f2937",
+        color: "#ffffff",
+        toast: true,
+        position: "top-end",
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Không thể sao chép mã. Vui lòng sao chép thủ công.",
+        background: "#1f2937",
+        color: "#ffffff",
+      });
+    }
+  };
+
   const overdueCount = loans.filter(
-    (loan) => new Date(loan.due_date) < new Date()
+    (loan) =>
+      loan.status === "borrowed" &&
+      loan.due_date &&
+      new Date(loan.due_date) < new Date()
   ).length;
+
   const pendingCount = loans.filter(
-    (loan) => loan.renewal_status === "pending"
+    (loan) =>
+      loan.renewal_status === "pending" || // Chỉ yêu cầu gia hạn
+      loan.renewal_status === "requested"
+  ).length;
+
+  const pickupCount = loans.filter(
+    (loan) => loan.status === "pending_pickup" // Chỉ status này
   ).length;
 
   return (
@@ -205,16 +340,22 @@ const LoanPage = () => {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-lightGreen mb-1">
-            Sách đang mượn
-          </h1>
-          <p className="text-gray-400 text-sm">
-            Quản lý các cuốn sách bạn đang mượn từ thư viện
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-lightGreen mb-1">
+                Sách đang mượn
+              </h1>
+              <p className="text-gray-400 text-sm">
+                Quản lý các cuốn sách bạn đang mượn từ thư viện
+              </p>
+            </div>
+
+            {/* Nút Test Mượn Sách đã được xoá */}
+          </div>
         </div>
 
         {/* Stats - Compact */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-4 gap-3 mb-6">
           <div className="bg-gray-800 rounded-lg p-3 border border-gray-700 text-center">
             <p className="text-xs text-gray-400">Tổng</p>
             <p className="text-lg font-semibold text-white">{loans.length}</p>
@@ -229,12 +370,19 @@ const LoanPage = () => {
               {pendingCount}
             </p>
           </div>
+          <div className="bg-gray-800 rounded-lg p-3 border border-gray-700 text-center">
+            <p className="text-xs text-gray-400">Chờ nhận</p>
+            <p className="text-lg font-semibold text-purple-400">
+              {pickupCount}
+            </p>
+          </div>
         </div>
 
         {/* Filter - Compact */}
         <div className="flex space-x-1 mb-4 bg-gray-800 rounded-lg p-1 border border-gray-700">
           {[
             { key: "all", label: "Tất cả" },
+            { key: "pickup", label: "🎫 Chờ nhận" },
             { key: "overdue", label: "Quá hạn" },
             { key: "pending", label: "Chờ duyệt" },
             { key: "normal", label: "Bình thường" },
@@ -268,12 +416,32 @@ const LoanPage = () => {
           </div>
         )}
 
+        {/* Pickup Code Notification */}
+        {pickupCount > 0 && filter === "all" && (
+          <div className="bg-purple-900/30 border border-purple-500/50 rounded-lg p-3 mb-4">
+            <div className="flex items-center space-x-2">
+              <FontAwesomeIcon
+                icon={faTicket}
+                className="text-purple-400 text-sm"
+              />
+              <p className="text-purple-300 text-sm font-medium">
+                Có {pickupCount} sách chờ nhận - Đến thư viện với mã nhận sách
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Books List - Compact */}
         {filteredLoans.length > 0 ? (
           <div className="space-y-3">
             {filteredLoans.map((loan) => {
-              const isOverdue = new Date(loan.due_date) < new Date();
+              const isOverdue =
+                loan.status === "borrowed" &&
+                loan.due_date &&
+                new Date(loan.due_date) < new Date();
               const isNearDue =
+                loan.status === "borrowed" &&
+                loan.due_date &&
                 new Date(loan.due_date) - new Date() <= 2 * 24 * 60 * 60 * 1000;
               const isExpanded = expandedCard === loan.loan_id;
               const statusInfo = getStatusInfo(loan);
@@ -303,10 +471,60 @@ const LoanPage = () => {
 
                         {/* Status Badge */}
                         <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border} border`}
+                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${statusInfo.color} ${statusInfo.border}`}
                         >
-                          {statusInfo.text}
+                          <FontAwesomeIcon
+                            icon={statusInfo.icon}
+                            className={statusInfo.iconColor}
+                          />
+                          {statusInfo.status}
                         </span>
+
+                        {/* Pickup Code Display - Tích hợp */}
+                        {loan.pickup_code &&
+                          (loan.status === "pending_pickup" ||
+                            loan.status === "borrowed") && (
+                            <div className="mt-3 bg-gray-700/50 border border-gray-600 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-2">
+                                <h4 className="text-sm font-medium text-purple-300">
+                                  🎫 Mã Nhận Sách
+                                </h4>
+                                <span className="text-xs px-2 py-1 bg-green-600/20 text-green-300 rounded-full border border-green-500/30">
+                                  Đang hoạt động
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <code className="bg-gray-800 px-3 py-2 rounded text-lg font-mono font-bold text-purple-200 border border-gray-600">
+                                  {loan.pickup_code}
+                                </code>
+                                <button
+                                  onClick={async () => {
+                                    try {
+                                      await navigator.clipboard.writeText(
+                                        loan.pickup_code
+                                      );
+                                      // Mini feedback toast
+                                      const btn =
+                                        event.target.closest("button");
+                                      const originalText = btn.textContent;
+                                      btn.textContent = "✅ Đã sao chép";
+                                      setTimeout(() => {
+                                        btn.textContent = originalText;
+                                      }, 1500);
+                                    } catch (err) {
+                                      console.error("Copy failed:", err);
+                                    }
+                                  }}
+                                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-xs font-medium transition-colors"
+                                >
+                                  📋 Sao chép
+                                </button>
+                              </div>
+                              <p className="text-xs text-gray-400 mt-2">
+                                💡 Đến thư viện với mã này để nhận sách
+                              </p>
+                            </div>
+                          )}
                       </div>
 
                       <button
@@ -324,23 +542,57 @@ const LoanPage = () => {
                     {/* Quick Info - Compact */}
                     <div className="grid grid-cols-3 gap-3 mb-3 text-xs">
                       <div>
-                        <p className="text-gray-500">Ngày mượn</p>
+                        <p className="text-gray-500">
+                          {loan.status === "pending_pickup"
+                            ? "Ngày yêu cầu"
+                            : "Ngày mượn"}
+                        </p>
                         <p className="text-gray-300 font-medium">
-                          {new Date(loan.loan_date).toLocaleDateString("vi-VN")}
+                          {loan.status === "pending_pickup"
+                            ? loan.request_date
+                              ? new Date(loan.request_date).toLocaleDateString(
+                                  "vi-VN"
+                                )
+                              : "Chưa xác định"
+                            : loan.loan_date
+                            ? new Date(loan.loan_date).toLocaleDateString(
+                                "vi-VN"
+                              )
+                            : "Chưa nhận"}
                         </p>
                       </div>
                       <div>
-                        <p className="text-gray-500">Hạn trả</p>
+                        <p className="text-gray-500">
+                          {loan.status === "pending_pickup"
+                            ? "Hạn nhận"
+                            : "Hạn trả"}
+                        </p>
                         <p
                           className={`font-medium ${
-                            isOverdue
+                            loan.status === "pending_pickup"
+                              ? loan.hold_until &&
+                                new Date(loan.hold_until) < new Date()
+                                ? "text-red-400"
+                                : "text-purple-400"
+                              : isOverdue
                               ? "text-red-400"
                               : isNearDue
                               ? "text-yellow-400"
                               : "text-gray-300"
                           }`}
                         >
-                          {new Date(loan.due_date).toLocaleDateString("vi-VN")}
+                          {loan.status === "pending_pickup"
+                            ? loan.hold_until
+                              ? new Date(loan.hold_until).toLocaleDateString(
+                                  "vi-VN"
+                                )
+                              : "3 ngày"
+                            : loan.due_date &&
+                              new Date(loan.due_date).getFullYear() > 1970
+                            ? new Date(loan.due_date).toLocaleDateString(
+                                "vi-VN"
+                              )
+                            : "Chưa xác định"}
                         </p>
                       </div>
                       <div>
@@ -353,68 +605,94 @@ const LoanPage = () => {
 
                     {/* Actions - Compact */}
                     <div className="flex gap-2">
-                      <button
-                        onClick={() =>
-                          handleReturnBook(
-                            loan.loan_id,
-                            loan.Book?.title || "Sách không xác định"
-                          )
-                        }
-                        className="flex items-center space-x-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors"
-                      >
-                        <FontAwesomeIcon icon={faReply} />
-                        <span>Trả sách</span>
-                      </button>
+                      {/* Chỉ hiển thị nút Gia hạn khi status = "borrowed" */}
+                      {loan.status === "borrowed" && (
+                        <>
+                          {(isNearDue || isOverdue) &&
+                            (loan.renew_count || 0) < 1 && (
+                              <button
+                                onClick={() =>
+                                  handleRenewBook(
+                                    loan.loan_id,
+                                    loan.Book?.title || "Sách không xác định"
+                                  )
+                                }
+                                disabled={
+                                  loan.renewal_status === "pending" ||
+                                  loan.renewal_status === "approved"
+                                }
+                                className={`flex items-center space-x-1 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                                  loan.renewal_status === "pending" ||
+                                  loan.renewal_status === "approved"
+                                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                                    : "bg-lightGreen hover:bg-lightGreen/80 text-black"
+                                }`}
+                              >
+                                <FontAwesomeIcon icon={faRedo} />
+                                <span>
+                                  {loan.renewal_status === "pending"
+                                    ? "Đang chờ"
+                                    : loan.renewal_status === "approved"
+                                    ? "Đã gia hạn"
+                                    : "Gia hạn"}
+                                </span>
+                              </button>
+                            )}
+                        </>
+                      )}
 
-                      {(isNearDue || isOverdue) &&
-                        (loan.renew_count || 0) < 1 && (
-                          <button
-                            onClick={() =>
-                              handleRenewBook(
-                                loan.loan_id,
-                                loan.Book?.title || "Sách không xác định"
-                              )
-                            }
-                            disabled={
-                              loan.renewal_status === "pending" ||
-                              loan.renewal_status === "approved"
-                            }
-                            className={`flex items-center space-x-1 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
-                              loan.renewal_status === "pending" ||
-                              loan.renewal_status === "approved"
-                                ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                                : "bg-lightGreen hover:bg-lightGreen/80 text-black"
-                            }`}
-                          >
-                            <FontAwesomeIcon icon={faRedo} />
-                            <span>
-                              {loan.renewal_status === "pending"
-                                ? "Đang chờ"
-                                : loan.renewal_status === "approved"
-                                ? "Đã gia hạn"
-                                : "Gia hạn"}
-                            </span>
-                          </button>
-                        )}
+                      {/* Hiển thị thông tin khác cho status khác */}
+                      {loan.status === "pending_pickup" && (
+                        <div className="text-xs text-purple-300">
+                          💡 Đến thư viện với mã nhận sách để nhận sách
+                        </div>
+                      )}
                     </div>
 
                     {/* Expanded Content - Minimal */}
                     {isExpanded && (
                       <div className="mt-3 pt-3 border-t border-gray-700">
-                        <div className="text-xs space-y-1">
+                        <div className="text-xs space-y-2">
+                          {/* Pickup code info (condensed) */}
+                          {loan.status === "pending_pickup" &&
+                            loan.pickup_code && (
+                              <div className="bg-purple-900/20 border border-purple-500/30 rounded-md p-2 mb-2">
+                                <p className="text-purple-300 text-xs">
+                                  🎫 Mã nhận sách:{" "}
+                                  <span className="font-mono bg-purple-800/50 px-1 rounded">
+                                    {loan.pickup_code}
+                                  </span>
+                                </p>
+                                {loan.hold_until && (
+                                  <p className="text-purple-200 text-xs mt-1">
+                                    Hạn nhận:{" "}
+                                    {new Date(
+                                      loan.hold_until
+                                    ).toLocaleDateString("vi-VN")}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
                           <div className="flex justify-between">
                             <span className="text-gray-500">
-                              Thời gian mượn:
+                              {loan.status === "pending_pickup"
+                                ? "Thời hạn nhận:"
+                                : "Thời gian mượn:"}
                             </span>
                             <span className="text-gray-300">
-                              {Math.ceil(
-                                (new Date(loan.due_date) -
-                                  new Date(loan.loan_date)) /
-                                  (1000 * 60 * 60 * 24)
-                              )}{" "}
-                              ngày
+                              {loan.status === "pending_pickup"
+                                ? "3 ngày từ khi yêu cầu"
+                                : loan.loan_date
+                                ? Math.ceil(
+                                    (new Date(loan.due_date) -
+                                      new Date(loan.loan_date)) /
+                                      (1000 * 60 * 60 * 24)
+                                  ) + " ngày"
+                                : "Chưa nhận sách"}
                             </span>
                           </div>
+
                           <div className="flex justify-between">
                             <span className="text-gray-500">
                               Trạng thái gia hạn:
@@ -437,6 +715,14 @@ const LoanPage = () => {
                                 : loan.renewal_status === "rejected"
                                 ? "Từ chối"
                                 : "Chưa gia hạn"}
+                            </span>
+                          </div>
+
+                          {/* 🆕 Hiển thị thông tin trạng thái chi tiết */}
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Ghi chú:</span>
+                            <span className="text-gray-300 text-right">
+                              {statusInfo.detail}
                             </span>
                           </div>
                         </div>

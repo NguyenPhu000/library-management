@@ -1,3 +1,17 @@
 node_modules
 .env
 .vscode
+create-test-member.js
+FINAL_PICKUP_CODE_REPORT.md
+FRONTEND_TEST_REPORT.md
+PICKUP_CODE_ANALYSIS.md
+OPTIMIZATION_SUMMARY.md
+REALISTIC_LOAN_SYSTEM.md
+test-fixed-workflow.js
+test-full-pickup-system.js
+test-member-api.js
+test-only-request.js
+test-pickup-workflow.js
+TESTING_GUIDE.md
+.vscode/*
+!.vscode/extensions.json

@@ -217,7 +217,7 @@ const ResponsiveMemberTable = () => {
                   return (
                     <tr
                       key={member.id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                     >
                       {/* STT */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white text-center">
@@ -277,12 +277,7 @@ const ResponsiveMemberTable = () => {
                         <div className="flex items-center">
                           <FaCalendarAlt className="w-4 h-4 text-gray-400 dark:text-gray-500 mr-2 flex-shrink-0" />
                           <div
-                            className={`text-sm ${
-                              expiryStatus.color
-                            } dark:${expiryStatus.color.replace(
-                              "text-",
-                              "text-"
-                            )} font-medium`}
+                            className={`text-sm ${expiryStatus.color} dark:text-white font-medium`}
                           >
                             {formatDate(member.expiryDate)}
                           </div>
@@ -291,12 +286,7 @@ const ResponsiveMemberTable = () => {
                           <div className="flex items-center text-xs mt-1">
                             <FaClock className="mr-1 h-3 w-3" />
                             <span
-                              className={`${
-                                expiryStatus.color
-                              } dark:${expiryStatus.color.replace(
-                                "text-",
-                                "text-"
-                              )}`}
+                              className={`${expiryStatus.color} dark:text-white`}
                             >
                               {expiryStatus.label}
                             </span>
@@ -438,14 +428,18 @@ const ResponsiveMemberTable = () => {
                         </div>
                         <div className="flex items-center">
                           <FaCalendarAlt className="mr-1 flex-shrink-0" />
-                          <span className={expiryStatus.color}>
+                          <span
+                            className={`${expiryStatus.color} dark:text-white`}
+                          >
                             Hết hạn: {formatDate(member.expiryDate)}
                           </span>
                         </div>
                         {expiryStatus.label && (
                           <div className="flex items-center">
                             <FaClock className="mr-1 flex-shrink-0" />
-                            <span className={expiryStatus.color}>
+                            <span
+                              className={`${expiryStatus.color} dark:text-white`}
+                            >
                               {expiryStatus.label}
                             </span>
                           </div>

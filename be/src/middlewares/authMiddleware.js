@@ -94,10 +94,30 @@ const verifyResourceOwner = (req, res, next) => {
   });
 };
 
+// Aliases for common usage
+const requireAuth = verifyToken;
+const requireAdmin = verifyAdmin;
+const requireMember = verifyMember;
+
 export default {
   verifyToken,
   verifyAdmin,
   verifyMember,
   verifyUser,
   verifyResourceOwner,
+  requireAuth,
+  requireAdmin,
+  requireMember,
+};
+
+// Named exports for CommonJS compatibility
+export {
+  verifyToken,
+  verifyAdmin,
+  verifyMember,
+  verifyUser,
+  verifyResourceOwner,
+  requireAuth,
+  requireAdmin,
+  requireMember,
 };
