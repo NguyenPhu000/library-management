@@ -76,7 +76,4 @@ router.post(
   adminController.syncAdmin
 );
 
-// Book management được xử lý trong bookRoutes.js
-// Routes: GET /api/admin/books, POST /api/admin/books, POST /api/admin/books/update, POST /api/admin/books/delete
-
 export default router;

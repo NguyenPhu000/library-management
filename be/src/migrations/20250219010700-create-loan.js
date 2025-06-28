@@ -44,7 +44,7 @@ module.exports = {
         allowNull: false,
       },
       renewal_status: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
         defaultValue: "none", // none, pending, approved, rejected
       },

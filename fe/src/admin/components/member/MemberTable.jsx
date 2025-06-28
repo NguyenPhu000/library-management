@@ -208,12 +208,7 @@ const MemberTable = () => {
                       <div className="flex items-center">
                         <FaCalendarAlt className="w-3 h-3 text-gray-400 dark:text-gray-500 mr-2 flex-shrink-0" />
                         <div
-                          className={`text-xs lg:text-sm ${
-                            expiryStatus.color
-                          } dark:${expiryStatus.color.replace(
-                            "text-",
-                            "text-"
-                          )} font-medium`}
+                          className={`text-xs lg:text-sm ${expiryStatus.color} dark:text-white font-medium`}
                         >
                           {formatDate(member.expiryDate)}
                         </div>
@@ -222,12 +217,7 @@ const MemberTable = () => {
                         <div className="flex items-center text-xs mt-1">
                           <FaClock className="mr-1 h-3 w-3" />
                           <span
-                            className={`${
-                              expiryStatus.color
-                            } dark:${expiryStatus.color.replace(
-                              "text-",
-                              "text-"
-                            )}`}
+                            className={`${expiryStatus.color} dark:text-white`}
                           >
                             {expiryStatus.label}
                           </span>

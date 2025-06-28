@@ -48,7 +48,7 @@ const CategoryLiveShow = () => {
 
   return (
     <div className="category-live-show py-10 md:py-16 bg-gradient-to-b from-gray-950 via-black to-gray-950 overflow-hidden">
-      <style jsx global>{`
+      <style>{`
         .custom-dots-category li button:before {
           font-size: 8px;
           color: #4a5568;

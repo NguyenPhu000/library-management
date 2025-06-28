@@ -97,7 +97,7 @@ const LiveShow = () => {
         Sách Ngẫu Nhiên
       </h2>
 
-      <style jsx global>{`
+      <style>{`
         .custom-dots-liveshow {
           bottom: -30px;
         }

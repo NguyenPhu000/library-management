@@ -24,6 +24,7 @@ import {
   faExclamationTriangle,
   faSignInAlt,
 } from "@fortawesome/free-solid-svg-icons";
+import Swal from "sweetalert2";
 
 const BookDetail = () => {
   const { slug } = useParams();
@@ -150,9 +151,37 @@ const BookDetail = () => {
   const handleBorrowClick = async () => {
     if (!book || borrowLoading) return;
     try {
-      await borrowBook(book_id);
+      const result = await borrowBook(book_id);
+
+      if (result && result.success) {
+        Swal.fire({
+          icon: "success",
+          title: "Gửi yêu cầu thành công!",
+          html: `
+            <p>Yêu cầu mượn sách <strong>"${book.title}"</strong> đã được gửi.</p>
+            <br>
+            <p><strong>Quy trình tiếp theo:</strong></p>
+            <p>1. ⏳ Chờ thủ thư duyệt yêu cầu</p>
+            <p>2. ✅ Đến thư viện nhận sách trong vòng 3 ngày sau khi được duyệt</p>
+            <p>3. 📚 Thời hạn trả: 10 ngày kể từ khi nhận sách</p>
+            <br>
+            <p class="text-sm text-gray-600">Bạn sẽ nhận được thông báo khi yêu cầu được duyệt.</p>
+          `,
+          confirmButtonText: "Đã hiểu",
+          confirmButtonColor: "#10B981",
+          background: "#1f2937",
+          color: "#ffffff",
+        });
+      }
     } catch (error) {
-      console.error("Lỗi khi thực hiện mượn sách:", error);
+      console.error("Lỗi khi thực hiện yêu cầu mượn sách:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: error.message || "Không thể gửi yêu cầu mượn sách",
+        background: "#1f2937",
+        color: "#ffffff",
+      });
     }
   };
 
@@ -368,21 +397,27 @@ const BookDetail = () => {
                   </motion.div>
                 </motion.div>
 
-                {/* Borrow Button */}
-                <motion.div variants={itemVariants} className="mt-auto pt-4">
-                  {" "}
-                  {/* Adjusted padding */}
-                  <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4">
-                    {currentUser ? (
-                      <button
-                        onClick={handleBorrowClick}
-                        disabled={borrowLoading}
-                        className={`${
-                          book.available_copies > 0
-                            ? "bg-lightGreen hover:bg-green-700"
-                            : "bg-gray-500 cursor-not-allowed"
-                        } text-white py-3 px-6 rounded-md shadow-lg transition-all duration-300 text-base font-medium flex items-center justify-center space-x-2 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-20 w-full sm:w-auto`}
-                      >
+                {/* Action Button */}
+                <div className="flex flex-col lg:flex-row items-center justify-center space-y-4 lg:space-y-0 lg:space-x-4">
+                  {!currentUser ? (
+                    <button
+                      onClick={handleLoginToBorrow}
+                      className="group relative px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition duration-300 overflow-hidden w-full lg:w-auto"
+                    >
+                      <div className={shimmerEffect}></div>
+                      <span className="relative flex items-center justify-center">
+                        <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
+                        Đăng nhập để yêu cầu mượn
+                      </span>
+                    </button>
+                  ) : book.available_copies > 0 ? (
+                    <button
+                      onClick={handleBorrowClick}
+                      disabled={borrowLoading}
+                      className="group relative px-8 py-3 bg-lightGreen hover:bg-opacity-80 text-black font-bold rounded-xl transition duration-300 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed w-full lg:w-auto"
+                    >
+                      <div className={shimmerEffect}></div>
+                      <span className="relative flex items-center justify-center">
                         {borrowLoading ? (
                           <>
                             <FontAwesomeIcon
@@ -390,50 +425,47 @@ const BookDetail = () => {
                               spin
                               className="mr-2"
                             />
-                            <span>Đang xử lý...</span>
+                            Đang gửi yêu cầu...
                           </>
-                        ) : book.available_copies > 0 ? (
+                        ) : (
                           <>
                             <FontAwesomeIcon
                               icon={faBookOpen}
                               className="mr-2"
                             />
-                            <span>Mượn sách</span>
-                          </>
-                        ) : (
-                          <>
-                            <FontAwesomeIcon
-                              icon={faCircleXmark}
-                              className="mr-2"
-                            />
-                            <span>Hết sách</span>
+                            Yêu cầu mượn sách
                           </>
                         )}
-                      </button>
-                    ) : (
+                      </span>
+                    </button>
+                  ) : (
+                    <div className="flex flex-col items-center space-y-2 w-full lg:w-auto">
                       <button
-                        onClick={handleLoginToBorrow}
-                        className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md shadow-lg transition-all duration-300 text-base font-medium flex items-center justify-center space-x-2 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-20 w-full sm:w-auto"
+                        disabled
+                        className="px-8 py-3 bg-gray-600 text-gray-300 font-bold rounded-xl cursor-not-allowed w-full lg:w-auto"
                       >
-                        <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
-                        <span>Đăng nhập để mượn</span>
+                        <FontAwesomeIcon
+                          icon={faCircleXmark}
+                          className="mr-2"
+                        />
+                        Tạm hết sách
                       </button>
-                    )}
-                  </div>
+                      <p className="text-xs text-gray-400 text-center">
+                        Bạn có thể đặt trước khi sách có sẵn
+                      </p>
+                    </div>
+                  )}
+
                   {borrowError && (
-                    <motion.p
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-red-400 mt-3 text-sm text-center md:text-left"
-                    >
+                    <div className="text-red-400 text-sm bg-red-900/20 p-3 rounded-lg border border-red-700/50 w-full">
                       <FontAwesomeIcon
                         icon={faExclamationTriangle}
-                        className="mr-1"
+                        className="mr-2"
                       />
                       {borrowError}
-                    </motion.p>
+                    </div>
                   )}
-                </motion.div>
+                </div>
               </motion.div>
             </div>
           </div>

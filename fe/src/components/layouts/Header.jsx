@@ -231,21 +231,6 @@ const Header = () => {
         )}
       </div>
       {/* Basic CSS for fade-in animation (add to your global CSS or index.css) */}
-      <style jsx global>{`
-        @keyframes fade-in-down {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in-down {
-          animation: fade-in-down 0.2s ease-out;
-        }
-      `}</style>
     </header>
   );
 };

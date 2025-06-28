@@ -10,7 +10,7 @@ import paymentRoutes from "./paymentRoutes.js";
 import adminRoutes from "./adminRoutes.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 
-let router = express.Router();
+const router = express.Router();
 
 // Public routes (không yêu cầu đăng nhập)
 router.use("/api", authRoutes);
@@ -21,7 +21,7 @@ router.use("/api", memberRoutes); // API member là công khai
 
 // Các API route sau khi đã xác thực
 router.use("/api", userRoutes);
-router.use("/api", loanRoutes);
+router.use("/api/loans", loanRoutes);
 router.use("/api", paymentRoutes);
 
 // Admin routes với middleware xác thực được tích hợp sẵn
