@@ -16,7 +16,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.08,
     },
   },
 };
@@ -28,7 +28,8 @@ const itemVariants = {
     opacity: 1,
     transition: {
       type: "spring",
-      stiffness: 100,
+      stiffness: 120,
+      damping: 20,
     },
   },
 };
@@ -51,14 +52,14 @@ const BookList = ({ books, loading, error }) => {
   return (
     <>
       <motion.section
-        className="container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8 px-4 py-12"
+        className="container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6 lg:gap-8 px-4 py-8 md:py-12"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {loading ? (
-          <motion.p
-            className="text-center col-span-full text-white text-2xl flex items-center justify-center space-x-3 py-16"
+          <motion.div
+            className="col-span-full flex flex-col items-center justify-center py-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -66,27 +67,30 @@ const BookList = ({ books, loading, error }) => {
             <FontAwesomeIcon
               icon={faSpinner}
               spin
-              className="text-lightGreen text-4xl"
+              className="text-library-primary text-4xl mb-4"
             />
-            <span className="font-semibold text-gray-300">
+            <p className="text-library-text-secondary text-lg font-medium">
               Đang tải sách...
-            </span>
-          </motion.p>
+            </p>
+          </motion.div>
         ) : error ? (
-          <motion.p
-            className="text-center col-span-full text-red-400 text-xl flex items-center justify-center space-x-3 py-16"
+          <motion.div
+            className="col-span-full flex flex-col items-center justify-center py-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
             <FontAwesomeIcon
               icon={faExclamationTriangle}
-              className="text-red-400 text-4xl"
+              className="text-library-error text-4xl mb-4"
             />
-            <span className="font-semibold">
-              Đã xảy ra lỗi khi tải sách. Vui lòng thử lại sau.
-            </span>
-          </motion.p>
+            <p className="text-library-text-primary text-xl font-semibold mb-2">
+              Đã xảy ra lỗi khi tải sách
+            </p>
+            <p className="text-library-text-secondary">
+              Vui lòng thử lại sau hoặc liên hệ hỗ trợ
+            </p>
+          </motion.div>
         ) : currentBooks && currentBooks.length > 0 ? (
           currentBooks.map((book) => {
             const slug = generateSlug(book.book_id);
@@ -95,53 +99,57 @@ const BookList = ({ books, loading, error }) => {
                 key={book.book_id}
                 variants={itemVariants}
                 whileHover={{
-                  y: -5,
-                  scale: 1.03,
-                  boxShadow: "0px 10px 20px rgba(0, 255, 150, 0.2)",
+                  y: -8,
+                  transition: { duration: 0.2, ease: "easeOut" },
                 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="h-full"
               >
-                <Link to={`/books/${slug}`} className="block h-full">
-                  <div
-                    className="relative flex flex-col h-full bg-gray-800 rounded-lg shadow-lg overflow-hidden
-                               group transition duration-300 ease-in-out border border-transparent hover:border-teal-500/50 cursor-pointer"
-                  >
-                    <div className="relative overflow-hidden aspect-[3/4]">
-                      {" "}
+                <Link to={`/books/${slug}`} className="block h-full group">
+                  <div className="card-library-book h-full flex flex-col overflow-hidden">
+                    {/* Book Cover */}
+                    <div className="relative overflow-hidden aspect-[3/4] bg-library-border">
                       <img
                         src={book.cover_image}
                         alt={book.title || "Bìa sách"}
                         loading="lazy"
-                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                        onError={(e) => {
+                          e.target.src = "/public/uploads/coverBook.jpg";
+                        }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300"></div>
-                      <div
-                        className="absolute inset-0 overflow-hidden bg-[linear-gradient(135deg,transparent_25%,rgba(255,255,255,.2)_50%,transparent_75%,transparent_100%)]
-                                 bg-[length:250%_250%] bg-[position:-100%_-100%] bg-no-repeat transition-[background-position_0s_ease] group-hover:bg-[position:200%_200%] group-hover:duration-[1200ms]"
-                      ></div>
+
+                      {/* Subtle overlay on hover */}
+                      <div className="absolute inset-0 bg-library-primary/0 group-hover:bg-library-primary/5 transition-colors duration-300"></div>
                     </div>
+
+                    {/* Book Info */}
                     <div className="p-4 flex flex-col flex-grow">
-                      {" "}
                       <h3
-                        className="text-md font-semibold text-white mb-1 line-clamp-2"
+                        className="text-library-heading text-sm md:text-base font-semibold mb-2 line-clamp-2 leading-tight"
                         title={book.title || "Không có tiêu đề"}
                       >
                         {book.title || "Không có tiêu đề"}
                       </h3>
-                      <p
-                        className="text-gray-400 text-xs mb-2 flex items-center"
-                        title={book.author || "Không rõ tác giả"}
-                      >
+
+                      <div className="flex items-center text-library-caption mb-1">
                         <FontAwesomeIcon
                           icon={faPenNib}
-                          className="mr-1.5 w-3 h-3 flex-shrink-0"
+                          className="mr-1.5 w-3 h-3 flex-shrink-0 text-library-text-muted"
                         />
-                        <span className="truncate">
-                          {" "}
+                        <span
+                          className="truncate text-library-text-muted"
+                          title={book.author || "Không rõ tác giả"}
+                        >
                           {book.author || "Không rõ tác giả"}
                         </span>
-                      </p>
+                      </div>
+
+                      {/* Optional: Publication year or category */}
+                      {book.publication_year && (
+                        <div className="text-xs text-library-text-muted mt-auto">
+                          {book.publication_year}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </Link>
@@ -149,26 +157,30 @@ const BookList = ({ books, loading, error }) => {
             );
           })
         ) : (
-          <motion.p
-            className="text-center col-span-full text-gray-400 text-xl flex items-center justify-center space-x-3 py-16"
+          <motion.div
+            className="col-span-full flex flex-col items-center justify-center py-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
             <FontAwesomeIcon
               icon={faBookOpen}
-              className="text-lightGreen text-4xl"
+              className="text-library-primary text-5xl mb-4"
             />
-            <span className="font-semibold">
-              Chưa có sách nào để hiển thị. Vui lòng quay lại sau nhé!
-            </span>
-          </motion.p>
+            <p className="text-library-text-primary text-xl font-semibold mb-2">
+              Chưa có sách nào
+            </p>
+            <p className="text-library-text-secondary">
+              Vui lòng quay lại sau khi thư viện đã cập nhật sách mới
+            </p>
+          </motion.div>
         )}
       </motion.section>
 
+      {/* Pagination với library styling */}
       {books && books.length > itemsPerPage && (
         <motion.div
-          className="mt-8 mb-12 flex justify-center"
+          className="mt-8 mb-12 flex justify-center px-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
