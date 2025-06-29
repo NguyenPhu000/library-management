@@ -14,61 +14,92 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-gray-400 py-16 px-8">
+    <footer className="bg-library-surface border-t border-library-border text-library-text-secondary py-12 px-8 mt-16">
       <div className="max-w-5xl mx-auto">
-        {/* Social Icons */}
-        <div className="flex justify-center space-x-6 mb-12">
-          <a href="#" className="hover:text-lightGreen transition-colors">
-            <FontAwesomeIcon icon={faFacebook} className="text-2xl" />
-          </a>
-          <a href="#" className="hover:text-lightGreen transition-colors">
-            <FontAwesomeIcon icon={faTwitter} className="text-2xl" />
-          </a>
-          <a href="#" className="hover:text-lightGreen transition-colors">
-            <FontAwesomeIcon icon={faInstagram} className="text-2xl" />
-          </a>
-        </div>
-
-        {/* Links */}
-        <nav className="grid grid-cols-1 md:grid-cols-2 lg:flex justify-center gap-8 lg:space-x-16 mb-10 text-lg">
+        {/* Library Brand */}
+        <div className="text-center mb-8">
           <Link
             to="/"
-            className="hover:text-lightGreen transition-colors flex items-center space-x-3"
+            className="text-2xl font-heading font-bold text-library-text-primary hover:text-library-primary transition-colors duration-200"
           >
-            <FontAwesomeIcon icon={faHome} className="text-xl" />
-            <span>Trang Chủ</span>
+            <span className="text-library-primary">Góc</span>{" "}
+            <span>Thư Viện</span>
+          </Link>
+          <p className="text-library-text-muted text-sm mt-2">
+            Khám phá tri thức, kết nối cộng đồng
+          </p>
+        </div>
+
+        {/* Navigation Links */}
+        <nav className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 text-center md:text-left">
+          <Link
+            to="/"
+            className="text-library-text-secondary hover:text-library-primary transition-colors duration-200 flex items-center justify-center md:justify-start space-x-2 py-2"
+          >
+            <FontAwesomeIcon icon={faHome} className="text-base" />
+            <span className="font-medium">Trang Chủ</span>
           </Link>
           <Link
             to="/books"
-            className="hover:text-lightGreen transition-colors flex items-center space-x-3"
+            className="text-library-text-secondary hover:text-library-primary transition-colors duration-200 flex items-center justify-center md:justify-start space-x-2 py-2"
           >
-            <FontAwesomeIcon icon={faBook} className="text-xl" />
-            <span>Danh Sách</span>
+            <FontAwesomeIcon icon={faBook} className="text-base" />
+            <span className="font-medium">Danh Sách</span>
           </Link>
           <Link
             to="/contact"
-            className="hover:text-lightGreen transition-colors flex items-center space-x-3"
+            className="text-library-text-secondary hover:text-library-primary transition-colors duration-200 flex items-center justify-center md:justify-start space-x-2 py-2"
           >
-            <FontAwesomeIcon icon={faEnvelope} className="text-xl" />
-            <span>Liên Hệ</span>
+            <FontAwesomeIcon icon={faEnvelope} className="text-base" />
+            <span className="font-medium">Liên Hệ</span>
           </Link>
           <Link
             to="#"
-            className="hover:text-lightGreen transition-colors flex items-center space-x-3"
+            className="text-library-text-secondary hover:text-library-primary transition-colors duration-200 flex items-center justify-center md:justify-start space-x-2 py-2"
           >
-            <FontAwesomeIcon icon={faFileContract} className="text-xl" />
-            <span>Điều khoản</span>
+            <FontAwesomeIcon icon={faFileContract} className="text-base" />
+            <span className="font-medium">Điều khoản</span>
           </Link>
         </nav>
 
-        <hr className="border-gray-700 mb-6" />
+        {/* Social Media Links */}
+        <div className="flex justify-center space-x-6 mb-8">
+          <a
+            href="#"
+            className="text-library-text-muted hover:text-library-primary transition-colors duration-200 p-2 rounded-library hover:bg-library-hover"
+            aria-label="Facebook"
+          >
+            <FontAwesomeIcon icon={faFacebook} className="text-xl" />
+          </a>
+          <a
+            href="#"
+            className="text-library-text-muted hover:text-library-primary transition-colors duration-200 p-2 rounded-library hover:bg-library-hover"
+            aria-label="Twitter"
+          >
+            <FontAwesomeIcon icon={faTwitter} className="text-xl" />
+          </a>
+          <a
+            href="#"
+            className="text-library-text-muted hover:text-library-primary transition-colors duration-200 p-2 rounded-library hover:bg-library-hover"
+            aria-label="Instagram"
+          >
+            <FontAwesomeIcon icon={faInstagram} className="text-xl" />
+          </a>
+        </div>
 
-        {/* Copyright */}
-        <div className="flex justify-center md:justify-start text-sm">
-          <p className="text-gray-500">
-            © {new Date().getFullYear()}
-            <span className="text-lightGreen"> Góc Thư Viện</span>. Đã đăng ký
-            bản quyền.
+        <hr className="border-library-border mb-6" />
+
+        {/* Copyright & Additional Info */}
+        <div className="text-center">
+          <p className="text-library-text-muted text-sm">
+            © {new Date().getFullYear()}{" "}
+            <span className="text-library-primary font-medium">
+              Góc Thư Viện
+            </span>
+            . Tất cả quyền được bảo lưu.
+          </p>
+          <p className="text-library-text-muted text-xs mt-2">
+            Được xây dựng với ❤️ để phục vụ cộng đồng đọc sách
           </p>
         </div>
       </div>
