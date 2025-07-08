@@ -659,6 +659,38 @@ const getLoanStatistics = async (req, res) => {
   }
 };
 
+// Đồng bộ lại số sách đang mượn của member(s)
+const syncMemberCurrentLoans = async (req, res) => {
+  try {
+    const { member_id } = req.body; // Tùy chọn, nếu null sẽ sync tất cả
+
+    const result = await loanService.syncMemberCurrentLoans(member_id);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.message,
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: result.message,
+      data: {
+        member_id: result.member_id,
+        current_loans: result.current_loans,
+        updated_count: result.updated_count,
+        total_members: result.total_members,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Có lỗi khi đồng bộ current_loans: " + error.message,
+    });
+  }
+};
+
 export default {
   // New pickup code workflow endpoints
   requestBook, // POST /api/loans/request/:memberId/:bookId - Tự động sinh mã
@@ -696,4 +728,5 @@ export default {
   rejectRenewLoan, // Deprecated - use rejectRenewal
   getLoanByBookId,
   getLoanStats,
+  syncMemberCurrentLoans, // NEW
 };

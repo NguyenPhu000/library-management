@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faBookOpen } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -11,96 +11,38 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative bg-library-gradient text-library-text-primary py-16 md:py-20 lg:py-24 px-4">
-      {/* Subtle background pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-20 w-32 h-32 border border-library-primary rounded-full"></div>
-        <div className="absolute bottom-32 right-32 w-24 h-24 border border-library-primary rounded-full"></div>
-        <div className="absolute top-1/3 right-20 w-16 h-16 border border-library-primary rounded-full"></div>
-      </div>
+    <section className="relative bg-gradient-to-br from-gray-950 via-black to-gray-950 text-white py-16 md:py-24 px-4 flex flex-col lg:flex-row items-center justify-center overflow-hidden min-h-[70vh]">
+      <div className="absolute top-1/4 left-5 md:left-10 w-64 h-64 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 filter blur-3xl opacity-50 mix-blend-lighten" />
+      <div className="absolute bottom-1/4 right-5 md:right-10 w-80 h-80 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 filter blur-3xl opacity-40 mix-blend-lighten" />
 
-      <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="flex flex-col lg:flex-row items-center justify-between">
-          {/* Content */}
-          <div className="max-w-2xl text-center lg:text-left lg:mr-12 mb-12 lg:mb-0">
-            <div className="inline-flex items-center bg-library-primary/10 text-library-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <FontAwesomeIcon icon={faBookOpen} className="mr-2" />
-              Thư viện số hiện đại
-            </div>
+      <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between max-w-6xl w-full">
+        <div className="max-w-xl text-center lg:text-left lg:mr-8 mb-8 lg:mb-0">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight tracking-tight bg-gradient-to-r from-white via-gray-200 to-emerald-300 text-transparent bg-clip-text mb-4">
+            Khám phá kho tàng tri thức vô hạn
+          </h1>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-heading font-bold leading-tight text-library-text-primary mb-6">
-              Khám phá kho tàng{" "}
-              <span className="text-library-primary">tri thức</span> vô hạn
-            </h1>
+          <p className="mt-4 text-base md:text-lg text-gray-300/90 leading-relaxed">
+            Đắm mình vào thế giới của hàng ngàn cuốn sách chọn lọc, hoàn toàn
+            miễn phí. Mở rộng kiến thức và tầm nhìn của bạn mọi lúc, mọi nơi!
+          </p>
 
-            <p className="text-lg md:text-xl text-library-text-secondary leading-relaxed mb-8 max-w-xl">
-              Đắm mình vào thế giới của hàng ngàn cuốn sách chọn lọc. Mở rộng
-              kiến thức và tầm nhìn của bạn mọi lúc, mọi nơi.
-            </p>
+          <button
+            onClick={handleExploreClick}
+            className="mt-6 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-teal-500 hover:to-emerald-500 text-white font-medium text-base py-2 px-6 rounded-full transition-all duration-300 ease-in-out shadow-md hover:shadow-emerald-400/30 flex items-center justify-center space-x-2 mx-auto lg:mx-0"
+          >
+            <span>Bắt đầu khám phá</span>
+            <FontAwesomeIcon icon={faArrowRight} />
+          </button>
+        </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={handleExploreClick}
-                className="btn-library-primary text-lg px-8 py-4 flex items-center justify-center space-x-3 group"
-              >
-                <span>Bắt đầu khám phá</span>
-                <FontAwesomeIcon
-                  icon={faArrowRight}
-                  className="transition-transform duration-200 group-hover:translate-x-1"
-                />
-              </button>
-
-              <button
-                onClick={() => navigate("/contact")}
-                className="btn-library-secondary text-lg px-8 py-4 flex items-center justify-center"
-              >
-                Tìm hiểu thêm
-              </button>
-            </div>
-
-            {/* Stats */}
-            <div className="flex flex-wrap gap-8 mt-12 pt-8 border-t border-library-border">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-library-primary">
-                  1000+
-                </div>
-                <div className="text-sm text-library-text-muted">Cuốn sách</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-library-primary">
-                  50+
-                </div>
-                <div className="text-sm text-library-text-muted">Danh mục</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-library-primary">
-                  24/7
-                </div>
-                <div className="text-sm text-library-text-muted">Mở cửa</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Hero Image */}
-          <div className="w-full max-w-lg relative">
-            <div className="card-library-book overflow-hidden">
-              <img
-                src="/public/uploads/coverBook.jpg"
-                alt="Thư viện hiện đại"
-                className="w-full h-auto object-cover transition-transform duration-700 ease-out hover:scale-105"
-                onError={(e) => {
-                  e.target.src = "/public/uploads/coverBook.jpg";
-                }}
-              />
-            </div>
-
-            {/* Floating elements */}
-            <div className="absolute -top-4 -right-4 bg-library-success text-white px-4 py-2 rounded-library text-sm font-medium shadow-library-card">
-              Miễn phí
-            </div>
-            <div className="absolute -bottom-4 -left-4 bg-library-surface border border-library-border px-4 py-2 rounded-library text-sm font-medium shadow-library-card">
-              ⭐ 4.9/5 đánh giá
-            </div>
+        <div className="w-full max-w-xs md:max-w-sm relative">
+          <div className="rounded-xl shadow-lg border border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 overflow-hidden">
+            <img
+              src="./uploads/coverBook.jpg"
+              alt="Kho sách đa dạng"
+              className="w-full h-auto object-cover transition-transform duration-500 ease-out hover:scale-105 block"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 opacity-70"></div>
           </div>
         </div>
       </div>

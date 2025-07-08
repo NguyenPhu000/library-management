@@ -9,7 +9,7 @@ import { useMemberId } from "./MemberContext";
 const PaymentContext = createContext();
 
 export const PaymentProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { currentUser } = useAuth();
   const memberId = useMemberId();
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -35,36 +35,80 @@ export const PaymentProvider = ({ children }) => {
     }
   };
 
-  // Hàm kiểm tra xem thanh toán đã tồn tại hay chưa
-  const isPaymentExists = (loanId) => {
-    return payments.some((payment) => payment.Loan.loan_id === loanId);
+  // Kiểm tra tình trạng thanh toán của 1 loan
+  const isPaymentCompleted = (loanId) => {
+    return payments.some(
+      (p) =>
+        p.Loan.loan_id === loanId &&
+        ["completed", "APPROVED"].includes(
+          p.status?.toLowerCase?.() || p.status
+        )
+    );
   };
 
-  // Hàm tạo một khoản thanh toán mới
-  const handleCreatePayment = async (loanId, paymentData) => {
+  const isPaymentPending = (loanId) => {
+    return payments.some(
+      (p) =>
+        p.Loan.loan_id === loanId &&
+        ["pending", "processing"].includes(
+          p.status?.toLowerCase?.() || p.status
+        )
+    );
+  };
+
+  const getPendingQrPayment = (loanId) => {
+    return payments.find(
+      (p) =>
+        p.Loan.loan_id === loanId &&
+        ["pending", "processing"].includes(
+          p.status?.toLowerCase?.() || p.status
+        ) &&
+        p.payment_method === "qrcode"
+    );
+  };
+
+  // Hàm tạo một khoản thanh toán mới (hỗ trợ QR code)
+  const createPaymentRequest = async (paymentData) => {
     try {
       if (!paymentData || Object.keys(paymentData).length === 0) {
         throw new Error("Dữ liệu thanh toán không hợp lệ.");
       }
 
+      if (!["cash", "qrcode"].includes(paymentData.payment_method)) {
+        throw new Error("Phương thức thanh toán không hợp lệ.");
+      }
+
       const newPaymentData = {
         ...paymentData,
-        user_id: user ? user.user_id : null,
+        amount: Number(paymentData.amount),
+        description:
+          paymentData.description ||
+          `Phí phạt trả sách quá hạn - Loan #${paymentData.loan_id}`,
+        user_id: currentUser ? currentUser.user_id || currentUser.id : null,
         member_id: memberId,
+        status:
+          paymentData.payment_method === "qrcode" ? "pending" : "processing",
       };
 
-      const newPayment = await createPayment(
-        loanId,
-        user ? user.user_id : null,
-        memberId,
-        newPaymentData
-      );
+      const newPayment = await createPayment(newPaymentData);
 
-      setPayments((prevPayments) => [...prevPayments, newPayment]);
+      if (!newPayment) {
+        throw new Error("Không nhận được phản hồi từ server");
+      }
+
+      // Cập nhật danh sách payments
+      setPayments((prevPayments) => {
+        // Loại bỏ payment cũ của loan này nếu có
+        const filteredPayments = prevPayments.filter(
+          (p) => p.loan_id !== paymentData.loan_id
+        );
+        return [...filteredPayments, newPayment];
+      });
+
       return newPayment;
     } catch (error) {
       console.error("❌ Lỗi khi tạo thanh toán:", error);
-      throw new Error("Không thể tạo thanh toán: " + error.message);
+      throw error;
     }
   };
 
@@ -79,9 +123,12 @@ export const PaymentProvider = ({ children }) => {
         payments,
         loading,
         error,
-        handleCreatePayment,
+        createPaymentRequest,
+        handleCreatePayment: createPaymentRequest,
         fetchPayments,
-        isPaymentExists,
+        isPaymentCompleted,
+        isPaymentPending,
+        getPendingQrPayment,
       }}
     >
       {children}

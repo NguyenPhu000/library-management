@@ -47,11 +47,6 @@ const Header = () => {
         showCancelButton: true,
         confirmButtonText: "Đăng xuất",
         cancelButtonText: "Hủy",
-        customClass: {
-          popup: "bg-library-surface",
-          title: "text-library-text-primary",
-          htmlContainer: "text-library-text-secondary",
-        },
       });
 
       if (result.isConfirmed) {
@@ -66,12 +61,12 @@ const Header = () => {
   const NavLink = ({ to, children, icon: Icon }) => (
     <Link
       to={to}
-      className="flex items-center px-4 py-2 rounded-library text-library-text-secondary hover:bg-library-hover hover:text-library-primary transition-all duration-200 ease-in-out group"
+      className="flex items-center px-3 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 ease-in-out group"
     >
       {Icon && (
-        <Icon className="mr-2 h-5 w-5 text-library-text-muted group-hover:text-library-primary transition-colors duration-200" />
+        <Icon className="mr-2 h-5 w-5 text-gray-400 group-hover:text-lightGreen transition-colors duration-200" />
       )}
-      <span className="font-medium text-library-body">{children}</span>
+      <span className="font-medium">{children}</span>
     </Link>
   );
 
@@ -89,11 +84,11 @@ const Header = () => {
             setIsDropdownOpen(false);
             onClick && onClick();
           }}
-          className="flex items-center w-full px-4 py-3 text-sm text-library-error hover:bg-red-50 hover:text-red-700 transition-all duration-200 ease-in-out group"
+          className="flex items-center w-full px-4 py-3 text-sm text-red-400 hover:bg-red-900/50 hover:text-red-300 transition-all duration-200 ease-in-out group"
         >
           {Icon && (
             <Icon
-              className="mr-3 h-5 w-5 text-library-error group-hover:text-red-700 transition-colors duration-200"
+              className="mr-3 h-5 w-5 text-red-500 group-hover:text-red-400 transition-colors duration-200"
               aria-hidden="true"
             />
           )}
@@ -106,11 +101,11 @@ const Header = () => {
       <Link
         to={to}
         onClick={() => setIsDropdownOpen(false)} // Close dropdown on item click
-        className="flex items-center w-full px-4 py-3 text-sm text-library-text-secondary hover:bg-library-hover hover:text-library-text-primary transition-all duration-200 ease-in-out group"
+        className="flex items-center w-full px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 ease-in-out group"
       >
         {Icon && (
           <Icon
-            className="mr-3 h-5 w-5 text-library-text-muted group-hover:text-library-primary transition-colors duration-200"
+            className="mr-3 h-5 w-5 text-gray-400 group-hover:text-lightGreen transition-colors duration-200"
             aria-hidden="true"
           />
         )}
@@ -120,19 +115,19 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-library-surface border-b border-library-border text-library-text-primary py-4 px-6 md:px-10 flex items-center justify-between shadow-library-card sticky top-0 z-50 backdrop-blur-sm bg-library-surface/95">
-      {/* Logo với library branding */}
+    <header className="bg-gradient-to-r from-gray-900 via-black to-gray-900 text-white py-4 px-6 md:px-10 flex items-center justify-between shadow-lg sticky top-0 z-50 border-b border-gray-700/50">
+      {/* Logo */}
       <Link
         to="/"
-        className="text-2xl md:text-3xl font-heading font-bold tracking-tight flex items-center space-x-1.5 hover:opacity-80 transition-opacity duration-300 cursor-pointer"
+        className="text-2xl md:text-3xl font-bold tracking-tight flex items-center space-x-1.5 hover:opacity-90 transition-opacity duration-300 cursor-pointer"
       >
-        <span className="text-library-primary">Góc</span>
-        <span className="text-library-text-primary">Thư</span>
-        <span className="text-library-primary">Viện</span>
+        <span className="text-lightGreen">Góc</span>
+        <span className="text-white">Thư</span>
+        <span className="text-lightGreen">Viện</span>
       </Link>
 
-      {/* Navigation với minimal styling */}
-      <nav className="hidden md:flex items-center space-x-1">
+      {/* Navigation */}
+      <nav className="hidden md:flex items-center space-x-2">
         <NavLink to="/" icon={FiHome}>
           Trang Chủ
         </NavLink>
@@ -140,6 +135,8 @@ const Header = () => {
           Danh Sách
         </NavLink>
         <NavLink to="/contact" icon={FiPhone}>
+          {" "}
+          {/* Updated Icon */}
           Liên Hệ
         </NavLink>
         {/* Admin-only navigation link */}
@@ -150,7 +147,7 @@ const Header = () => {
         )}
       </nav>
 
-      {/* Search & User với library theme */}
+      {/* Search & User */}
       <div className="flex items-center space-x-4 md:space-x-6">
         {/* Search Bar */}
         <SearchBar />
@@ -161,22 +158,22 @@ const Header = () => {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center justify-center text-library-text-muted hover:text-library-primary focus:outline-none focus:ring-2 focus:ring-library-primary-light focus:ring-opacity-50 rounded-full transition-colors duration-200 p-2"
+              className="flex items-center justify-center text-gray-400 hover:text-lightGreen focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-lightGreen rounded-full transition-colors duration-200"
               aria-label="User menu"
               aria-haspopup="true"
             >
               <div className="flex items-center">
                 <FaUserCircle className="h-8 w-8" />
-                <span className="ml-2 text-sm text-library-text-secondary hidden md:block font-medium">
+                <span className="ml-2 text-sm text-gray-300 hidden md:block">
                   {currentUser.fullName || currentUser.username}
                 </span>
               </div>
             </button>
 
-            {/* Dropdown Menu với library styling */}
+            {/* Dropdown Menu */}
             {isDropdownOpen && (
               <div
-                className="absolute right-0 mt-3 w-60 origin-top-right bg-library-surface border border-library-border rounded-library-card shadow-library-card-hover ring-1 ring-library-border ring-opacity-5 focus:outline-none overflow-hidden animate-slide-up"
+                className="absolute right-0 mt-3 w-60 origin-top-right bg-gray-800/95 backdrop-blur-sm border border-gray-700 rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden animate-fade-in-down"
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="user-menu-button"
@@ -188,7 +185,7 @@ const Header = () => {
                       <DropdownItem to="/admin" icon={FiSettings}>
                         Quản lý thư viện
                       </DropdownItem>
-                      <div className="border-t border-library-border my-1"></div>
+                      <div className="border-t border-gray-700 my-1"></div>
                     </>
                   )}
 
@@ -207,7 +204,7 @@ const Header = () => {
                       <DropdownItem to="/payments" icon={FiCreditCard}>
                         Thanh toán
                       </DropdownItem>
-                      <div className="border-t border-library-border my-1"></div>
+                      <div className="border-t border-gray-700 my-1"></div>
                     </>
                   )}
 
@@ -223,16 +220,17 @@ const Header = () => {
             )}
           </div>
         ) : (
-          // Chưa đăng nhập - Hiển thị nút đăng nhập với library button style
+          // Chưa đăng nhập - Hiển thị nút đăng nhập
           <Link
             to="/login"
-            className="btn-library-primary flex items-center text-sm font-medium"
+            className="flex items-center px-3 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 ease-in-out group"
           >
-            <FiLogIn className="mr-2 h-4 w-4" />
-            <span>Đăng nhập</span>
+            <FiLogIn className="mr-2 h-5 w-5 text-gray-400 group-hover:text-lightGreen transition-colors duration-200" />
+            <span className="font-medium">Đăng nhập</span>
           </Link>
         )}
       </div>
+      {/* Basic CSS for fade-in animation (add to your global CSS or index.css) */}
     </header>
   );
 };

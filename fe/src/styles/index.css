@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap");
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css");
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";
@@ -7,75 +7,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Library Theme Global Styles */
 body {
-  font-family: "Inter", "Poppins", system-ui, sans-serif;
+  font-family: "Poppins", sans-serif;
+  /* index.css hoặc App.css */
 
-  /* New minimal library background */
-  background-color: #fafafa; /* Light library background */
-  color: #1e293b; /* Dark text for readability */
-
-  /* Typography improvements */
-  line-height: 1.6;
-  letter-spacing: -0.01em;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Custom Library CSS Components */
-@layer components {
-  /* Modern button styles */
-  .btn-library-primary {
-    @apply bg-library-primary text-white px-6 py-3 rounded-library-button 
-           font-medium transition-all duration-200 ease-in-out
-           hover:bg-library-primary-light hover:shadow-library-card-hover
-           focus:outline-none focus:ring-2 focus:ring-library-primary-light focus:ring-opacity-50;
-  }
-
-  .btn-library-secondary {
-    @apply bg-library-surface text-library-text-primary border border-library-border 
-           px-6 py-3 rounded-library-button font-medium transition-all duration-200 ease-in-out
-           hover:bg-library-hover hover:shadow-library-card-hover
-           focus:outline-none focus:ring-2 focus:ring-library-primary-light focus:ring-opacity-50;
-  }
-
-  /* Card styles */
-  .card-library {
-    @apply bg-library-surface border border-library-border rounded-library-card 
-           shadow-library-card transition-all duration-200 ease-in-out
-           hover:shadow-library-card-hover;
-  }
-
-  .card-library-book {
-    @apply bg-library-surface rounded-library-card shadow-library-book 
-           transition-all duration-300 ease-in-out hover:shadow-library-book-hover
-           hover:transform hover:-translate-y-1;
-  }
-
-  /* Text styles */
-  .text-library-heading {
-    @apply font-heading font-semibold text-library-text-primary;
-  }
-
-  .text-library-body {
-    @apply font-library text-library-text-secondary;
-  }
-
-  .text-library-caption {
-    @apply font-library text-sm text-library-text-muted;
-  }
-
-  /* Input styles */
-  .input-library {
-    @apply border border-library-border rounded-library px-4 py-3 
-           bg-library-surface text-library-text-primary
-           focus:outline-none focus:ring-2 focus:ring-library-primary-light 
-           focus:border-library-primary-light transition-colors duration-200;
-  }
-
-  /* Search bar styles */
-  .search-library {
-    @apply input-library w-full pl-12 pr-4 py-4 text-lg
-           placeholder:text-library-text-muted;
-  }
+  background-color: #f0f0f0; /* Thay đổi màu nền ở đây */
+  color: #333; /* Màu chữ mặc định */
 }

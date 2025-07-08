@@ -16,21 +16,34 @@ const getPaymentsByMemberId = async (memberId) => {
   }
 };
 
-// Hàm tạo một khoản thanh toán mới
-const createPayment = async (loanId, userId, memberId, paymentData) => {
-  if (!loanId || !userId || !memberId || !paymentData) {
-    throw new Error("Thiếu thông tin cần thiết.");
+// Hàm tạo một khoản thanh toán mới (hỗ trợ QR code)
+const createPayment = async (paymentData) => {
+  if (!paymentData) {
+    throw new Error("Dữ liệu thanh toán không hợp lệ.");
   }
 
   try {
-    const response = await API.post(
-      `/payments/create/${loanId}/${userId}/${memberId}`,
-      paymentData
-    );
-    return response.data;
+    // Backend sẽ tự lấy loan_id, member_id, user_id từ body
+    const response = await API.post("/payments/create", paymentData);
+    // Trả về object payment (response.data.payment)
+    return response.data.payment;
   } catch (error) {
     throw new Error(`Lỗi tạo thanh toán: ${error.message}`);
   }
 };
 
-export { getPaymentsByMemberId, createPayment };
+// Hàm lấy thông tin thanh toán theo ID
+const getPaymentById = async (paymentId) => {
+  if (!paymentId) {
+    throw new Error("paymentId không hợp lệ.");
+  }
+
+  try {
+    const response = await API.get(`/payments/${paymentId}`);
+    return response.data.payment;
+  } catch (error) {
+    throw new Error(`Lỗi lấy dữ liệu thanh toán: ${error.message}`);
+  }
+};
+
+export { getPaymentsByMemberId, createPayment, getPaymentById };

@@ -2,16 +2,39 @@ import { AdminAPI } from "../../services/api";
 
 const adminPaymentService = {
   // Lấy danh sách tất cả thanh toán với phân trang
-  getAllPayments: async (page = 1, limit = 10, status = null) => {
+  getAllPayments: async (page = 1, limit = 10, filters = {}) => {
     try {
-      const params = { page, limit };
-      if (status) params.status = status;
+      const params = {
+        page,
+        limit,
+        ...filters,
+      };
 
       const response = await AdminAPI.get("/payments", { params });
-      return response.data;
+      return {
+        success: true,
+        payments: response.data.payments || response.data,
+        currentPage: response.data.currentPage || page,
+        totalPages:
+          response.data.totalPages ||
+          Math.ceil((response.data.totalCount || 0) / limit),
+        totalCount: response.data.totalCount || 0,
+        limit: response.data.limit || limit,
+        offset: response.data.offset || (page - 1) * limit,
+      };
     } catch (error) {
       console.error("Error fetching payments for admin:", error);
-      throw error;
+      return {
+        success: false,
+        message:
+          error.response?.data?.message || "Lỗi khi tải danh sách thanh toán",
+        payments: [],
+        currentPage: 1,
+        totalPages: 1,
+        totalCount: 0,
+        limit: limit,
+        offset: 0,
+      };
     }
   },
 
@@ -63,13 +86,23 @@ const adminPaymentService = {
   },
 
   // Xác nhận thanh toán
-  confirmPayment: async (paymentId) => {
+  confirmPayment: async (paymentId, data = {}) => {
     try {
-      const response = await AdminAPI.patch(`/payments/${paymentId}/confirm`);
-      return response.data;
+      const response = await AdminAPI.patch(
+        `/payments/${paymentId}/confirm`,
+        data
+      );
+      return {
+        success: true,
+        message: response.data.message || "Xác nhận thanh toán thành công",
+        payment: response.data.payment,
+      };
     } catch (error) {
       console.error(`Error confirming payment ${paymentId} by admin:`, error);
-      throw error;
+      return {
+        success: false,
+        message: error.response?.data?.message || "Lỗi khi xác nhận thanh toán",
+      };
     }
   },
 
@@ -79,10 +112,17 @@ const adminPaymentService = {
       const response = await AdminAPI.patch(`/payments/${paymentId}/cancel`, {
         reason,
       });
-      return response.data;
+      return {
+        success: true,
+        message: response.data.message || "Hủy thanh toán thành công",
+        payment: response.data.payment,
+      };
     } catch (error) {
       console.error(`Error canceling payment ${paymentId} by admin:`, error);
-      throw error;
+      return {
+        success: false,
+        message: error.response?.data?.message || "Lỗi khi hủy thanh toán",
+      };
     }
   },
 
@@ -108,10 +148,40 @@ const adminPaymentService = {
       if (endDate) params.endDate = endDate;
 
       const response = await AdminAPI.get("/payments/stats", { params });
-      return response.data;
+      return {
+        success: true,
+        stats: response.data.stats || {
+          totalRevenue: 0,
+          totalPayments: 0,
+          pendingPayments: 0,
+          completedPayments: 0,
+          cashPayments: 0,
+          qrPayments: 0,
+          monthlyRevenue: 0,
+          dailyRevenue: 0,
+          averagePayment: 0,
+          revenueGrowth: 0,
+        },
+      };
     } catch (error) {
       console.error("Error fetching payment stats for admin:", error);
-      throw error;
+      return {
+        success: false,
+        message:
+          error.response?.data?.message || "Lỗi khi tải thống kê thanh toán",
+        stats: {
+          totalRevenue: 0,
+          totalPayments: 0,
+          pendingPayments: 0,
+          completedPayments: 0,
+          cashPayments: 0,
+          qrPayments: 0,
+          monthlyRevenue: 0,
+          dailyRevenue: 0,
+          averagePayment: 0,
+          revenueGrowth: 0,
+        },
+      };
     }
   },
 
@@ -121,10 +191,18 @@ const adminPaymentService = {
       const response = await AdminAPI.get("/payments/income-report", {
         params: { year, month },
       });
-      return response.data;
+      return {
+        success: true,
+        message: "Tạo báo cáo thành công",
+        data: response.data,
+      };
     } catch (error) {
       console.error("Error generating income report for admin:", error);
-      throw error;
+      return {
+        success: false,
+        message:
+          error.response?.data?.message || "Lỗi khi tạo báo cáo thu nhập",
+      };
     }
   },
 };

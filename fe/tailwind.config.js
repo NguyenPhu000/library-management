@@ -4,65 +4,69 @@ export default {
   darkMode: "class",
   theme: {
     extend: {
-      // Modern Library Color Palette - Inspired by top libraries worldwide
       colors: {
-        // Legacy color (keep for admin)
         lightGreen: "#97bc62",
-
-        // NEW MINIMAL LIBRARY THEME
-        library: {
-          // Primary whites & grays
-          white: "#FFFFFF",
-          background: "#FAFAFA", // Very light gray background
-          surface: "#FFFFFF", // Card/surface white
-
-          // Soft accent colors
-          primary: "#2563EB", // Professional blue
-          "primary-light": "#3B82F6",
-          "primary-dark": "#1D4ED8",
-
-          secondary: "#64748B", // Medium gray
-          "secondary-light": "#94A3B8",
-          "secondary-dark": "#475569",
-
-          // Text hierarchy
-          "text-primary": "#1E293B", // Almost black for headers
-          "text-secondary": "#475569", // Dark gray for body
-          "text-muted": "#64748B", // Light gray for captions
-
-          // Success & status
-          success: "#059669", // Clean green
-          "success-light": "#10B981",
-          warning: "#D97706", // Professional orange
-          error: "#DC2626", // Clean red
-
-          // Borders & dividers
-          border: "#E2E8F0", // Subtle border
-          "border-light": "#F1F5F9", // Very light border
-
-          // Interactive states
-          hover: "#F8FAFC", // Light hover state
-          active: "#F1F5F9", // Active state
+        primary: {
+          50: "#f0f9ff",
+          100: "#e0f2fe",
+          200: "#bae6fd",
+          300: "#7dd3fc",
+          400: "#38bdf8",
+          500: "#0ea5e9",
+          600: "#0284c7",
+          700: "#0369a1",
+          800: "#075985",
+          900: "#0c4a6e",
+        },
+        secondary: {
+          50: "#f8fafc",
+          100: "#f1f5f9",
+          200: "#e2e8f0",
+          300: "#cbd5e1",
+          400: "#94a3b8",
+          500: "#64748b",
+          600: "#475569",
+          700: "#334155",
+          800: "#1e293b",
+          900: "#0f172a",
+        },
+        success: {
+          50: "#f0fdf4",
+          100: "#dcfce7",
+          200: "#bbf7d0",
+          300: "#86efac",
+          400: "#4ade80",
+          500: "#22c55e",
+          600: "#16a34a",
+          700: "#15803d",
+          800: "#166534",
+          900: "#14532d",
+        },
+        warning: {
+          50: "#fffbeb",
+          100: "#fef3c7",
+          200: "#fde68a",
+          300: "#fcd34d",
+          400: "#fbbf24",
+          500: "#f59e0b",
+          600: "#d97706",
+          700: "#b45309",
+          800: "#92400e",
+          900: "#78350f",
+        },
+        danger: {
+          50: "#fef2f2",
+          100: "#fee2e2",
+          200: "#fecaca",
+          300: "#fca5a5",
+          400: "#f87171",
+          500: "#ef4444",
+          600: "#dc2626",
+          700: "#b91c1c",
+          800: "#991b1b",
+          900: "#7f1d1d",
         },
       },
-
-      // Typography improvements
-      fontFamily: {
-        library: ["Inter", "system-ui", "sans-serif"],
-        heading: ["Poppins", "system-ui", "sans-serif"],
-      },
-
-      // Spacing scale for better white space
-      spacing: {
-        18: "4.5rem",
-        88: "22rem",
-        100: "25rem",
-        104: "26rem",
-        112: "28rem",
-        120: "30rem",
-      },
-
-      // Animation improvements
       animation: {
         "spin-slow": "spin 3s linear infinite",
         "pulse-slow": "pulse 3s ease-in-out infinite",
@@ -70,9 +74,8 @@ export default {
         reverse: "reverse-spin 2s linear infinite",
         "fade-in": "fadeIn 0.5s ease-in-out",
         "slide-up": "slideUp 0.3s ease-out",
-        "gentle-hover": "gentleHover 0.2s ease-in-out",
+        "scale-in": "scaleIn 0.2s ease-out",
       },
-
       keyframes: {
         "reverse-spin": {
           from: { transform: "rotate(360deg)" },
@@ -86,38 +89,30 @@ export default {
           "0%": { transform: "translateY(10px)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
         },
-        gentleHover: {
-          "0%": { transform: "translateY(0px)" },
-          "100%": { transform: "translateY(-2px)" },
+        scaleIn: {
+          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
         },
       },
-
       backdropBlur: {
         xs: "2px",
       },
-
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-        "library-gradient": "linear-gradient(135deg, #F8FAFC 0%, #FFFFFF 100%)",
+        "gradient-primary": "linear-gradient(135deg, var(--tw-gradient-stops))",
       },
-
-      // Box shadows for cards
-      boxShadow: {
-        "library-card":
-          "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
-        "library-card-hover":
-          "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-        "library-book": "0 2px 4px 0 rgba(0, 0, 0, 0.1)",
-        "library-book-hover": "0 8px 15px 0 rgba(0, 0, 0, 0.12)",
+      spacing: {
+        18: "4.5rem",
+        88: "22rem",
+        128: "32rem",
       },
-
-      // Border radius for modern look
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+      },
       borderRadius: {
-        library: "0.5rem", // Standard library elements
-        "library-card": "0.75rem", // Book cards
-        "library-button": "0.375rem", // Buttons
+        "4xl": "2rem",
       },
     },
   },

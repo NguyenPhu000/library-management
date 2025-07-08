@@ -1,32 +1,23 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { SearchBookContext } from "../../contexts/SearchBookContext";
 import { useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
-  const { searchBooks, resetCategory } = useContext(SearchBookContext);
+  // Nối SearchBookContext nếu cần trong tương lai
   const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     setSearchQuery(event.target.value);
   };
 
-  const handleSearchSubmit = async (event) => {
+  const handleSearchSubmit = (event) => {
     event.preventDefault();
-    if (!searchQuery.trim()) {
-      return;
-    }
+    if (!searchQuery.trim()) return;
 
-    try {
-      const criteria = "all";
-      await searchBooks(criteria, searchQuery);
-      resetCategory();
-      navigate(`/books?q=${searchQuery}`);
-    } catch (error) {
-      console.error("Lỗi tìm kiếm:", error);
-    }
+    // Điều hướng tới trang danh sách sách với tham số truy vấn 'q'
+    // Trang BookListPage sẽ tự động đọc tham số này và thực hiện tìm kiếm.
+    navigate(`/books?q=${encodeURIComponent(searchQuery.trim())}`);
   };
 
   const handleKeyDown = (event) => {
@@ -35,54 +26,27 @@ const SearchBar = () => {
     }
   };
 
-  const handleFocus = () => setIsFocused(true);
-  const handleBlur = () => setIsFocused(false);
-
   return (
-    <form onSubmit={handleSearchSubmit} className="relative">
-      <div
-        className={`
-        relative flex items-center
-        ${isFocused ? "ring-2 ring-library-primary-light ring-opacity-50" : ""}
-        rounded-library-button overflow-hidden transition-all duration-200
-      `}
+    <form
+      onSubmit={handleSearchSubmit}
+      className="relative flex items-center justify-center"
+    >
+      <FaSearch className="absolute left-4 text-gray-500 pointer-events-none text-lg" />
+      <input
+        type="text"
+        placeholder="Tìm kiếm sách..."
+        aria-label="Ô tìm kiếm sách"
+        className="bg-gray-800/90 backdrop-blur-sm border border-gray-700 rounded-full pl-12 pr-12 py-2 w-48 sm:w-60 md:w-72 focus:w-80 md:focus:w-96 text-sm text-gray-100 placeholder-gray-500 transition-all duration-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 outline-none"
+        value={searchQuery}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+      />
+      <button
+        type="submit"
+        className="absolute right-4 text-gray-400 hover:text-emerald-400 transition-colors"
       >
-        <FaSearch className="absolute left-4 text-library-text-muted text-base pointer-events-none" />
-
-        <input
-          type="text"
-          placeholder="Tìm kiếm sách, tác giả..."
-          className="
-            bg-library-surface border border-library-border 
-            text-library-text-primary rounded-library-button 
-            px-5 py-3 pl-12 pr-12 
-            w-48 md:w-56 focus:w-64 lg:focus:w-72
-            focus:outline-none focus:border-library-primary-light 
-            placeholder:text-library-text-muted
-            transition-all duration-300 ease-in-out
-            text-sm font-medium
-          "
-          value={searchQuery}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        />
-
-        <button
-          type="submit"
-          className="
-            absolute right-2 top-1/2 transform -translate-y-1/2 
-            p-2 rounded-library text-library-text-muted 
-            hover:text-library-primary hover:bg-library-hover
-            transition-colors duration-200 ease-in-out
-            focus:outline-none focus:ring-2 focus:ring-library-primary-light focus:ring-opacity-50
-          "
-          aria-label="Tìm kiếm"
-        >
-          <FaSearch className="text-sm" />
-        </button>
-      </div>
+        <FaSearch className="text-lg" />
+      </button>
     </form>
   );
 };

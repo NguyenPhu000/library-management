@@ -64,28 +64,43 @@ const BookDetail = () => {
   }, [book_id]);
 
   const pageVariants = {
-    initial: { opacity: 0, y: 20 },
+    initial: { opacity: 0, y: 30 },
     animate: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5, ease: "easeOut" },
+      transition: { duration: 0.6, ease: "easeOut" },
     },
-    exit: { opacity: 0, y: -10, transition: { duration: 0.3, ease: "easeIn" } },
+    exit: { opacity: 0, y: -30, transition: { duration: 0.4, ease: "easeIn" } },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
+    hidden: { opacity: 0, scale: 0.95 },
     visible: {
       opacity: 1,
-      y: 0,
-      transition: { duration: 0.4, staggerChildren: 0.1, delayChildren: 0.1 },
+      scale: 1,
+      transition: { duration: 0.5, staggerChildren: 0.1, delayChildren: 0.2 },
     },
   };
+
+  const imageVariants = {
+    hover: {
+      scale: 1.05,
+      boxShadow: "0px 15px 30px rgba(0, 255, 150, 0.25)",
+      transition: { duration: 0.4, ease: "circOut" },
+    },
+  };
+
+  const shimmerEffect = `
+    absolute inset-0 overflow-hidden rounded-2xl
+    bg-[linear-gradient(110deg,transparent_30%,rgba(255,255,255,0.15)_50%,transparent_70%)]
+    bg-[length:200%_100%] bg-no-repeat
+    transition-[background-position_0s_ease] group-hover:bg-[position:-200%_0] group-hover:duration-[1200ms]
+  `;
 
   if (loading) {
     return (
       <motion.div
-        className="bg-library-background min-h-screen flex flex-col justify-center items-center text-center p-4"
+        className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] min-h-screen flex flex-col justify-center items-center text-center p-4"
         variants={pageVariants}
         initial="initial"
         animate="animate"
@@ -94,12 +109,12 @@ const BookDetail = () => {
         <FontAwesomeIcon
           icon={faSpinner}
           spin
-          className="text-library-primary text-5xl mb-4"
+          className="text-lightGreen text-5xl mb-4"
         />
-        <p className="text-library-text-primary text-xl font-semibold">
+        <p className="text-gray-300 text-xl font-semibold">
           Đang tải thông tin sách...
         </p>
-        <p className="text-library-text-muted text-sm mt-2">
+        <p className="text-gray-500 text-sm mt-2">
           Vui lòng chờ trong giây lát.
         </p>
       </motion.div>
@@ -109,7 +124,7 @@ const BookDetail = () => {
   if (error || !book) {
     return (
       <motion.div
-        className="bg-library-background min-h-screen flex flex-col justify-center items-center text-center p-4"
+        className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] min-h-screen flex flex-col justify-center items-center text-center p-4"
         variants={pageVariants}
         initial="initial"
         animate="animate"
@@ -117,12 +132,15 @@ const BookDetail = () => {
       >
         <FontAwesomeIcon
           icon={faExclamationTriangle}
-          className="text-library-error text-5xl mb-4"
+          className="text-red-500 text-5xl mb-4"
         />
-        <p className="text-library-error text-xl font-semibold mb-4">
+        <p className="text-red-400 text-xl font-semibold">
           {error || "Không thể hiển thị thông tin sách."}
         </p>
-        <Link to="/books" className="btn-library-primary flex items-center">
+        <Link
+          to="/books"
+          className="mt-6 inline-flex items-center px-6 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-lightGreen hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-lightGreen transition duration-300"
+        >
           <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
           Quay lại danh sách
         </Link>
@@ -150,12 +168,9 @@ const BookDetail = () => {
             <p class="text-sm text-gray-600">Bạn sẽ nhận được thông báo khi yêu cầu được duyệt.</p>
           `,
           confirmButtonText: "Đã hiểu",
-          confirmButtonColor: "#2563EB",
-          customClass: {
-            popup: "bg-library-surface",
-            title: "text-library-text-primary",
-            htmlContainer: "text-library-text-secondary",
-          },
+          confirmButtonColor: "#10B981",
+          background: "#1f2937",
+          color: "#ffffff",
         });
       }
     } catch (error) {
@@ -164,11 +179,8 @@ const BookDetail = () => {
         icon: "error",
         title: "Lỗi",
         text: error.message || "Không thể gửi yêu cầu mượn sách",
-        customClass: {
-          popup: "bg-library-surface",
-          title: "text-library-text-primary",
-          htmlContainer: "text-library-text-secondary",
-        },
+        background: "#1f2937",
+        color: "#ffffff",
       });
     }
   };
@@ -181,17 +193,15 @@ const BookDetail = () => {
     icon,
     label,
     value,
-    valueClass = "text-library-primary font-medium",
+    valueClass = "text-lightGreen",
   }) => (
     <motion.div variants={itemVariants} className="flex items-start space-x-3">
       <FontAwesomeIcon
         icon={icon}
-        className="text-library-text-muted mt-1 w-4 h-4 flex-shrink-0"
+        className="text-gray-400 mt-1 w-4 h-4 flex-shrink-0"
       />
       <div>
-        <span className="font-medium text-library-text-secondary">
-          {label}:
-        </span>{" "}
+        <span className="font-semibold text-gray-300">{label}:</span>{" "}
         <span className={`${valueClass} break-words`}>{value}</span>
       </div>
     </motion.div>
@@ -199,57 +209,57 @@ const BookDetail = () => {
 
   return (
     <motion.div
-      className="bg-library-background min-h-screen py-8 md:py-12"
+      className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] min-h-screen py-12 md:py-16"
       variants={pageVariants}
       initial="initial"
       animate="animate"
       exit="exit"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4">
         <motion.div
-          className="card-library overflow-hidden"
+          className="bg-[#1E293B] rounded-2xl shadow-xl overflow-hidden border border-gray-700/50"
           variants={itemVariants}
           initial="hidden"
           animate="visible"
         >
           {/* Back Button */}
-          <div className="p-6 md:p-8 border-b border-library-border">
+          <div className="p-6 md:p-8 border-b border-gray-700/50">
             <Link
               to="/books"
-              className="inline-flex items-center text-library-text-secondary hover:text-library-primary transition duration-200 group"
+              className="inline-flex items-center text-gray-400 hover:text-lightGreen transition duration-300 group"
             >
               <FontAwesomeIcon
                 icon={faArrowLeft}
-                className="mr-2 transition-transform duration-200 group-hover:-translate-x-1"
+                className="mr-2 transition-transform duration-300 group-hover:-translate-x-1"
               />
-              <span className="font-medium">Về trang sách</span>
+              <span className="text-sm font-medium">Về trang sách</span>
             </Link>
           </div>
 
-          <div className="p-6 md:p-8 lg:p-10">
+          <div className="p-6 md:p-10 lg:p-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
               {/* Left Side: Cover Image */}
-              <motion.div className="lg:col-span-4 flex justify-center items-start">
+              <motion.div className="lg:col-span-4 flex justify-center items-start group relative">
                 <motion.img
                   src={book.cover_image || "/placeholder-image.png"}
                   alt={book.title || "Bìa sách"}
-                  className="w-full max-w-sm lg:max-w-full rounded-library-card shadow-library-book border border-library-border object-cover aspect-[3/4] transition-transform duration-300 hover:scale-105"
+                  className="w-full max-w-sm lg:max-w-full rounded-lg shadow-lg border-2 border-gray-700 object-cover aspect-[3/4]"
+                  variants={imageVariants}
+                  whileHover="hover"
                   loading="lazy"
-                  onError={(e) => {
-                    e.target.src = "/public/uploads/coverBook.jpg";
-                  }}
                 />
+                <div className={shimmerEffect}></div>
               </motion.div>
 
               {/* Right Side: Main Info */}
               <motion.div
-                className="lg:col-span-8 text-library-text-primary flex flex-col"
+                className="lg:col-span-8 text-white flex flex-col"
                 variants={itemVariants}
               >
                 {/* Title */}
                 <motion.h1
                   variants={itemVariants}
-                  className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold mb-4 text-library-text-primary leading-tight"
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 text-lightGreen"
                 >
                   {book.title || "Không có tiêu đề"}
                 </motion.h1>
@@ -257,72 +267,134 @@ const BookDetail = () => {
                 {/* Author */}
                 <motion.p
                   variants={itemVariants}
-                  className="text-library-text-secondary text-lg md:text-xl mb-4 flex items-center"
+                  className="text-gray-300 text-lg md:text-xl mb-4 flex items-center"
                 >
                   <FontAwesomeIcon
                     icon={faUserPen}
-                    className="mr-2 text-library-text-muted w-4 h-4"
+                    className="mr-2 text-gray-400 w-4 h-4"
                   />
                   Tác giả:{" "}
-                  <span className="text-library-primary font-semibold ml-1">
+                  <span className="text-lightGreen font-medium ml-1">
                     {book.author || "Không rõ tác giả"}
                   </span>
                 </motion.p>
 
-                {/* Status */}
-                {book.status && (
-                  <motion.div variants={itemVariants} className="mb-6">
-                    <span
-                      className={`inline-flex items-center px-4 py-2 rounded-library text-sm font-medium ${
-                        book.status === "available"
-                          ? "bg-library-success/10 text-library-success border border-library-success/20"
-                          : "bg-library-error/10 text-library-error border border-library-error/20"
-                      }`}
-                    >
-                      <FontAwesomeIcon
-                        icon={
-                          book.status === "available"
-                            ? faCircleCheck
-                            : faCircleXmark
-                        }
-                        className="mr-2 h-4 w-4"
-                      />
-                      {book.status === "available" ? "Còn Sách" : "Hết Sách"}
-                    </span>
-                  </motion.div>
-                )}
+                {/* Status Badge */}
+                <motion.div variants={itemVariants} className="mb-6">
+                  {(() => {
+                    let status = {
+                      icon: faCircleXmark,
+                      text: "Chưa nhập",
+                      bgColor: "bg-gray-500/20",
+                      textColor: "text-gray-300",
+                    };
+
+                    if (book.total_copies !== undefined) {
+                      if (book.available_copies === 0) {
+                        status = {
+                          icon: faCircleXmark,
+                          text: "Tạm hết sách",
+                          bgColor: "bg-red-500/20",
+                          textColor: "text-red-400",
+                        };
+                      } else if (
+                        book.available_copies <
+                        book.total_copies * 0.2
+                      ) {
+                        status = {
+                          icon: faExclamationTriangle,
+                          text: "Sắp hết sách",
+                          bgColor: "bg-yellow-500/20",
+                          textColor: "text-yellow-400",
+                        };
+                      } else {
+                        status = {
+                          icon: faCircleCheck,
+                          text: "Còn sách",
+                          bgColor: "bg-green-500/20",
+                          textColor: "text-green-300",
+                        };
+                      }
+                    }
+
+                    return (
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${status.bgColor} ${status.textColor}`}
+                        >
+                          <FontAwesomeIcon
+                            icon={status.icon}
+                            className={`mr-1.5 h-4 w-4 ${
+                              status.text === "Sắp hết sách"
+                                ? "animate-pulse"
+                                : ""
+                            }`}
+                          />
+                          {status.text}
+                        </span>
+                        {book.total_copies !== undefined && (
+                          <div className="flex items-center gap-2">
+                            <div className="h-1.5 w-24 bg-gray-700 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all duration-500 ${
+                                  book.available_copies === 0
+                                    ? "bg-red-500"
+                                    : book.available_copies <
+                                      book.total_copies * 0.2
+                                    ? "bg-yellow-500"
+                                    : "bg-green-500"
+                                }`}
+                                style={{
+                                  width: `${
+                                    (book.available_copies /
+                                      book.total_copies) *
+                                    100
+                                  }%`,
+                                }}
+                              />
+                            </div>
+                            <span className="text-sm text-gray-400">
+                              {book.available_copies}/{book.total_copies}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </motion.div>
 
                 {/* Short Description */}
                 {book.description && (
                   <motion.p
                     variants={itemVariants}
-                    className="text-library-text-secondary leading-relaxed mb-8 text-base md:text-lg line-clamp-3"
+                    className="text-gray-400 leading-relaxed mb-8 text-base md:text-lg line-clamp-3" // Added mb-8 for spacing
                   >
                     {book.description}
                   </motion.p>
                 )}
 
-                {/* Detailed Information Section */}
+                {/* Detailed Information Section - MOVED HERE */}
                 <motion.div className="mb-8" variants={itemVariants}>
+                  {" "}
+                  {/* Added wrapper div with margin */}
                   <motion.h2
                     variants={itemVariants}
-                    className="text-xl font-heading font-semibold mb-6 text-library-text-primary flex items-center"
+                    className="text-xl font-semibold mb-4 text-lightGreen flex items-center" // Smaller heading
                   >
                     <FontAwesomeIcon icon={faInfoCircle} className="mr-2" />
                     Thông tin chi tiết
                   </motion.h2>
                   <motion.div
                     variants={itemVariants}
-                    className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 text-sm"
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm text-gray-400" // Smaller text, gap
                   >
-                    {/* ISBN */}
+                    {/* ISBN - Moved to top */}
                     <DetailItem
                       icon={faBarcode}
                       label="ISBN"
-                      value={book.isbn || "Chưa cập nhật"}
+                      value={book.isbn || "N/A"} // Use N/A if missing
                     />
-
-                    {/* Categories/Genre */}
+                    {/* Categories/Genre - Moved to second */}
                     {book.categories && book.categories.length > 0 && (
                       <DetailItem
                         icon={faTags}
@@ -340,51 +412,46 @@ const BookDetail = () => {
                           value={book.genre}
                         />
                       )}
-
                     {/* Publication Year */}
                     {book.publication_year && (
                       <DetailItem
                         icon={faCalendarAlt}
-                        label="Năm xuất bản"
+                        label="Năm XB" // Abbreviated label
                         value={book.publication_year}
                       />
                     )}
-
                     {/* Publisher */}
                     {book.publisher && (
                       <DetailItem
                         icon={faBuilding}
-                        label="Nhà xuất bản"
+                        label="Nhà XB" // Abbreviated label
                         value={book.publisher}
                       />
                     )}
-
                     {/* Format */}
                     <DetailItem
                       icon={faPager}
                       label="Định dạng"
                       value={book.format || "Bìa mềm"}
                     />
-
                     {/* Total Copies */}
                     {book.total_copies !== undefined && (
                       <DetailItem
                         icon={faClone}
-                        label="Tổng số bản"
-                        value={`${book.total_copies} cuốn`}
+                        label="Tổng số" // Abbreviated label
+                        value={book.total_copies}
                       />
                     )}
-
                     {/* Available Copies */}
                     {book.available_copies !== undefined && (
                       <DetailItem
                         icon={faCheckDouble}
                         label="Sẵn có"
-                        value={`${book.available_copies} cuốn`}
+                        value={book.available_copies}
                         valueClass={
                           book.available_copies > 0
-                            ? "text-library-success font-semibold"
-                            : "text-library-error font-semibold"
+                            ? "text-green-400 font-semibold" // Highlight availability
+                            : "text-red-400"
                         }
                       />
                     )}
@@ -392,42 +459,51 @@ const BookDetail = () => {
                 </motion.div>
 
                 {/* Action Button */}
-                <div className="flex flex-col lg:flex-row items-start space-y-4 lg:space-y-0 lg:space-x-4">
+                <div className="flex flex-col lg:flex-row items-center justify-center space-y-4 lg:space-y-0 lg:space-x-4">
                   {!currentUser ? (
                     <button
                       onClick={handleLoginToBorrow}
-                      className="btn-library-primary text-lg px-8 py-4 flex items-center justify-center w-full lg:w-auto"
+                      className="group relative px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition duration-300 overflow-hidden w-full lg:w-auto"
                     >
-                      <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
-                      Đăng nhập để yêu cầu mượn
+                      <div className={shimmerEffect}></div>
+                      <span className="relative flex items-center justify-center">
+                        <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
+                        Đăng nhập để yêu cầu mượn
+                      </span>
                     </button>
                   ) : book.available_copies > 0 ? (
                     <button
                       onClick={handleBorrowClick}
                       disabled={borrowLoading}
-                      className="btn-library-primary text-lg px-8 py-4 flex items-center justify-center w-full lg:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="group relative px-8 py-3 bg-lightGreen hover:bg-opacity-80 text-black font-bold rounded-xl transition duration-300 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed w-full lg:w-auto"
                     >
-                      {borrowLoading ? (
-                        <>
-                          <FontAwesomeIcon
-                            icon={faSpinner}
-                            spin
-                            className="mr-2"
-                          />
-                          Đang gửi yêu cầu...
-                        </>
-                      ) : (
-                        <>
-                          <FontAwesomeIcon icon={faBookOpen} className="mr-2" />
-                          Yêu cầu mượn sách
-                        </>
-                      )}
+                      <div className={shimmerEffect}></div>
+                      <span className="relative flex items-center justify-center">
+                        {borrowLoading ? (
+                          <>
+                            <FontAwesomeIcon
+                              icon={faSpinner}
+                              spin
+                              className="mr-2"
+                            />
+                            Đang gửi yêu cầu...
+                          </>
+                        ) : (
+                          <>
+                            <FontAwesomeIcon
+                              icon={faBookOpen}
+                              className="mr-2"
+                            />
+                            Yêu cầu mượn sách
+                          </>
+                        )}
+                      </span>
                     </button>
                   ) : (
-                    <div className="flex flex-col items-center space-y-3 w-full lg:w-auto">
+                    <div className="flex flex-col items-center space-y-2 w-full lg:w-auto">
                       <button
                         disabled
-                        className="px-8 py-4 bg-library-border text-library-text-muted font-semibold rounded-library-button cursor-not-allowed w-full lg:w-auto"
+                        className="px-8 py-3 bg-gray-600 text-gray-300 font-bold rounded-xl cursor-not-allowed w-full lg:w-auto"
                       >
                         <FontAwesomeIcon
                           icon={faCircleXmark}
@@ -435,14 +511,14 @@ const BookDetail = () => {
                         />
                         Tạm hết sách
                       </button>
-                      <p className="text-sm text-library-text-muted text-center">
+                      <p className="text-xs text-gray-400 text-center">
                         Bạn có thể đặt trước khi sách có sẵn
                       </p>
                     </div>
                   )}
 
                   {borrowError && (
-                    <div className="bg-library-error/10 border border-library-error/20 text-library-error text-sm p-4 rounded-library w-full">
+                    <div className="text-red-400 text-sm bg-red-900/20 p-3 rounded-lg border border-red-700/50 w-full">
                       <FontAwesomeIcon
                         icon={faExclamationTriangle}
                         className="mr-2"
@@ -455,28 +531,26 @@ const BookDetail = () => {
             </div>
           </div>
 
-          {/* Full Description Section */}
+          {/* Full Description Section - Remains at the bottom */}
           {book.description && (
             <motion.section
-              className="py-8 md:py-10 border-t border-library-border bg-library-background"
+              className="py-8 md:py-10 border-t border-gray-700/50 text-white" // Keep border here
               variants={itemVariants}
             >
-              <div className="px-6 md:px-8 lg:px-10">
+              <div className="px-6 md:px-10 lg:px-12">
                 <motion.h2
                   variants={itemVariants}
-                  className="text-2xl md:text-3xl font-heading font-semibold mb-6 text-library-text-primary flex items-center"
+                  className="text-2xl md:text-3xl font-semibold mb-5 text-lightGreen flex items-center"
                 >
                   <FontAwesomeIcon icon={faBookOpen} className="mr-3" />
                   Mô tả đầy đủ
                 </motion.h2>
-                <motion.div
+                <motion.p
                   variants={itemVariants}
-                  className="prose prose-lg max-w-none text-library-text-secondary leading-relaxed"
+                  className="text-gray-300 leading-relaxed text-base md:text-lg whitespace-pre-line"
                 >
-                  <p className="whitespace-pre-line text-base md:text-lg">
-                    {book.description}
-                  </p>
-                </motion.div>
+                  {book.description}
+                </motion.p>
               </div>
             </motion.section>
           )}

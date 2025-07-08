@@ -14,15 +14,28 @@ const BookListPage = () => {
     searchError,
     isSearching,
     selectedCategory,
+    searchBooks,
+    resetSearch,
+    resetCategory,
   } = useContext(SearchBookContext);
 
   const location = useLocation();
 
-  // Lấy tham số truy vấn từ URL
+  // Đồng bộ kết quả tìm kiếm với tham số truy vấn "q" trên URL
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const queryParam = params.get("q");
-    // Có thể thêm logic xử lý tham số q nếu cần
+
+    // Nếu có tham số q => thực hiện tìm kiếm
+    if (queryParam && queryParam.trim()) {
+      // Chỉ thực hiện tìm kiếm khi từ khoá trên URL thay đổi
+      searchBooks("all", queryParam.trim());
+      resetCategory(); // Reset bộ lọc thể loại khi tìm kiếm mới
+    } else {
+      // Không có query => trả về trạng thái mặc định
+      resetSearch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
   // Xác định sách hiển thị dựa trên trạng thái tìm kiếm và thể loại

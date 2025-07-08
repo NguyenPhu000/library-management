@@ -310,7 +310,7 @@ const ResponsiveMemberTable = () => {
                               : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                           }`}
                         >
-                          {member.currentLoans}
+                          {Math.max(0, member.currentLoans)}
                         </span>
                       </td>
 
@@ -458,7 +458,7 @@ const ResponsiveMemberTable = () => {
                               : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                           }`}
                         >
-                          Đang mượn: {member.currentLoans}
+                          Đang mượn: {Math.max(0, member.currentLoans)}
                         </span>
                       </div>
                     </div>
