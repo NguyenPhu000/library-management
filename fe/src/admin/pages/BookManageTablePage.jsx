@@ -156,7 +156,11 @@ const BookManageTablePage = () => {
       setLoading(true);
       console.log("🔍 Fetching books from API...");
 
-      const response = await adminBookService.getAllBooks();
+      // Lấy tất cả sách với limit lớn để hiển thị đầy đủ và phân trang phía client
+      const response = await adminBookService.getAllBooks({
+        page: 1,
+        limit: 1000,
+      });
       console.log("📡 Raw API response:", response);
       console.log("📊 Response structure:", {
         hasData: !!response.data,
@@ -211,8 +215,206 @@ const BookManageTablePage = () => {
   }, [fetchBooks, fetchCategories]);
 
   // Event handlers
-  const handleViewBook = (book) => {
-    navigate(`/admin/books/view/${book.book_id}`);
+  const handleViewBook = async (book) => {
+    try {
+      // Show loading state
+      Swal.fire({
+        title: "Đang tải...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      // Lấy chi tiết sách mới nhất
+      const response = await adminBookService.getBookById(book.book_id);
+      const bookData =
+        response?.data?.book ||
+        response?.book ||
+        response?.data ||
+        response ||
+        {};
+
+      // Xử lý URL ảnh bìa
+      let imageUrl = "";
+      if (bookData.cover_image) {
+        imageUrl = bookData.cover_image.startsWith("http")
+          ? bookData.cover_image
+          : `/uploads/${bookData.cover_image}`;
+      }
+
+      // Ghép tên danh mục
+      const categoriesNames = (bookData.categories || [])
+        .map((c) => c.name)
+        .join(", ");
+
+      // Tạo HTML chi tiết với giao diện đẹp hơn
+      const html = `
+        <div class="flex flex-col md:flex-row gap-6 text-left">
+          <div class="md:w-1/3">
+            ${
+              imageUrl
+                ? `
+                  <div class="relative group">
+                    <img 
+                      src="${imageUrl}" 
+                      alt="${bookData.title}" 
+                      class="w-full h-[400px] object-cover rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity duration-300 rounded-lg"></div>
+                  </div>
+                `
+                : `
+                  <div class="w-full h-[400px] bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                    <span class="text-gray-400 dark:text-gray-500 text-lg">Không có ảnh</span>
+                  </div>
+                `
+            }
+          </div>
+          <div class="flex-1 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg">
+                <p class="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">Tác giả</p>
+                <p class="text-gray-900 dark:text-white">${
+                  bookData.author || "N/A"
+                }</p>
+              </div>
+              <div class="bg-purple-50 dark:bg-purple-900/30 p-3 rounded-lg">
+                <p class="text-sm text-purple-600 dark:text-purple-400 font-medium mb-1">Nhà xuất bản</p>
+                <p class="text-gray-900 dark:text-white">${
+                  bookData.publisher || "N/A"
+                }</p>
+              </div>
+              <div class="bg-green-50 dark:bg-green-900/30 p-3 rounded-lg">
+                <p class="text-sm text-green-600 dark:text-green-400 font-medium mb-1">Năm xuất bản</p>
+                <p class="text-gray-900 dark:text-white">${
+                  bookData.publication_year || "N/A"
+                }</p>
+              </div>
+              <div class="bg-yellow-50 dark:bg-yellow-900/30 p-3 rounded-lg">
+                <p class="text-sm text-yellow-600 dark:text-yellow-400 font-medium mb-1">ISBN</p>
+                <p class="text-gray-900 dark:text-white font-mono">${
+                  bookData.isbn || "N/A"
+                }</p>
+              </div>
+            </div>
+
+            <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-lg">
+              <p class="text-sm text-indigo-600 dark:text-indigo-400 font-medium mb-2">Số lượng</p>
+              <div class="flex items-center space-x-2">
+                <div class="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div 
+                    class="h-full bg-indigo-500 dark:bg-indigo-400 rounded-full transition-all duration-500"
+                    style="width: ${
+                      ((bookData.available_copies || 0) /
+                        (bookData.total_copies || 1)) *
+                      100
+                    }%"
+                  ></div>
+                </div>
+                <span class="text-gray-900 dark:text-white font-medium">
+                  ${bookData.available_copies || 0}/${
+        bookData.total_copies || 0
+      }
+                </span>
+                <div class="ml-2">
+                  ${(() => {
+                    const status = getBookStatus(
+                      bookData.available_copies,
+                      bookData.total_copies
+                    );
+                    const baseClasses =
+                      "px-2 py-0.5 rounded-full text-sm font-medium inline-flex items-center gap-1";
+                    const statusClasses = {
+                      red: "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+                      yellow:
+                        "bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+                      green:
+                        "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+                      gray: "bg-gray-50 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400",
+                    };
+                    return `
+                      <div class="${baseClasses} ${
+                      statusClasses[status.color]
+                    }">
+                        <span class="w-1.5 h-1.5 rounded-full ${
+                          status.color === "red" ? "animate-pulse" : ""
+                        } bg-${status.color}-400 dark:bg-${
+                      status.color
+                    }-500"></span>
+                        ${status.text}
+                      </div>
+                    `;
+                  })()}
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-pink-50 dark:bg-pink-900/30 p-4 rounded-lg">
+              <p class="text-sm text-pink-600 dark:text-pink-400 font-medium mb-2">Danh mục</p>
+              <div class="flex flex-wrap gap-2">
+                ${
+                  categoriesNames
+                    ? categoriesNames
+                        .split(", ")
+                        .map(
+                          (cat) => `
+                        <span class="px-3 py-1 bg-pink-100 dark:bg-pink-900/50 text-pink-700 dark:text-pink-300 rounded-full text-sm">
+                          ${cat}
+                        </span>
+                      `
+                        )
+                        .join("")
+                    : '<span class="text-gray-500 dark:text-gray-400">Chưa phân loại</span>'
+                }
+              </div>
+            </div>
+
+            <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-2">Mô tả</p>
+              <p class="text-gray-900 dark:text-white whitespace-pre-line">
+                ${bookData.description || "Không có mô tả"}
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Hiển thị modal với animation
+      Swal.fire({
+        title: `<span class="text-xl font-medium text-gray-900 dark:text-white">${
+          bookData.title || "Chi tiết sách"
+        }</span>`,
+        html,
+        width: 1000,
+        padding: "2em",
+        showCloseButton: true,
+        showConfirmButton: false,
+        customClass: {
+          container: "swal2-book-details",
+          popup: "rounded-xl shadow-2xl bg-white dark:bg-gray-900",
+          header: "border-b pb-3",
+          closeButton:
+            "focus:outline-none hover:text-red-500 transition-colors",
+        },
+        didOpen: (popup) => {
+          // Add fade-in animation
+          popup.style.animation = "swal2-show 0.3s";
+        },
+        willClose: (popup) => {
+          // Add fade-out animation
+          popup.style.animation = "swal2-hide 0.15s forwards";
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching book detail:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Không thể tải chi tiết sách.",
+        confirmButtonColor: "#3b82f6",
+      });
+    }
   };
 
   // Modal state
@@ -457,6 +659,46 @@ const BookManageTablePage = () => {
   const handlePageSizeChange = (newSize) => {
     setItemsPerPage(newSize);
     setCurrentPage(1);
+  };
+
+  // Hàm tính toán trạng thái sách
+  const getBookStatus = (available, total) => {
+    if (!total) return { text: "Chưa nhập", color: "gray" };
+    if (available === 0) return { text: "Hết sách", color: "red" };
+    if (available < total * 0.2) return { text: "Sắp hết", color: "yellow" };
+    return { text: "Còn sách", color: "green" };
+  };
+
+  // Component hiển thị trạng thái
+  const BookStatusBadge = ({ available, total }) => {
+    const status = getBookStatus(available, total);
+    const baseClasses =
+      "px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1.5 w-fit";
+
+    const statusClasses = {
+      red: "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+      yellow:
+        "bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+      green:
+        "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+      gray: "bg-gray-50 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400",
+    };
+
+    const indicators = {
+      red: "animate-pulse bg-red-400 dark:bg-red-500",
+      yellow: "bg-yellow-400 dark:bg-yellow-500",
+      green: "bg-green-400 dark:bg-green-500",
+      gray: "bg-gray-400 dark:bg-gray-500",
+    };
+
+    return (
+      <div className={`${baseClasses} ${statusClasses[status.color]}`}>
+        <span
+          className={`w-2 h-2 rounded-full ${indicators[status.color]}`}
+        ></span>
+        {status.text}
+      </div>
+    );
   };
 
   if (loading) {

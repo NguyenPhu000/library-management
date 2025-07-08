@@ -64,6 +64,10 @@ router.post("/admin/reject-renewal", loanController.rejectRenewal);
 // Admin lấy thống kê tổng quan
 router.get("/admin/statistics", loanController.getLoanStatistics);
 
+// === UTILITY ROUTES ===
+// Admin đồng bộ lại số sách đang mượn
+router.post("/admin/sync-current-loans", loanController.syncMemberCurrentLoans);
+
 // === LEGACY ROUTES (for backward compatibility) ===
 // Danh sách tất cả loans
 router.get("/", loanController.listLoans);

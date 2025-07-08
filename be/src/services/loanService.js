@@ -325,6 +325,24 @@ const confirmPickupWithCode = async (pickup_code, admin_id) => {
 
     const loan = validation.loan;
 
+    // Kiểm tra member chưa vượt quá giới hạn sách
+    const member = await Member.findByPk(loan.member_id, { transaction });
+    if (!member) {
+      await transaction.rollback();
+      return {
+        success: false,
+        message: "Không tìm thấy thông tin thành viên!",
+      };
+    }
+
+    if (member.current_loans >= LIBRARY_RULES.MAX_BOOKS_PER_MEMBER) {
+      await transaction.rollback();
+      return {
+        success: false,
+        message: `Thành viên đã đạt giới hạn ${LIBRARY_RULES.MAX_BOOKS_PER_MEMBER} cuốn sách!`,
+      };
+    }
+
     // Tính ngày hết hạn trả sách (10 ngày từ khi nhận)
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + LIBRARY_RULES.LOAN_PERIOD_DAYS);
@@ -339,6 +357,12 @@ const confirmPickupWithCode = async (pickup_code, admin_id) => {
       },
       { transaction }
     );
+
+    // QUAN TRỌNG: Tăng số sách đang mượn của member
+    await Member.increment("current_loans", {
+      where: { member_id: loan.member_id },
+      transaction,
+    });
 
     await transaction.commit();
     return {
@@ -487,11 +511,14 @@ const confirmBookReturn = async (
       transaction,
     });
 
-    // Giảm số sách đang mượn của member
-    await Member.decrement("current_loans", {
-      where: { member_id: loan.member_id },
-      transaction,
-    });
+    // Giảm số sách đang mượn của member nhưng không nhỏ hơn 0
+    const member = await Member.findByPk(loan.member_id, { transaction });
+    if (member && member.current_loans > 0) {
+      await Member.decrement("current_loans", {
+        where: { member_id: loan.member_id },
+        transaction,
+      });
+    }
 
     await transaction.commit();
     return {
@@ -945,6 +972,82 @@ const getLoanStats = async () => {
   }
 };
 
+// === UTILITY FUNCTIONS ===
+
+// Đồng bộ lại số sách đang mượn của member từ database
+const syncMemberCurrentLoans = async (member_id = null) => {
+  const transaction = await sequelize.transaction();
+  try {
+    // Nếu có member_id cụ thể, chỉ sync member đó, ngược lại sync tất cả
+    const whereClause = member_id ? { member_id } : {};
+
+    if (member_id) {
+      // Sync một member cụ thể
+      const actualCurrentLoans = await Loan.count({
+        where: {
+          member_id,
+          status: "borrowed", // Chỉ tính sách đang mượn thực tế
+        },
+      });
+
+      await Member.update(
+        { current_loans: actualCurrentLoans },
+        {
+          where: { member_id },
+          transaction,
+        }
+      );
+
+      await transaction.commit();
+      return {
+        success: true,
+        message: `Đã đồng bộ member ${member_id}: ${actualCurrentLoans} sách đang mượn`,
+        member_id,
+        current_loans: actualCurrentLoans,
+      };
+    } else {
+      // Sync tất cả members
+      const members = await Member.findAll({ transaction });
+      let updated = 0;
+
+      for (const member of members) {
+        const actualCurrentLoans = await Loan.count({
+          where: {
+            member_id: member.member_id,
+            status: "borrowed",
+          },
+        });
+
+        // Chỉ update nếu khác với giá trị hiện tại
+        if (member.current_loans !== actualCurrentLoans) {
+          await Member.update(
+            { current_loans: actualCurrentLoans },
+            {
+              where: { member_id: member.member_id },
+              transaction,
+            }
+          );
+          updated++;
+        }
+      }
+
+      await transaction.commit();
+      return {
+        success: true,
+        message: `Đã đồng bộ ${updated}/${members.length} thành viên`,
+        updated_count: updated,
+        total_members: members.length,
+      };
+    }
+  } catch (error) {
+    await transaction.rollback();
+    return {
+      success: false,
+      message: "Lỗi khi đồng bộ current_loans: " + error.message,
+    };
+  }
+};
+
 // === DASHBOARD STATISTICS ===
 // Tính các chỉ số tổng quan cho trang quản trị
 const getLoanStatistics = async () => {
@@ -1052,6 +1155,7 @@ export default {
   rejectRenewLoan,
   getLoanByBookId,
   getLoanStats,
+  syncMemberCurrentLoans, // NEW, đồng bộ current_loans
 
   // Constants
   LIBRARY_RULES,

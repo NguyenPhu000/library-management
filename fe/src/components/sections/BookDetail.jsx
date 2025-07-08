@@ -279,28 +279,89 @@ const BookDetail = () => {
                   </span>
                 </motion.p>
 
-                {/* Status */}
-                {book.status && (
-                  <motion.div variants={itemVariants} className="mb-6">
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                        book.status === "available"
-                          ? "bg-green-500/20 text-green-300"
-                          : "bg-red-500/20 text-red-400"
-                      }`}
-                    >
-                      <FontAwesomeIcon
-                        icon={
-                          book.status === "available"
-                            ? faCircleCheck
-                            : faCircleXmark
-                        }
-                        className="mr-1.5 h-4 w-4"
-                      />
-                      {book.status === "available" ? "Còn Sách" : "Hết Sách"}
-                    </span>
-                  </motion.div>
-                )}
+                {/* Status Badge */}
+                <motion.div variants={itemVariants} className="mb-6">
+                  {(() => {
+                    let status = {
+                      icon: faCircleXmark,
+                      text: "Chưa nhập",
+                      bgColor: "bg-gray-500/20",
+                      textColor: "text-gray-300",
+                    };
+
+                    if (book.total_copies !== undefined) {
+                      if (book.available_copies === 0) {
+                        status = {
+                          icon: faCircleXmark,
+                          text: "Tạm hết sách",
+                          bgColor: "bg-red-500/20",
+                          textColor: "text-red-400",
+                        };
+                      } else if (
+                        book.available_copies <
+                        book.total_copies * 0.2
+                      ) {
+                        status = {
+                          icon: faExclamationTriangle,
+                          text: "Sắp hết sách",
+                          bgColor: "bg-yellow-500/20",
+                          textColor: "text-yellow-400",
+                        };
+                      } else {
+                        status = {
+                          icon: faCircleCheck,
+                          text: "Còn sách",
+                          bgColor: "bg-green-500/20",
+                          textColor: "text-green-300",
+                        };
+                      }
+                    }
+
+                    return (
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${status.bgColor} ${status.textColor}`}
+                        >
+                          <FontAwesomeIcon
+                            icon={status.icon}
+                            className={`mr-1.5 h-4 w-4 ${
+                              status.text === "Sắp hết sách"
+                                ? "animate-pulse"
+                                : ""
+                            }`}
+                          />
+                          {status.text}
+                        </span>
+                        {book.total_copies !== undefined && (
+                          <div className="flex items-center gap-2">
+                            <div className="h-1.5 w-24 bg-gray-700 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all duration-500 ${
+                                  book.available_copies === 0
+                                    ? "bg-red-500"
+                                    : book.available_copies <
+                                      book.total_copies * 0.2
+                                    ? "bg-yellow-500"
+                                    : "bg-green-500"
+                                }`}
+                                style={{
+                                  width: `${
+                                    (book.available_copies /
+                                      book.total_copies) *
+                                    100
+                                  }%`,
+                                }}
+                              />
+                            </div>
+                            <span className="text-sm text-gray-400">
+                              {book.available_copies}/{book.total_copies}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </motion.div>
 
                 {/* Short Description */}
                 {book.description && (
