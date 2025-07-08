@@ -27,6 +27,7 @@ import CategoryManagePage from "./admin/pages/CategoryManagePage";
 import AdminRoute from "./admin/components/auth/AdminRoute";
 import MemberManagePage from "./admin/pages/MemberManagePage";
 import LoanManagePage from "./admin/pages/LoanManagePage";
+import PaymentManagePage from "./admin/pages/PaymentManagePage";
 
 function App() {
   return (
@@ -80,10 +81,7 @@ function App() {
           <Route path="categories" element={<CategoryManagePage />} />
           <Route path="users" element={<UserManagePage />} />
           <Route path="loans" element={<LoanManagePage />} />
-          <Route
-            path="payments"
-            element={<div>Trang quản lý thanh toán</div>}
-          />
+          <Route path="payments" element={<PaymentManagePage />} />
         </Route>
 
         {/* Catch-all route */}

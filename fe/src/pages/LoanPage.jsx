@@ -12,6 +12,12 @@ import {
   faChevronDown,
   faChevronUp,
   faTicket,
+  faFilter,
+  faSearch,
+  faInfoCircle,
+  faArrowRight,
+  faBookOpen,
+  faHistory,
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 
@@ -20,6 +26,7 @@ const LoanPage = () => {
     useContext(LoanContext);
   const [expandedCard, setExpandedCard] = useState(null);
   const [filter, setFilter] = useState("all"); // all, overdue, normal, pending, pickup
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchLoans();
@@ -34,10 +41,15 @@ const LoanPage = () => {
         showCancelButton: true,
         confirmButtonText: "Gia hạn",
         cancelButtonText: "Hủy",
-        confirmButtonColor: "#97bc62",
+        confirmButtonColor: "#10b981",
         cancelButtonColor: "#6b7280",
         background: "#1f2937",
         color: "#ffffff",
+        customClass: {
+          popup: "rounded-xl border border-gray-700",
+          confirmButton: "rounded-lg",
+          cancelButton: "rounded-lg",
+        },
       });
 
       if (!confirmResult.isConfirmed) return;
@@ -50,6 +62,9 @@ const LoanPage = () => {
           text: result.message || "Không thể gia hạn sách",
           background: "#1f2937",
           color: "#ffffff",
+          customClass: {
+            popup: "rounded-xl border border-gray-700",
+          },
         });
       }
     } catch (error) {
@@ -59,6 +74,9 @@ const LoanPage = () => {
         text: `Không thể yêu cầu gia hạn: ${error.message}`,
         background: "#1f2937",
         color: "#ffffff",
+        customClass: {
+          popup: "rounded-xl border border-gray-700",
+        },
       });
     }
   };
@@ -68,8 +86,10 @@ const LoanPage = () => {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-gray-600 border-t-lightGreen rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-300">Đang tải...</p>
+          <div className="w-16 h-16 border-4 border-gray-700 border-t-emerald-500 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400 animate-pulse">
+            Đang tải danh sách mượn...
+          </p>
         </div>
       </div>
     );
@@ -79,18 +99,20 @@ const LoanPage = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-        <div className="bg-gray-800 rounded-lg border border-gray-700 p-8 max-w-md w-full text-center">
-          <FontAwesomeIcon
-            icon={faExclamationTriangle}
-            className="text-3xl text-red-400 mb-4"
-          />
+        <div className="bg-gray-800 rounded-xl border border-gray-700 p-8 max-w-md w-full text-center shadow-2xl">
+          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FontAwesomeIcon
+              icon={faExclamationTriangle}
+              className="text-2xl text-red-400"
+            />
+          </div>
           <h2 className="text-xl font-semibold text-white mb-2">
             Có lỗi xảy ra
           </h2>
-          <p className="text-gray-300 mb-4">{error}</p>
+          <p className="text-gray-400 mb-6">{error}</p>
           <button
             onClick={() => fetchLoans()}
-            className="bg-lightGreen hover:bg-lightGreen/80 text-black px-4 py-2 rounded-lg transition-colors font-medium"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-emerald-500/25"
           >
             Thử lại
           </button>
@@ -127,6 +149,12 @@ const LoanPage = () => {
   });
 
   const filteredLoans = sortedLoans.filter((loan) => {
+    const matchesSearch =
+      loan.Book?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.Book?.isbn?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    if (!matchesSearch) return false;
+
     if (filter === "all") return true;
 
     if (filter === "overdue") {
@@ -178,10 +206,11 @@ const LoanPage = () => {
         detail: `Yêu cầu ngày ${new Date(loan.request_date).toLocaleDateString(
           "vi-VN"
         )}`,
-        color: "bg-blue-100 text-blue-800 border-blue-200",
+        color: "bg-blue-500/20 text-blue-400 border-blue-500/30",
         icon: faClock,
-        iconColor: "text-blue-600",
+        iconColor: "text-blue-400",
         priority: 3,
+        glow: "shadow-blue-500/20",
       };
     }
 
@@ -192,10 +221,11 @@ const LoanPage = () => {
       return {
         status: "Đã duyệt",
         detail: `Còn ${daysLeft} ngày để nhận sách`,
-        color: "bg-green-100 text-green-800 border-green-200",
+        color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
         icon: faCheckCircle,
-        iconColor: "text-green-600",
+        iconColor: "text-emerald-400",
         priority: 2,
+        glow: "shadow-emerald-500/20",
       };
     }
 
@@ -208,11 +238,12 @@ const LoanPage = () => {
         detail: loan.pickup_code
           ? `Mã nhận: ${loan.pickup_code} (còn ${daysLeft} ngày)`
           : `Còn ${daysLeft} ngày để nhận`,
-        color: "bg-purple-100 text-purple-800 border-purple-200",
+        color: "bg-purple-500/20 text-purple-400 border-purple-500/30",
         icon: faTicket,
-        iconColor: "text-purple-600",
+        iconColor: "text-purple-400",
         priority: 1,
         showPickupCode: true,
+        glow: "shadow-purple-500/20",
       };
     }
 
@@ -227,10 +258,11 @@ const LoanPage = () => {
               ? ` - Phạt: ${fineAmount.toLocaleString("vi-VN")}đ`
               : ""
           }`,
-          color: "bg-red-100 text-red-800 border-red-200",
+          color: "bg-red-500/20 text-red-400 border-red-500/30",
           icon: faExclamationTriangle,
-          iconColor: "text-red-600",
+          iconColor: "text-red-400",
           priority: 0,
+          glow: "shadow-red-500/20",
         };
       } else {
         const daysLeft = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
@@ -243,10 +275,11 @@ const LoanPage = () => {
         return {
           status: "Đang mượn",
           detail: `Còn ${daysLeft} ngày${renewalInfo}`,
-          color: "bg-yellow-100 text-yellow-800 border-yellow-200",
+          color: "bg-amber-500/20 text-amber-400 border-amber-500/30",
           icon: faBook,
-          iconColor: "text-yellow-600",
+          iconColor: "text-amber-400",
           priority: 4,
+          glow: "shadow-amber-500/20",
         };
       }
     }
@@ -263,10 +296,11 @@ const LoanPage = () => {
             ? ` - Phạt: ${fineAmount.toLocaleString("vi-VN")}đ`
             : ""
         }`,
-        color: "bg-gray-100 text-gray-800 border-gray-200",
+        color: "bg-gray-600/20 text-gray-400 border-gray-600/30",
         icon: faCheckCircle,
-        iconColor: "text-gray-600",
+        iconColor: "text-gray-400",
         priority: 6,
+        glow: "shadow-gray-600/20",
       };
     }
 
@@ -274,10 +308,11 @@ const LoanPage = () => {
       return {
         status: "Bị từ chối",
         detail: loan.rejection_reason || "Không có lý do cụ thể",
-        color: "bg-red-100 text-red-800 border-red-200",
+        color: "bg-red-500/20 text-red-400 border-red-500/30",
         icon: faExclamationTriangle,
-        iconColor: "text-red-600",
+        iconColor: "text-red-400",
         priority: 5,
+        glow: "shadow-red-500/20",
       };
     }
 
@@ -285,10 +320,11 @@ const LoanPage = () => {
     return {
       status: loan.status || "Không xác định",
       detail: "Trạng thái không rõ",
-      color: "bg-gray-100 text-gray-800 border-gray-200",
+      color: "bg-gray-600/20 text-gray-400 border-gray-600/30",
       icon: faClock,
-      iconColor: "text-gray-600",
+      iconColor: "text-gray-400",
       priority: 7,
+      glow: "shadow-gray-600/20",
     };
   };
 
@@ -306,6 +342,9 @@ const LoanPage = () => {
         color: "#ffffff",
         toast: true,
         position: "top-end",
+        customClass: {
+          popup: "rounded-lg border border-gray-700 shadow-lg",
+        },
       });
     } catch (error) {
       Swal.fire({
@@ -314,6 +353,9 @@ const LoanPage = () => {
         text: "Không thể sao chép mã. Vui lòng sao chép thủ công.",
         background: "#1f2937",
         color: "#ffffff",
+        customClass: {
+          popup: "rounded-xl border border-gray-700",
+        },
       });
     }
   };
@@ -337,103 +379,180 @@ const LoanPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-4 md:p-6">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-lightGreen mb-1">
-                Sách đang mượn
-              </h1>
-              <p className="text-gray-400 text-sm">
-                Quản lý các cuốn sách bạn đang mượn từ thư viện
-              </p>
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700 shadow-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-white mb-2 flex items-center">
+                  <FontAwesomeIcon
+                    icon={faBookOpen}
+                    className="mr-3 text-emerald-400"
+                  />
+                  Sách đang mượn
+                </h1>
+                <p className="text-gray-400">
+                  Quản lý và theo dõi các cuốn sách bạn đang mượn từ thư viện
+                </p>
+              </div>
+              <button
+                onClick={() => fetchLoans()}
+                className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-gray-600/25"
+              >
+                <FontAwesomeIcon icon={faRedo} className="text-sm" />
+                Làm mới
+              </button>
             </div>
-
-            {/* Nút Test Mượn Sách đã được xoá */}
           </div>
         </div>
 
-        {/* Stats - Compact */}
-        <div className="grid grid-cols-4 gap-3 mb-6">
-          <div className="bg-gray-800 rounded-lg p-3 border border-gray-700 text-center">
-            <p className="text-xs text-gray-400">Tổng</p>
-            <p className="text-lg font-semibold text-white">{loans.length}</p>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-gray-600 transition-all duration-200 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Tổng số</p>
+                <p className="text-2xl font-bold text-white">{loans.length}</p>
+              </div>
+              <div className="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center">
+                <FontAwesomeIcon icon={faBook} className="text-gray-400" />
+              </div>
+            </div>
           </div>
-          <div className="bg-gray-800 rounded-lg p-3 border border-gray-700 text-center">
-            <p className="text-xs text-gray-400">Quá hạn</p>
-            <p className="text-lg font-semibold text-red-400">{overdueCount}</p>
+
+          <div className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-red-600 transition-all duration-200 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Quá hạn</p>
+                <p className="text-2xl font-bold text-red-400">
+                  {overdueCount}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
+                <FontAwesomeIcon
+                  icon={faExclamationTriangle}
+                  className="text-red-400"
+                />
+              </div>
+            </div>
           </div>
-          <div className="bg-gray-800 rounded-lg p-3 border border-gray-700 text-center">
-            <p className="text-xs text-gray-400">Chờ duyệt</p>
-            <p className="text-lg font-semibold text-yellow-400">
-              {pendingCount}
-            </p>
+
+          <div className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-amber-600 transition-all duration-200 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Chờ duyệt</p>
+                <p className="text-2xl font-bold text-amber-400">
+                  {pendingCount}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center">
+                <FontAwesomeIcon icon={faClock} className="text-amber-400" />
+              </div>
+            </div>
           </div>
-          <div className="bg-gray-800 rounded-lg p-3 border border-gray-700 text-center">
-            <p className="text-xs text-gray-400">Chờ nhận</p>
-            <p className="text-lg font-semibold text-purple-400">
-              {pickupCount}
-            </p>
+
+          <div className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-purple-600 transition-all duration-200 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Chờ nhận</p>
+                <p className="text-2xl font-bold text-purple-400">
+                  {pickupCount}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                <FontAwesomeIcon icon={faTicket} className="text-purple-400" />
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Filter - Compact */}
-        <div className="flex space-x-1 mb-4 bg-gray-800 rounded-lg p-1 border border-gray-700">
-          {[
-            { key: "all", label: "Tất cả" },
-            { key: "pickup", label: "🎫 Chờ nhận" },
-            { key: "overdue", label: "Quá hạn" },
-            { key: "pending", label: "Chờ duyệt" },
-            { key: "normal", label: "Bình thường" },
-          ].map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => setFilter(key)}
-              className={`flex-1 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                filter === key
-                  ? "bg-lightGreen text-black"
-                  : "text-gray-400 hover:text-white hover:bg-gray-700"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+        {/* Search and Filter */}
+        <div className="mb-6 space-y-4">
+          {/* Search Bar */}
+          <div className="relative">
+            <FontAwesomeIcon
+              icon={faSearch}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+            />
+            <input
+              type="text"
+              placeholder="Tìm kiếm theo tên sách hoặc ISBN..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all duration-200"
+            />
+          </div>
+
+          {/* Filter Tabs */}
+          <div className="flex flex-wrap gap-2 p-1.5 bg-gray-800 rounded-xl border border-gray-700">
+            {[
+              { key: "all", label: "Tất cả", icon: faBook },
+              { key: "pickup", label: "Chờ nhận", icon: faTicket },
+              { key: "overdue", label: "Quá hạn", icon: faExclamationTriangle },
+              { key: "pending", label: "Chờ duyệt", icon: faClock },
+              { key: "normal", label: "Bình thường", icon: faCheckCircle },
+            ].map(({ key, label, icon }) => (
+              <button
+                key={key}
+                onClick={() => setFilter(key)}
+                className={`flex-1 min-w-[100px] px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
+                  filter === key
+                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/25"
+                    : "text-gray-400 hover:text-white hover:bg-gray-700"
+                }`}
+              >
+                <FontAwesomeIcon icon={icon} className="text-xs" />
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Warning - Compact */}
+        {/* Warnings */}
         {overdueCount > 0 && (
-          <div className="bg-red-900/30 border border-red-500/50 rounded-lg p-3 mb-4">
-            <div className="flex items-center space-x-2">
-              <FontAwesomeIcon
-                icon={faExclamationTriangle}
-                className="text-red-400 text-sm"
-              />
-              <p className="text-red-300 text-sm font-medium">
-                Có {overdueCount} sách quá hạn - Vui lòng trả để tránh phạt
-              </p>
+          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-6 backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                <FontAwesomeIcon
+                  icon={faExclamationTriangle}
+                  className="text-red-400"
+                />
+              </div>
+              <div>
+                <p className="text-red-400 font-semibold">
+                  Có {overdueCount} sách quá hạn
+                </p>
+                <p className="text-red-300 text-sm">
+                  Vui lòng trả sách để tránh phạt thêm
+                </p>
+              </div>
             </div>
           </div>
         )}
 
         {/* Pickup Code Notification */}
         {pickupCount > 0 && filter === "all" && (
-          <div className="bg-purple-900/30 border border-purple-500/50 rounded-lg p-3 mb-4">
-            <div className="flex items-center space-x-2">
-              <FontAwesomeIcon
-                icon={faTicket}
-                className="text-purple-400 text-sm"
-              />
-              <p className="text-purple-300 text-sm font-medium">
-                Có {pickupCount} sách chờ nhận - Đến thư viện với mã nhận sách
-              </p>
+          <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-4 mb-6 backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                <FontAwesomeIcon icon={faTicket} className="text-purple-400" />
+              </div>
+              <div>
+                <p className="text-purple-400 font-semibold">
+                  Có {pickupCount} sách chờ nhận
+                </p>
+                <p className="text-purple-300 text-sm">
+                  Đến thư viện với mã nhận sách để lấy sách
+                </p>
+              </div>
             </div>
           </div>
         )}
 
-        {/* Books List - Compact */}
+        {/* Books List */}
         {filteredLoans.length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {filteredLoans.map((loan) => {
               const isOverdue =
                 loan.status === "borrowed" &&
@@ -449,52 +568,64 @@ const LoanPage = () => {
               return (
                 <div
                   key={loan.loan_id}
-                  className={`bg-gray-800 rounded-lg border transition-all duration-200 ${
+                  className={`bg-gray-800 rounded-xl border transition-all duration-200 shadow-lg hover:shadow-xl ${
                     isOverdue
-                      ? "border-red-500/50"
+                      ? "border-red-500/50 shadow-red-500/10"
+                      : isNearDue
+                      ? "border-amber-500/50 shadow-amber-500/10"
                       : "border-gray-700 hover:border-gray-600"
-                  }`}
+                  } ${statusInfo.glow ? `hover:${statusInfo.glow}` : ""}`}
                 >
-                  {/* Card Content - Compact */}
-                  <div className="p-4">
-                    <div className="flex items-start justify-between mb-3">
+                  {/* Card Content */}
+                  <div className="p-5">
+                    <div className="flex items-start justify-between mb-4">
                       <div className="flex-1 min-w-0">
                         <h3
-                          className="text-base font-semibold text-white mb-1 truncate"
+                          className="text-lg font-semibold text-white mb-2 line-clamp-2"
                           title={loan.Book?.title}
                         >
                           {loan.Book?.title || "Chưa có tiêu đề"}
                         </h3>
-                        <p className="text-sm text-gray-400 mb-2">
+                        <p className="text-sm text-gray-400 mb-3 flex items-center">
+                          <FontAwesomeIcon
+                            icon={faBook}
+                            className="mr-2 text-gray-500"
+                          />
                           {loan.Book?.author || "Chưa có tác giả"}
                         </p>
 
                         {/* Status Badge */}
                         <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${statusInfo.color} ${statusInfo.border}`}
+                          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium ${statusInfo.color} backdrop-blur-sm`}
                         >
                           <FontAwesomeIcon
                             icon={statusInfo.icon}
-                            className={statusInfo.iconColor}
+                            className={`${statusInfo.iconColor} ${
+                              statusInfo.icon === faClock ? "animate-pulse" : ""
+                            }`}
                           />
                           {statusInfo.status}
                         </span>
 
-                        {/* Pickup Code Display - Tích hợp */}
+                        {/* Pickup Code Display */}
                         {loan.pickup_code &&
                           (loan.status === "pending_pickup" ||
                             loan.status === "borrowed") && (
-                            <div className="mt-3 bg-gray-700/50 border border-gray-600 rounded-lg p-3">
-                              <div className="flex items-center justify-between mb-2">
-                                <h4 className="text-sm font-medium text-purple-300">
-                                  🎫 Mã Nhận Sách
+                            <div className="mt-4 bg-purple-500/10 border border-purple-500/30 rounded-lg p-4 backdrop-blur-sm">
+                              <div className="flex items-center justify-between mb-3">
+                                <h4 className="text-sm font-semibold text-purple-400 flex items-center">
+                                  <FontAwesomeIcon
+                                    icon={faTicket}
+                                    className="mr-2"
+                                  />
+                                  Mã Nhận Sách
                                 </h4>
-                                <span className="text-xs px-2 py-1 bg-green-600/20 text-green-300 rounded-full border border-green-500/30">
+                                <span className="text-xs px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
                                   Đang hoạt động
                                 </span>
                               </div>
                               <div className="flex items-center gap-3">
-                                <code className="bg-gray-800 px-3 py-2 rounded text-lg font-mono font-bold text-purple-200 border border-gray-600">
+                                <code className="bg-gray-900 px-4 py-2 rounded-lg text-xl font-mono font-bold text-purple-300 border border-purple-500/30">
                                   {loan.pickup_code}
                                 </code>
                                 <button
@@ -515,13 +646,17 @@ const LoanPage = () => {
                                       console.error("Copy failed:", err);
                                     }
                                   }}
-                                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-xs font-medium transition-colors"
+                                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-emerald-500/25"
                                 >
                                   📋 Sao chép
                                 </button>
                               </div>
-                              <p className="text-xs text-gray-400 mt-2">
-                                💡 Đến thư viện với mã này để nhận sách
+                              <p className="text-xs text-gray-400 mt-3 flex items-center">
+                                <FontAwesomeIcon
+                                  icon={faInfoCircle}
+                                  className="mr-2 text-gray-500"
+                                />
+                                Đến thư viện với mã này để nhận sách
                               </p>
                             </div>
                           )}
@@ -531,23 +666,28 @@ const LoanPage = () => {
                         onClick={() =>
                           setExpandedCard(isExpanded ? null : loan.loan_id)
                         }
-                        className="text-gray-500 hover:text-lightGreen transition-colors ml-4"
+                        className="text-gray-400 hover:text-emerald-400 transition-all duration-200 ml-4 group"
                       >
                         <FontAwesomeIcon
                           icon={isExpanded ? faChevronUp : faChevronDown}
+                          className="group-hover:scale-110 transition-transform duration-200"
                         />
                       </button>
                     </div>
 
-                    {/* Quick Info - Compact */}
-                    <div className="grid grid-cols-3 gap-3 mb-3 text-xs">
-                      <div>
-                        <p className="text-gray-500">
+                    {/* Quick Info */}
+                    <div className="grid grid-cols-3 gap-4 mb-4">
+                      <div className="bg-gray-700/30 rounded-lg p-3">
+                        <p className="text-xs text-gray-400 mb-1 flex items-center">
+                          <FontAwesomeIcon
+                            icon={faCalendarAlt}
+                            className="mr-2 text-gray-500"
+                          />
                           {loan.status === "pending_pickup"
                             ? "Ngày yêu cầu"
                             : "Ngày mượn"}
                         </p>
-                        <p className="text-gray-300 font-medium">
+                        <p className="text-white font-medium">
                           {loan.status === "pending_pickup"
                             ? loan.request_date
                               ? new Date(loan.request_date).toLocaleDateString(
@@ -561,8 +701,12 @@ const LoanPage = () => {
                             : "Chưa nhận"}
                         </p>
                       </div>
-                      <div>
-                        <p className="text-gray-500">
+                      <div className="bg-gray-700/30 rounded-lg p-3">
+                        <p className="text-xs text-gray-400 mb-1 flex items-center">
+                          <FontAwesomeIcon
+                            icon={faCalendarAlt}
+                            className="mr-2 text-gray-500"
+                          />
                           {loan.status === "pending_pickup"
                             ? "Hạn nhận"
                             : "Hạn trả"}
@@ -577,8 +721,8 @@ const LoanPage = () => {
                               : isOverdue
                               ? "text-red-400"
                               : isNearDue
-                              ? "text-yellow-400"
-                              : "text-gray-300"
+                              ? "text-amber-400"
+                              : "text-white"
                           }`}
                         >
                           {loan.status === "pending_pickup"
@@ -595,16 +739,22 @@ const LoanPage = () => {
                             : "Chưa xác định"}
                         </p>
                       </div>
-                      <div>
-                        <p className="text-gray-500">Gia hạn</p>
-                        <p className="text-gray-300 font-medium">
+                      <div className="bg-gray-700/30 rounded-lg p-3">
+                        <p className="text-xs text-gray-400 mb-1 flex items-center">
+                          <FontAwesomeIcon
+                            icon={faHistory}
+                            className="mr-2 text-gray-500"
+                          />
+                          Gia hạn
+                        </p>
+                        <p className="text-white font-medium">
                           {loan.renew_count || 0}/1
                         </p>
                       </div>
                     </div>
 
-                    {/* Actions - Compact */}
-                    <div className="flex gap-2">
+                    {/* Actions */}
+                    <div className="flex gap-3">
                       {/* Chỉ hiển thị nút Gia hạn khi status = "borrowed" */}
                       {loan.status === "borrowed" && (
                         <>
@@ -621,17 +771,17 @@ const LoanPage = () => {
                                   loan.renewal_status === "pending" ||
                                   loan.renewal_status === "approved"
                                 }
-                                className={`flex items-center space-x-1 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                                   loan.renewal_status === "pending" ||
                                   loan.renewal_status === "approved"
                                     ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                                    : "bg-lightGreen hover:bg-lightGreen/80 text-black"
+                                    : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg hover:shadow-emerald-500/25"
                                 }`}
                               >
                                 <FontAwesomeIcon icon={faRedo} />
                                 <span>
                                   {loan.renewal_status === "pending"
-                                    ? "Đang chờ"
+                                    ? "Đang chờ duyệt"
                                     : loan.renewal_status === "approved"
                                     ? "Đã gia hạn"
                                     : "Gia hạn"}
@@ -643,88 +793,70 @@ const LoanPage = () => {
 
                       {/* Hiển thị thông tin khác cho status khác */}
                       {loan.status === "pending_pickup" && (
-                        <div className="text-xs text-purple-300">
-                          💡 Đến thư viện với mã nhận sách để nhận sách
+                        <div className="text-sm text-purple-300 flex items-center">
+                          <FontAwesomeIcon
+                            icon={faInfoCircle}
+                            className="mr-2"
+                          />
+                          Đến thư viện với mã nhận sách để lấy sách
                         </div>
                       )}
                     </div>
 
-                    {/* Expanded Content - Minimal */}
+                    {/* Expanded Content */}
                     {isExpanded && (
-                      <div className="mt-3 pt-3 border-t border-gray-700">
-                        <div className="text-xs space-y-2">
-                          {/* Pickup code info (condensed) */}
-                          {loan.status === "pending_pickup" &&
-                            loan.pickup_code && (
-                              <div className="bg-purple-900/20 border border-purple-500/30 rounded-md p-2 mb-2">
-                                <p className="text-purple-300 text-xs">
-                                  🎫 Mã nhận sách:{" "}
-                                  <span className="font-mono bg-purple-800/50 px-1 rounded">
-                                    {loan.pickup_code}
-                                  </span>
+                      <div className="mt-4 pt-4 border-t border-gray-700 animate-fadeIn">
+                        <div className="space-y-3">
+                          {/* Book Details */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="bg-gray-700/30 rounded-lg p-3">
+                              <p className="text-xs text-gray-400 mb-1">ISBN</p>
+                              <p className="text-white font-medium">
+                                {loan.Book?.isbn || "Không có"}
+                              </p>
+                            </div>
+                            <div className="bg-gray-700/30 rounded-lg p-3">
+                              <p className="text-xs text-gray-400 mb-1">
+                                Thể loại
+                              </p>
+                              <p className="text-white font-medium">
+                                {loan.Book?.genre || "Không xác định"}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Status Details */}
+                          <div className="bg-gray-700/30 rounded-lg p-3">
+                            <p className="text-xs text-gray-400 mb-2">
+                              Chi tiết trạng thái
+                            </p>
+                            <p className="text-sm text-gray-300">
+                              {statusInfo.detail}
+                            </p>
+                          </div>
+
+                          {/* Renewal History */}
+                          {loan.renewal_history &&
+                            loan.renewal_history.length > 0 && (
+                              <div className="bg-gray-700/30 rounded-lg p-3">
+                                <p className="text-xs text-gray-400 mb-2">
+                                  Lịch sử gia hạn
                                 </p>
-                                {loan.hold_until && (
-                                  <p className="text-purple-200 text-xs mt-1">
-                                    Hạn nhận:{" "}
-                                    {new Date(
-                                      loan.hold_until
-                                    ).toLocaleDateString("vi-VN")}
-                                  </p>
-                                )}
+                                <div className="space-y-1">
+                                  {loan.renewal_history.map((renewal, idx) => (
+                                    <p
+                                      key={idx}
+                                      className="text-sm text-gray-300"
+                                    >
+                                      {new Date(
+                                        renewal.date
+                                      ).toLocaleDateString("vi-VN")}{" "}
+                                      - {renewal.status}
+                                    </p>
+                                  ))}
+                                </div>
                               </div>
                             )}
-
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">
-                              {loan.status === "pending_pickup"
-                                ? "Thời hạn nhận:"
-                                : "Thời gian mượn:"}
-                            </span>
-                            <span className="text-gray-300">
-                              {loan.status === "pending_pickup"
-                                ? "3 ngày từ khi yêu cầu"
-                                : loan.loan_date
-                                ? Math.ceil(
-                                    (new Date(loan.due_date) -
-                                      new Date(loan.loan_date)) /
-                                      (1000 * 60 * 60 * 24)
-                                  ) + " ngày"
-                                : "Chưa nhận sách"}
-                            </span>
-                          </div>
-
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">
-                              Trạng thái gia hạn:
-                            </span>
-                            <span
-                              className={`${
-                                loan.renewal_status === "approved"
-                                  ? "text-lightGreen"
-                                  : loan.renewal_status === "pending"
-                                  ? "text-yellow-400"
-                                  : loan.renewal_status === "rejected"
-                                  ? "text-red-400"
-                                  : "text-gray-400"
-                              }`}
-                            >
-                              {loan.renewal_status === "approved"
-                                ? "Đã duyệt"
-                                : loan.renewal_status === "pending"
-                                ? "Đang chờ duyệt"
-                                : loan.renewal_status === "rejected"
-                                ? "Từ chối"
-                                : "Chưa gia hạn"}
-                            </span>
-                          </div>
-
-                          {/* 🆕 Hiển thị thông tin trạng thái chi tiết */}
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Ghi chú:</span>
-                            <span className="text-gray-300 text-right">
-                              {statusInfo.detail}
-                            </span>
-                          </div>
                         </div>
                       </div>
                     )}
@@ -734,31 +866,43 @@ const LoanPage = () => {
             })}
           </div>
         ) : (
-          <div className="text-center py-8">
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-              <FontAwesomeIcon
-                icon={faBook}
-                className="text-3xl text-gray-500 mb-3"
-              />
-              <h3 className="text-base font-medium text-white mb-2">
-                {filter === "all"
-                  ? "Chưa có sách nào được mượn"
+          <div className="text-center py-12">
+            <div className="bg-gray-800 rounded-xl p-8 border border-gray-700 max-w-md mx-auto shadow-xl">
+              <div className="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FontAwesomeIcon
+                  icon={faBook}
+                  className="text-3xl text-gray-500"
+                />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                {searchTerm
+                  ? "Không tìm thấy kết quả"
+                  : filter === "all"
+                  ? "Chưa có sách nào đang mượn"
                   : filter === "overdue"
                   ? "Không có sách quá hạn"
+                  : filter === "pickup"
+                  ? "Không có sách chờ nhận"
                   : filter === "pending"
-                  ? "Không có sách chờ duyệt"
+                  ? "Không có yêu cầu gia hạn"
                   : "Không có sách bình thường"}
               </h3>
-              <p className="text-gray-400 text-sm mb-3">
-                {filter === "all"
-                  ? "Hãy khám phá thư viện và mượn những cuốn sách yêu thích!"
-                  : "Thay đổi bộ lọc để xem các sách khác"}
+              <p className="text-gray-400 text-sm mb-4">
+                {searchTerm
+                  ? "Thử tìm kiếm với từ khóa khác"
+                  : filter === "all"
+                  ? "Hãy mượn sách từ thư viện để bắt đầu!"
+                  : "Thay đổi bộ lọc để xem các mục khác"}
               </p>
-              {filter !== "all" && (
+              {(filter !== "all" || searchTerm) && (
                 <button
-                  onClick={() => setFilter("all")}
-                  className="bg-lightGreen hover:bg-lightGreen/80 text-black px-3 py-1.5 rounded text-sm font-medium transition-colors"
+                  onClick={() => {
+                    setFilter("all");
+                    setSearchTerm("");
+                  }}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-emerald-500/25 flex items-center gap-2 mx-auto"
                 >
+                  <FontAwesomeIcon icon={faArrowRight} />
                   Xem tất cả
                 </button>
               )}

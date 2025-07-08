@@ -6,21 +6,19 @@ import AdminFloatingButton from "../ui/AdminFloatingButton";
 
 const Layout = () => {
   return (
-    <div className="bg-library-background text-library-text-primary min-h-screen flex flex-col">
-      {/* Header với library theme */}
+    <div className="bg-gray-900 text-white min-h-screen flex flex-col">
+      {/* Header */}
       <Header />
 
-      {/* Nội dung chính với proper spacing và typography */}
-      <main className="flex-grow px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <Outlet />
-        </div>
+      {/* Nội dung chính */}
+      <main className="flex-grow">
+        <Outlet />
       </main>
 
-      {/* Footer với library styling */}
+      {/* Footer */}
       <Footer />
 
-      {/* Admin Floating Button - giữ nguyên functionality */}
+      {/* Admin Floating Button */}
       <AdminFloatingButton />
     </div>
   );

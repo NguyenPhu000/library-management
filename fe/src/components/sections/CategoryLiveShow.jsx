@@ -1,251 +1,140 @@
 import React from "react";
 import Slider from "react-slick";
 import { useCategory } from "../../contexts/CategoryContext";
+import randomImages from "../../assets/images/importImages";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faLayerGroup,
-  faBookmark,
-  faGraduationCap,
-  faHeart,
-  faMagic,
-  faGlobe,
-  faFlask,
-  faPalette,
-  faHistory,
-  faTree,
-  faMusic,
-  faGamepad,
+  faSpinner,
+  faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
-import randomImages from "../../assets/images/importImages";
 
 const CategoryLiveShow = () => {
-  const { categories } = useCategory();
+  const { categories, loading, error } = useCategory();
 
-  const validCategories = categories.filter(
-    (cat) => cat.name && cat.description
+  // Lọc danh mục hợp lệ
+  const validCategories = (categories || []).filter(
+    (cat) => cat?.name && cat?.description
   );
 
-  // Icon mapping cho các category phổ biến
-  const categoryIcons = {
-    "Khoa học": faFlask,
-    "Văn học": faBookmark,
-    "Giáo dục": faGraduationCap,
-    "Nghệ thuật": faPalette,
-    "Lịch sử": faHistory,
-    "Thiên nhiên": faTree,
-    "Âm nhạc": faMusic,
-    "Giải trí": faGamepad,
-    "Thế giới": faGlobe,
-    "Tình cảm": faHeart,
-    default: faLayerGroup,
-  };
-
-  const getIconForCategory = (categoryName) => {
-    const foundKey = Object.keys(categoryIcons).find((key) =>
-      categoryName.toLowerCase().includes(key.toLowerCase())
-    );
-    return categoryIcons[foundKey] || categoryIcons.default;
-  };
-
-  const slidesToShow = Math.min(3, validCategories.length);
-
+  // Cấu hình slider
   const settings = {
     dots: true,
-    infinite: validCategories.length > slidesToShow,
-    speed: 600,
-    slidesToShow: slidesToShow,
+    infinite: validCategories.length > 1,
+    speed: 700,
+    slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 5000,
+    autoplaySpeed: 7000,
     pauseOnHover: true,
-    centerMode: false,
-    cssEase: "ease-in-out",
-    dotsClass: "slick-dots library-category-dots",
     arrows: false,
+    cssEase: "ease-in-out",
+    centerMode: true,
+    centerPadding: validCategories.length > 1 ? "15%" : "0px",
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: Math.min(2, validCategories.length),
-          infinite: validCategories.length > 2,
+          centerPadding: validCategories.length > 1 ? "10%" : "0px",
         },
       },
       {
         breakpoint: 768,
         settings: {
-          slidesToShow: 1,
-          infinite: validCategories.length > 1,
+          centerMode: false,
+          centerPadding: "0px",
         },
       },
     ],
   };
 
   return (
-    <section className="py-16 md:py-20 bg-library-background overflow-hidden">
-      {/* Section Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-        <div className="text-center">
-          <div className="flex items-center justify-center mb-4">
-            <FontAwesomeIcon
-              icon={faLayerGroup}
-              className="text-library-primary mr-3 w-6 h-6"
-            />
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-library-text-primary">
-              Danh Mục Sách
-            </h2>
-          </div>
-          <p className="text-library-text-secondary text-lg max-w-2xl mx-auto">
-            Khám phá các thể loại sách đa dạng trong bộ sưu tập thư viện của
-            chúng tôi
-          </p>
+    <section className="relative py-12 md:py-16 bg-gradient-to-b from-gray-950 via-black to-gray-950 text-white overflow-hidden">
+      {/* States */}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-20">
+          <FontAwesomeIcon
+            icon={faSpinner}
+            spin
+            className="text-emerald-400 text-4xl mb-4"
+          />
+          <p className="text-gray-400">Đang tải danh mục...</p>
         </div>
-      </div>
+      )}
 
-      <style>{`
-        .library-category-dots {
-          bottom: -40px;
-          display: flex !important;
-          justify-content: center;
-          list-style: none;
-          margin: 0;
-          padding: 0;
-        }
-        
-        .library-category-dots li {
-          margin: 0 4px;
-        }
-        
-        .library-category-dots li button {
-          border: none;
-          background: transparent;
-          cursor: pointer;
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          padding: 0;
-          transition: all 0.3s ease;
-        }
-        
-        .library-category-dots li button:before {
-          content: '';
-          display: block;
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background-color: #D1D5DB;
-          transition: all 0.3s ease;
-        }
-        
-        .library-category-dots li.slick-active button:before {
-          background-color: #2563EB;
-          transform: scale(1.2);
-        }
-        
-        .library-category-dots li:hover button:before {
-          background-color: #2563EB;
-          opacity: 0.7;
-        }
-        
-        .slick-slide {
-          padding: 0 8px;
-        }
-        
-        .slick-list {
-          margin: 0 -8px;
-        }
-        
-        .category-card {
-          transition: all 0.3s ease;
-        }
-        
-        .category-card:hover {
-          transform: translateY(-6px);
-        }
-        
-        @media (max-width: 767px) {
-          .slick-slide {
-            padding: 0 4px;
-          }
-          .slick-list {
-            margin: 0 -4px;
-          }
-        }
-      `}</style>
+      {error && !loading && (
+        <div className="flex flex-col items-center justify-center py-20">
+          <FontAwesomeIcon
+            icon={faExclamationTriangle}
+            className="text-red-400 text-4xl mb-4"
+          />
+          <p className="text-red-400 max-w-xs text-center">{error}</p>
+        </div>
+      )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {validCategories.length > 0 ? (
-          <Slider {...settings}>
-            {validCategories.map((category, index) => {
-              const imageIndex = (index % Object.keys(randomImages).length) + 1;
-              const imageUrl = randomImages[`image${imageIndex}`];
-              const categoryIcon = getIconForCategory(category.name);
+      {!loading && !error && (
+        <>
+          {validCategories.length > 0 ? (
+            <Slider {...settings} className="px-2">
+              {validCategories.map((category, idx) => {
+                const keys = Object.keys(randomImages);
+                const imageUrl = randomImages[keys[idx % keys.length]];
 
-              return (
-                <div key={category.category_id || index}>
-                  <div className="category-card card-library overflow-hidden group cursor-pointer">
-                    {/* Category Image */}
-                    <div className="relative h-48 md:h-56 overflow-hidden">
+                return (
+                  <div
+                    key={category.category_id || idx}
+                    className="px-2 outline-none select-none"
+                  >
+                    <div
+                      className="relative rounded-xl overflow-hidden shadow-lg border border-gray-700/40 hover:border-emerald-500/40 transition-all duration-300"
+                      style={{ aspectRatio: "16/9" }}
+                    >
                       <img
                         src={imageUrl}
                         alt={category.name}
-                        title={category.name}
                         loading="lazy"
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-105"
                       />
-
                       {/* Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-
-                      {/* Category Icon */}
-                      <div className="absolute top-4 right-4 w-10 h-10 bg-library-primary/90 rounded-library flex items-center justify-center">
-                        <FontAwesomeIcon
-                          icon={categoryIcon}
-                          className="text-white w-5 h-5"
-                        />
-                      </div>
-
-                      {/* Category Info Overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                        <h3 className="text-xl md:text-2xl font-heading font-bold mb-2 drop-shadow-md">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
+                      {/* Content */}
+                      <div className="absolute inset-0 flex flex-col justify-end p-6">
+                        <h3 className="text-2xl font-semibold mb-1 line-clamp-1 drop-shadow-lg">
                           {category.name}
                         </h3>
-                      </div>
-                    </div>
-
-                    {/* Category Description */}
-                    <div className="p-6">
-                      <p className="text-library-text-secondary leading-relaxed line-clamp-3">
-                        {category.description}
-                      </p>
-
-                      {/* Explore Button */}
-                      <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <span className="inline-flex items-center text-library-primary font-medium text-sm">
-                          <FontAwesomeIcon
-                            icon={faMagic}
-                            className="mr-2 w-4 h-4"
-                          />
-                          Khám phá thể loại này
-                        </span>
+                        <p className="text-gray-300 text-sm line-clamp-2">
+                          {category.description}
+                        </p>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </Slider>
-        ) : (
-          <div className="text-center py-12">
-            <FontAwesomeIcon
-              icon={faLayerGroup}
-              className="text-library-text-muted text-4xl mb-4"
-            />
-            <p className="text-library-text-secondary text-lg">
-              Hiện chưa có danh mục nào để hiển thị.
+                );
+              })}
+            </Slider>
+          ) : (
+            <p className="text-center text-gray-500 py-20">
+              ✨ Hiện chưa có danh mục để hiển thị. ✨
             </p>
-          </div>
-        )}
-      </div>
+          )}
+        </>
+      )}
+
+      {/* Custom slick dots */}
+      <style jsx>{`
+        .slick-dots {
+          bottom: -35px;
+        }
+        .slick-dots li button:before {
+          font-size: 10px;
+          color: #6b7280;
+          opacity: 0.6;
+          transition: all 0.3s;
+        }
+        .slick-dots li.slick-active button:before {
+          color: #34d399;
+          opacity: 1;
+        }
+      `}</style>
     </section>
   );
 };

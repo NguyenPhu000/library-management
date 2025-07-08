@@ -77,22 +77,40 @@ export const LoanProvider = ({ children }) => {
     if (historyLoading) return;
 
     setHistoryLoading(true);
+    setError(null); // Reset error state
 
     try {
       const historyData = await loanService.getMemberLoanHistory(memberId);
 
-      if (historyData.success && Array.isArray(historyData.loans)) {
-        setLoanHistory(historyData.loans);
+      if (historyData && historyData.success === true) {
+        // Kiểm tra xem có thuộc tính history hoặc loans không
+        const loanArray = historyData.history || historyData.loans || [];
+
+        if (Array.isArray(loanArray)) {
+          // Format dữ liệu trước khi lưu vào state
+          const formattedLoans = loanArray.map((loan) => ({
+            ...loan,
+            fine_amount: loan.fine_amount || 0,
+            return_date: loan.return_date || null,
+            renewal_count: loan.renewal_count || 0,
+            status: loan.status || "completed",
+          }));
+          setLoanHistory(formattedLoans);
+        } else {
+          console.error("Dữ liệu lịch sử mượn không phải là mảng:", loanArray);
+          setError("Định dạng dữ liệu không hợp lệ");
+        }
       } else {
         console.error("Lịch sử mượn không đúng định dạng:", historyData);
+        setError("Không thể tải lịch sử mượn sách");
       }
     } catch (err) {
       console.error("Lỗi khi tải lịch sử mượn:", err);
-      setError(err.message);
+      setError(err.message || "Không thể tải lịch sử mượn sách");
     } finally {
       setHistoryLoading(false);
     }
-  }, [currentUser, memberId, historyLoading]);
+  }, [currentUser, memberId]);
 
   // Load initial data
   useEffect(() => {
@@ -102,8 +120,9 @@ export const LoanProvider = ({ children }) => {
   useEffect(() => {
     if (currentUser && memberId) {
       fetchLoans();
+      fetchLoanHistory();
     }
-  }, [memberId, currentUser, fetchLoans]);
+  }, [memberId, currentUser, fetchLoans, fetchLoanHistory]);
 
   // =============================================================================
   // ENHANCED LOAN ACTIONS
@@ -326,6 +345,26 @@ export const LoanProvider = ({ children }) => {
     }
   };
 
+  // Hàm lấy chi tiết loan theo ID
+  const getLoanDetail = async (loanId) => {
+    // Thử tìm trong loanHistory trước
+    let found = [...loans, ...loanHistory].find((l) => l.loan_id === loanId);
+    if (found) return found;
+
+    // Nếu không thấy, fetch lại lịch sử
+    try {
+      const historyData = await loanService.getMemberLoanHistory(memberId);
+      if (historyData.success) {
+        const arr = historyData.history || historyData.loans || [];
+        found = arr.find((l) => l.loan_id === loanId);
+        if (found) return found;
+      }
+    } catch (err) {
+      console.error("getLoanDetail error:", err);
+    }
+    throw new Error("Không thể tải thông tin khoản vay");
+  };
+
   // =============================================================================
   // UTILITY FUNCTIONS
   // =============================================================================
@@ -397,6 +436,7 @@ export const LoanProvider = ({ children }) => {
         returnLoan,
         borrowBook: borrowBookContext,
         requestRenewLoan,
+        getLoanDetail,
 
         // Utility functions
         getLoanStatistics,

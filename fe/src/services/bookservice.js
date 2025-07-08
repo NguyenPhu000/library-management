@@ -83,7 +83,7 @@ const getBookById = async (bookId) => {
 
 const searchBooks = async (criteria, query) => {
   try {
-    const response = await PublicAPI.get("/books/search", {
+    const response = await PublicAPI.get("/books", {
       params: {
         criteria: criteria,
         query: query,

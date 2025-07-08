@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../../contexts/UserContext";
 import Modal from "react-modal";
+import {
+  FaEdit,
+  FaTimes,
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaLock,
+  FaVenusMars,
+} from "react-icons/fa";
 
 const UpdateProfileModal = ({ isOpen, onClose }) => {
   const { userData, updateUser } = useUser();
@@ -14,6 +24,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
     address: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (userData) {
@@ -37,6 +48,8 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
     try {
       const dataToSubmit = { ...formData };
 
@@ -46,14 +59,36 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
 
       await updateUser(dataToSubmit);
 
-      alert("Cập nhật thông tin thành công!");
+      // Success notification
+      const successAlert = document.createElement("div");
+      successAlert.className =
+        "fixed top-4 right-4 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl z-50 border border-emerald-500";
+      successAlert.textContent = "Cập nhật thông tin thành công!";
+      document.body.appendChild(successAlert);
+
+      setTimeout(() => {
+        document.body.removeChild(successAlert);
+      }, 3000);
+
       onClose();
       window.location.reload();
     } catch (error) {
       console.error("Lỗi khi cập nhật thông tin:", error);
       const errorMessage =
         error.response?.data?.message || "Cập nhật thông tin thất bại!";
-      alert(errorMessage);
+
+      // Error notification
+      const errorAlert = document.createElement("div");
+      errorAlert.className =
+        "fixed top-4 right-4 bg-red-600 text-white px-6 py-3 rounded-xl shadow-2xl z-50 border border-red-500";
+      errorAlert.textContent = errorMessage;
+      document.body.appendChild(errorAlert);
+
+      setTimeout(() => {
+        document.body.removeChild(errorAlert);
+      }, 3000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -62,168 +97,182 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
       isOpen={isOpen}
       onRequestClose={onClose}
       contentLabel="Cập nhật thông tin"
-      className="bg-gray-900 p-6 rounded-lg w-full max-w-xl mx-auto my-8"
-      overlayClassName="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+      className="bg-gray-800 rounded-2xl w-full max-w-2xl mx-auto my-8 max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-700"
+      overlayClassName="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 z-50"
       ariaHideApp={false}
     >
-      <h2 className="text-lightGreen text-xl mb-4 text-center">
-        Cập nhật thông tin
-      </h2>
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-2 gap-x-4 gap-y-3"
-      >
-        <div>
-          <label
-            className="block text-lightGreen text-xs font-medium mb-1"
-            htmlFor="username"
+      {/* Header */}
+      <div className="bg-gradient-to-r from-gray-700 via-gray-800 to-gray-900 px-8 py-6 text-white relative">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center border border-emerald-500/30">
+              <FaEdit className="w-5 h-5 text-emerald-400" />
+            </div>
+            <h2 className="text-xl font-semibold">Cập nhật thông tin</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 bg-gray-600/50 hover:bg-gray-600 rounded-lg flex items-center justify-center transition-colors duration-200"
           >
-            Tên đăng nhập:
-          </label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            value={formData.username}
-            onChange={handleInputChange}
-            placeholder={userData?.username ? "" : "Nhập tên đăng nhập"}
-            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
-          />
+            <FaTimes className="w-4 h-4" />
+          </button>
         </div>
-        <div>
-          <label
-            className="block text-lightGreen text-xs font-medium mb-1"
-            htmlFor="password"
-          >
-            Mật khẩu mới:
-          </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            placeholder="Để trống nếu không đổi"
-            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
-            autoComplete="new-password"
-          />
+      </div>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="p-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Username */}
+          <div className="md:col-span-2">
+            <label className="block text-gray-300 text-sm font-semibold mb-2">
+              <FaUser className="inline w-4 h-4 mr-2 text-emerald-400" />
+              Tên đăng nhập
+            </label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleInputChange}
+              placeholder="Nhập tên đăng nhập"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+
+          {/* First Name */}
+          <div>
+            <label className="block text-gray-300 text-sm font-semibold mb-2">
+              Họ
+            </label>
+            <input
+              type="text"
+              name="first_name"
+              value={formData.first_name}
+              onChange={handleInputChange}
+              placeholder="Nhập họ"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+
+          {/* Last Name */}
+          <div>
+            <label className="block text-gray-300 text-sm font-semibold mb-2">
+              Tên
+            </label>
+            <input
+              type="text"
+              name="last_name"
+              value={formData.last_name}
+              onChange={handleInputChange}
+              placeholder="Nhập tên"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-gray-300 text-sm font-semibold mb-2">
+              <FaEnvelope className="inline w-4 h-4 mr-2 text-emerald-400" />
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Nhập email"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+
+          {/* Gender */}
+          <div>
+            <label className="block text-gray-300 text-sm font-semibold mb-2">
+              <FaVenusMars className="inline w-4 h-4 mr-2 text-emerald-400" />
+              Giới tính
+            </label>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+            >
+              <option value="0">Nữ</option>
+              <option value="1">Nam</option>
+            </select>
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label className="block text-gray-300 text-sm font-semibold mb-2">
+              <FaPhone className="inline w-4 h-4 mr-2 text-emerald-400" />
+              Số điện thoại
+            </label>
+            <input
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              placeholder="Nhập số điện thoại"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-gray-300 text-sm font-semibold mb-2">
+              <FaLock className="inline w-4 h-4 mr-2 text-emerald-400" />
+              Mật khẩu mới
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              placeholder="Để trống nếu không đổi"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+              autoComplete="new-password"
+            />
+          </div>
+
+          {/* Address */}
+          <div className="md:col-span-2">
+            <label className="block text-gray-300 text-sm font-semibold mb-2">
+              <FaMapMarkerAlt className="inline w-4 h-4 mr-2 text-emerald-400" />
+              Địa chỉ
+            </label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleInputChange}
+              placeholder="Nhập địa chỉ"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
         </div>
-        <div>
-          <label
-            className="block text-lightGreen text-xs font-medium mb-1"
-            htmlFor="first_name"
-          >
-            Họ:
-          </label>
-          <input
-            type="text"
-            id="first_name"
-            name="first_name"
-            value={formData.first_name}
-            onChange={handleInputChange}
-            placeholder={userData?.first_name ? "" : "Nhập họ"}
-            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
-          />
-        </div>
-        <div>
-          <label
-            className="block text-lightGreen text-xs font-medium mb-1"
-            htmlFor="last_name"
-          >
-            Tên:
-          </label>
-          <input
-            type="text"
-            id="last_name"
-            name="last_name"
-            value={formData.last_name}
-            onChange={handleInputChange}
-            placeholder={userData?.last_name ? "" : "Nhập tên"}
-            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
-          />
-        </div>
-        <div>
-          <label
-            className="block text-lightGreen text-xs font-medium mb-1"
-            htmlFor="gender"
-          >
-            Giới tính:
-          </label>
-          <select
-            id="gender"
-            name="gender"
-            value={formData.gender}
-            onChange={handleInputChange}
-            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
-          >
-            <option value="0">Nữ</option>
-            <option value="1">Nam</option>
-          </select>
-        </div>
-        <div>
-          <label
-            className="block text-lightGreen text-xs font-medium mb-1"
-            htmlFor="email"
-          >
-            Email:
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            placeholder={userData?.email ? "" : "Nhập email"}
-            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
-          />
-        </div>
-        <div className="col-span-2">
-          <label
-            className="block text-lightGreen text-xs font-medium mb-1"
-            htmlFor="phone"
-          >
-            Số điện thoại:
-          </label>
-          <input
-            type="text"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleInputChange}
-            placeholder={userData?.phone ? "" : "Nhập số điện thoại"}
-            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
-          />
-        </div>
-        <div className="col-span-2">
-          <label
-            className="block text-lightGreen text-xs font-medium mb-1"
-            htmlFor="address"
-          >
-            Địa chỉ:
-          </label>
-          <input
-            type="text"
-            id="address"
-            name="address"
-            value={formData.address}
-            onChange={handleInputChange}
-            placeholder={userData?.address ? "" : "Nhập địa chỉ"}
-            className="shadow appearance-none border rounded w-full py-1.5 px-2 text-white bg-gray-800 leading-tight focus:outline-none focus:shadow-outline border-gray-700 focus:ring focus:ring-lightGreen text-sm"
-          />
-        </div>
-        <div className="col-span-2 flex justify-center mt-4">
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-gray-600">
           <button
             type="submit"
-            className="bg-lightGreen text-gray-900 font-medium py-1.5 px-4 rounded focus:outline-none focus:shadow-outline text-sm hover:bg-opacity-90 transition duration-200"
+            disabled={isLoading}
+            className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold py-3 px-6 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Cập nhật
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <span>Đang cập nhật...</span>
+              </div>
+            ) : (
+              "Cập nhật thông tin"
+            )}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="ml-4 bg-gray-600 text-white font-medium py-1.5 px-4 rounded focus:outline-none focus:shadow-outline text-sm hover:bg-gray-500 transition duration-200"
+            className="flex-1 sm:flex-none bg-gray-600 hover:bg-gray-500 text-gray-200 font-semibold py-3 px-6 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200"
           >
-            Hủy
+            Hủy bỏ
           </button>
         </div>
       </form>
@@ -246,9 +295,11 @@ const UpdateProfileButton = () => {
     <>
       <button
         onClick={openModal}
-        className="bg-lightGreen text-gray-900 font-medium py-1.5 px-3 rounded hover:bg-opacity-90 focus:outline-none focus:shadow-outline transition duration-200 text-sm"
+        className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-100 font-semibold py-3 px-6 rounded-xl backdrop-blur-sm border border-emerald-500/30 hover:border-emerald-500/40 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all duration-200 flex items-center gap-2"
       >
-        Cập nhật thông tin
+        <FaEdit className="w-4 h-4" />
+        <span className="hidden sm:inline">Cập nhật thông tin</span>
+        <span className="sm:hidden">Cập nhật</span>
       </button>
       <UpdateProfileModal isOpen={modalIsOpen} onClose={closeModal} />
     </>
