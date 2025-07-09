@@ -39,6 +39,7 @@ const getAllAdmins = async (req, res) => {
       totalItems: data.totalItems,
     });
   } catch (error) {
+    console.error("getAllAdmins error:", error);
     return res.status(500).json({
       success: false,
       message: "Có lỗi xảy ra khi lấy danh sách admin: " + error.message,

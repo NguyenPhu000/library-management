@@ -13,6 +13,10 @@ const getCurrentUser = async () => {
     return null;
   } catch (error) {
     console.error("Get current user error:", error);
+    // Nếu lỗi 401 Unauthorized, không throw lỗi mà trả về null
+    if (error.response && error.response.status === 401) {
+      return null;
+    }
     throw new Error(
       error.response?.data?.message || "Không thể lấy thông tin người dùng"
     );

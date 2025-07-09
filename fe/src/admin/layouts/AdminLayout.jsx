@@ -18,6 +18,7 @@ import {
   FaSun,
   FaCog,
   FaChevronDown,
+  FaUserShield,
 } from "react-icons/fa";
 import { useAuth } from "../../contexts/AuthContext";
 import Swal from "sweetalert2";
@@ -115,6 +116,7 @@ const AdminLayout = () => {
       icon: <FaUsers className="w-5 h-5" />,
       label: "Tài khoản",
       color: "text-purple-600 dark:text-purple-400",
+      superAdminOnly: true,
     },
     {
       path: "/admin/members",
@@ -133,6 +135,13 @@ const AdminLayout = () => {
       icon: <FaMoneyBill className="w-5 h-5" />,
       label: "Thanh toán",
       color: "text-amber-600 dark:text-amber-400",
+    },
+    {
+      path: "/admin/admins",
+      icon: <FaUserShield className="w-5 h-5" />,
+      label: "Nhân sự",
+      color: "text-cyan-600 dark:text-cyan-400",
+      superAdminOnly: true,
     },
   ];
 
@@ -208,37 +217,42 @@ const AdminLayout = () => {
         {/* Navigation */}
         <div className="flex-1 overflow-y-auto py-4">
           <nav className="space-y-1 px-3">
-            {menuItems.map((item) => {
-              const isActive =
-                location.pathname === item.path ||
-                (item.path !== "/admin" &&
-                  location.pathname.startsWith(item.path));
+            {menuItems
+              .filter(
+                (item) =>
+                  !(item.superAdminOnly && currentUser.adminType !== "admin")
+              )
+              .map((item) => {
+                const isActive =
+                  location.pathname === item.path ||
+                  (item.path !== "/admin" &&
+                    location.pathname.startsWith(item.path));
 
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    isActive
-                      ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-r-2 border-blue-600 dark:border-blue-400"
-                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"
-                  }`}
-                >
-                  <span
-                    className={`${
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
                       isActive
-                        ? item.color
-                        : "text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300"
-                    } transition-colors`}
+                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-r-2 border-blue-600 dark:border-blue-400"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"
+                    }`}
                   >
-                    {item.icon}
-                  </span>
-                  {sidebarOpen && (
-                    <span className="ml-3 truncate">{item.label}</span>
-                  )}
-                </Link>
-              );
-            })}
+                    <span
+                      className={`${
+                        isActive
+                          ? item.color
+                          : "text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300"
+                      } transition-colors`}
+                    >
+                      {item.icon}
+                    </span>
+                    {sidebarOpen && (
+                      <span className="ml-3 truncate">{item.label}</span>
+                    )}
+                  </Link>
+                );
+              })}
           </nav>
         </div>
 

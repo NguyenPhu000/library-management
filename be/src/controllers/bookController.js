@@ -182,6 +182,19 @@ const searchBooks = async (req, res) => {
   }
 };
 
+// GET /api/admin/books/stats - Lấy thống kê sách cho dashboard
+const getBookStats = async (req, res) => {
+  try {
+    const stats = await bookService.getBookStats();
+    return res.json({ success: true, data: stats });
+  } catch (error) {
+    console.error("Lỗi khi lấy thống kê sách:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: error.message, data: null });
+  }
+};
+
 export default {
   listBooks,
   createBook,
@@ -190,4 +203,5 @@ export default {
   getBookById,
   getBookByCategory,
   searchBooks,
+  getBookStats,
 };

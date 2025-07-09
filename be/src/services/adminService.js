@@ -13,28 +13,25 @@ let getAllAdmins = async () => {
 
 let syncAdminFromUsers = async () => {
   try {
-    let users = await db.User.findAll({ where: { role: "admin" } });
+    const users = await db.User.findAll({ where: { role: "admin" } });
 
-    let existingAdmins = await db.Admin.findAll({ attributes: ["user_id"] });
-    let existingUserIds = existingAdmins.map((admin) => admin.user_id);
+    const existingAdmins = await db.Admin.findAll({ attributes: ["user_id"] });
+    const existingUserIds = existingAdmins.map((a) => a.user_id);
 
-    let newAdmins = users
-      .filter((user) => !existingUserIds.includes(user.user_id))
-      .map((user) => ({
-        user_id: user.user_id,
-        access_level: 1,
+    const newAdmins = users
+      .filter((u) => !existingUserIds.includes(u.user_id))
+      .map((u) => ({
+        user_id: u.user_id,
         department: "General",
-        can_manage_users: true,
-        can_manage_books: true,
+        admin_type: "librarian", // mặc định
       }));
 
-    if (newAdmins.length > 0) {
-      await db.Admin.bulkCreate(newAdmins);
-    }
+    if (newAdmins.length) await db.Admin.bulkCreate(newAdmins);
 
     return {
       success: true,
-      message: `${newAdmins.length} Admins được thêm thành công!`,
+      message: `${newAdmins.length} admin được thêm thành công!`,
+      data: newAdmins,
     };
   } catch (error) {
     return {
@@ -52,11 +49,24 @@ let updateAdmin = async (data) => {
     if (!user || user.role !== "admin")
       throw new Error("User này không phải Admin");
 
+    // Nếu thay đổi admin_type, đảm bảo còn ít nhất 1 super admin
+    if (
+      data.admin_type &&
+      data.admin_type !== admin.admin_type &&
+      admin.admin_type === "admin" &&
+      data.admin_type === "librarian"
+    ) {
+      const countAdmin = await db.Admin.count({
+        where: { admin_type: "admin" },
+      });
+      if (countAdmin <= 1) {
+        throw new Error("Hệ thống phải có ít nhất 1 Super Admin!");
+      }
+    }
+
     await admin.update({
-      access_level: data.access_level,
-      department: data.department,
-      can_manage_users: data.can_manage_users === "on",
-      can_manage_books: data.can_manage_books === "on",
+      department: data.department || admin.department,
+      admin_type: data.admin_type || admin.admin_type,
     });
 
     return { message: "Cập nhật Admin thành công!" };

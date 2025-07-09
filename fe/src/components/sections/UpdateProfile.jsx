@@ -41,8 +41,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
     }
   }, [userData]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = (name, value) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -132,7 +131,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
               type="text"
               name="username"
               value={formData.username}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange("username", e.target.value)}
               placeholder="Nhập tên đăng nhập"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
             />
@@ -147,7 +146,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
               type="text"
               name="first_name"
               value={formData.first_name}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange("first_name", e.target.value)}
               placeholder="Nhập họ"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
             />
@@ -162,7 +161,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
               type="text"
               name="last_name"
               value={formData.last_name}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange("last_name", e.target.value)}
               placeholder="Nhập tên"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
             />
@@ -178,7 +177,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
               type="email"
               name="email"
               value={formData.email}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange("email", e.target.value)}
               placeholder="Nhập email"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
             />
@@ -193,7 +192,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
             <select
               name="gender"
               value={formData.gender}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange("gender", e.target.value)}
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
             >
               <option value="0">Nữ</option>
@@ -211,7 +210,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
               type="text"
               name="phone"
               value={formData.phone}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange("phone", e.target.value)}
               placeholder="Nhập số điện thoại"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
             />
@@ -227,7 +226,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
               type="password"
               name="password"
               value={formData.password}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange("password", e.target.value)}
               placeholder="Để trống nếu không đổi"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
               autoComplete="new-password"
@@ -244,7 +243,7 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
               type="text"
               name="address"
               value={formData.address}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange("address", e.target.value)}
               placeholder="Nhập địa chỉ"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
             />

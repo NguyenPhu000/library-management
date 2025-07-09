@@ -171,9 +171,9 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-6 bg-gray-50 dark:bg-gray-900 dark:text-white">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
           Dashboard - Hệ thống Quản lý Thư viện
         </h1>
         {stats.librarySettings && (
@@ -194,7 +194,7 @@ const AdminDashboard = () => {
       {/* Enhanced Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {/* Tổng số sách */}
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-blue-500 dark:border-blue-400">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Tổng số sách</p>
@@ -215,7 +215,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Tổng số thành viên */}
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-green-500 dark:border-green-400">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Tổng số thành viên</p>
@@ -240,7 +240,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Sách đang được mượn (Active Loans) */}
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-purple-500 dark:border-purple-400">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Đang được mượn</p>
@@ -264,7 +264,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Tổng phí phạt */}
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-orange-500">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-orange-500 dark:border-orange-400">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Tổng phí phạt</p>
@@ -295,13 +295,15 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {/* Chờ nhận sách */}
         <div
-          className={`bg-white p-6 rounded-lg shadow-md border-l-4 ${
+          className={`bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 ${
             stats.awaitingPickup > 0 ? "border-purple-500" : "border-gray-300"
-          }`}
+          } dark:border-purple-400`}
         >
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500 text-sm">Chờ nhận sách</p>
+              <p className="text-gray-500 text-sm dark:text-gray-300">
+                Chờ nhận sách
+              </p>
               <p
                 className={`text-2xl font-bold ${
                   stats.awaitingPickup > 0 ? "text-purple-600" : "text-gray-600"
@@ -337,13 +339,15 @@ const AdminDashboard = () => {
 
         {/* Sách quá hạn */}
         <div
-          className={`bg-white p-6 rounded-lg shadow-md border-l-4 ${
+          className={`bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 ${
             stats.overdueLoans > 0 ? "border-red-500" : "border-gray-300"
-          }`}
+          } dark:border-red-400`}
         >
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500 text-sm">Sách quá hạn</p>
+              <p className="text-gray-500 text-sm dark:text-gray-300">
+                Sách quá hạn
+              </p>
               <p
                 className={`text-2xl font-bold ${
                   stats.overdueLoans > 0 ? "text-red-600" : "text-gray-600"
@@ -379,13 +383,15 @@ const AdminDashboard = () => {
 
         {/* Chờ duyệt gia hạn */}
         <div
-          className={`bg-white p-6 rounded-lg shadow-md border-l-4 ${
+          className={`bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 ${
             stats.pendingRenewals > 0 ? "border-yellow-500" : "border-gray-300"
-          }`}
+          } dark:border-yellow-400`}
         >
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500 text-sm">Chờ duyệt gia hạn</p>
+              <p className="text-gray-500 text-sm dark:text-gray-300">
+                Chờ duyệt gia hạn
+              </p>
               <p
                 className={`text-2xl font-bold ${
                   stats.pendingRenewals > 0
@@ -426,7 +432,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Trả sách hôm nay */}
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-green-500 dark:border-green-400">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Trả sách hôm nay</p>
@@ -450,10 +456,12 @@ const AdminDashboard = () => {
         </div>
 
         {/* Tỷ lệ tuân thủ */}
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-indigo-500">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-indigo-500 dark:border-indigo-400">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500 text-sm">Tỷ lệ tuân thủ</p>
+              <p className="text-gray-500 text-sm dark:text-gray-300">
+                Tỷ lệ tuân thủ
+              </p>
               <p
                 className={`text-2xl font-bold ${
                   getComplianceRate() >= 90
@@ -531,12 +539,12 @@ const AdminDashboard = () => {
       {/* Các thống kê phụ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg shadow-md p-6">
           <h3 className="text-lg font-semibold mb-4">Thao tác nhanh</h3>
           <div className="space-y-3">
             <Link
               to="/admin/loans?filter=pending"
-              className="flex items-center justify-between p-3 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors"
+              className="flex items-center justify-between p-3 bg-yellow-50 hover:bg-yellow-100 dark:bg-yellow-900/20 dark:hover:bg-yellow-900/40 rounded-lg transition-colors"
             >
               <span className="flex items-center">
                 <FaClock className="text-yellow-500 mr-2" />
@@ -549,7 +557,7 @@ const AdminDashboard = () => {
 
             <Link
               to="/admin/loans?filter=overdue"
-              className="flex items-center justify-between p-3 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+              className="flex items-center justify-between p-3 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 rounded-lg transition-colors"
             >
               <span className="flex items-center">
                 <FaExclamationTriangle className="text-red-500 mr-2" />
@@ -562,7 +570,7 @@ const AdminDashboard = () => {
 
             <Link
               to="/admin/loans"
-              className="flex items-center justify-between p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+              className="flex items-center justify-between p-3 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 rounded-lg transition-colors"
             >
               <span className="flex items-center">
                 <FaExchangeAlt className="text-blue-500 mr-2" />
@@ -576,7 +584,7 @@ const AdminDashboard = () => {
             {/* Chờ nhận sách */}
             <Link
               to="/admin/loans?filter=pending_pickup"
-              className="flex items-center justify-between p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
+              className="flex items-center justify-between p-3 bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/40 rounded-lg transition-colors"
             >
               <span className="flex items-center">
                 <FaTicketAlt className="text-purple-500 mr-2" />
@@ -590,7 +598,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Recent Activities */}
-        <div className="bg-white rounded-lg shadow-md col-span-1 lg:col-span-2 p-6">
+        <div className="bg-white dark:bg-gray-800 dark:text-gray-200 p-6 rounded-lg shadow-md flex-1">
           <h3 className="text-lg font-semibold mb-4">Hoạt động gần đây</h3>
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {stats.recentLoans.length > 0 ? (

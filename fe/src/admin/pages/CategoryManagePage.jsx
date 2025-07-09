@@ -151,6 +151,22 @@ const CategoryManagePage = () => {
     resetForm();
   };
 
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    setFormData((prev) => ({ ...prev, name: value }));
+    if (formErrors.name) {
+      setFormErrors((prev) => ({ ...prev, name: "" }));
+    }
+  };
+
+  const handleDescriptionChange = (e) => {
+    const value = e.target.value;
+    setFormData((prev) => ({ ...prev, description: value }));
+    if (formErrors.description) {
+      setFormErrors((prev) => ({ ...prev, description: "" }));
+    }
+  };
+
   const validateForm = () => {
     const errors = {};
 
@@ -205,7 +221,7 @@ const CategoryManagePage = () => {
     setShowViewModal(true);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, dataToSubmit = formData) => {
     e.preventDefault();
 
     if (!validateForm()) return;
@@ -214,8 +230,8 @@ const CategoryManagePage = () => {
 
     try {
       const trimmedData = {
-        name: formData.name.trim(),
-        description: formData.description?.trim() || "",
+        name: dataToSubmit.name.trim(),
+        description: dataToSubmit.description?.trim() || "",
       };
 
       let response;
@@ -383,110 +399,164 @@ const CategoryManagePage = () => {
     );
   };
 
-  const CategoryForm = () => (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Tên danh mục <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          placeholder="Nhập tên danh mục..."
-          value={formData.name}
-          onChange={(e) => {
-            setFormData({ ...formData, name: e.target.value });
-            // Clear errors when user starts typing
-            if (formErrors.name) {
-              setFormErrors({ ...formErrors, name: "" });
-            }
-          }}
-          onBlur={() => {
-            // Validate on blur
-            if (formData.name?.trim()) {
-              validateForm();
-            }
-          }}
-          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-            formErrors.name
-              ? "border-red-500 bg-red-50 dark:bg-red-900/20"
-              : "border-gray-300 dark:border-gray-600"
-          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
-          disabled={isSubmitting}
-          autoComplete="off"
-          maxLength={100}
-        />
-        {formErrors.name && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-            {formErrors.name}
-          </p>
-        )}
-        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          {formData.name?.length || 0}/100 ký tự
-        </p>
-      </div>
+  const CategoryForm = () => {
+    const [name, setName] = useState(formData.name || "");
+    const [description, setDescription] = useState(formData.description || "");
+    const [localErrors, setLocalErrors] = useState({});
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Mô tả
-        </label>
-        <textarea
-          placeholder="Nhập mô tả danh mục..."
-          value={formData.description}
-          onChange={(e) => {
-            setFormData({ ...formData, description: e.target.value });
-            // Clear errors when user starts typing
-            if (formErrors.description) {
-              setFormErrors({ ...formErrors, description: "" });
-            }
-          }}
-          rows="4"
-          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical transition-colors ${
-            formErrors.description
-              ? "border-red-500 bg-red-50 dark:bg-red-900/20"
-              : "border-gray-300 dark:border-gray-600"
-          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
-          disabled={isSubmitting}
-          autoComplete="off"
-          maxLength={500}
-        />
-        {formErrors.description && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-            {formErrors.description}
-          </p>
-        )}
-        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          {formData.description?.length || 0}/500 ký tự
-        </p>
-      </div>
+    // Đồng bộ state khi formData thay đổi từ bên ngoài (khi mở modal)
+    useEffect(() => {
+      setName(formData.name || "");
+      setDescription(formData.description || "");
+    }, [formData]);
 
-      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-        <button
-          type="button"
-          onClick={closeAllModals}
-          disabled={isSubmitting}
-          className="px-6 py-3 text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Hủy
-        </button>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
-        >
-          {isSubmitting ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              {showCreateModal ? "Đang tạo..." : "Đang cập nhật..."}
-            </>
-          ) : showCreateModal ? (
-            "Tạo danh mục"
-          ) : (
-            "Cập nhật"
+    const validateLocalForm = () => {
+      const errors = {};
+
+      // Validate name
+      if (!name?.trim()) {
+        errors.name = "Tên danh mục không được để trống";
+      } else if (name.trim().length < 2) {
+        errors.name = "Tên danh mục phải có ít nhất 2 ký tự";
+      } else if (name.trim().length > 100) {
+        errors.name = "Tên danh mục không được quá 100 ký tự";
+      }
+
+      // Check duplicate name
+      if (name?.trim()) {
+        const duplicateName = categories.find(
+          (cat) =>
+            cat.name?.toLowerCase() === name.trim().toLowerCase() &&
+            cat.id !== selectedCategory?.id
+        );
+
+        if (duplicateName) {
+          errors.name = "Tên danh mục đã tồn tại";
+        }
+      }
+
+      // Validate description
+      if (description && description.trim().length > 500) {
+        errors.description = "Mô tả không được quá 500 ký tự";
+      }
+
+      setLocalErrors(errors);
+      return Object.keys(errors).length === 0;
+    };
+
+    const handleLocalSubmit = (e) => {
+      e.preventDefault();
+
+      if (!validateLocalForm()) return;
+
+      // Cập nhật formData từ parent component
+      const updatedData = {
+        name: name.trim(),
+        description: description?.trim() || "",
+      };
+
+      // Gọi hàm submit của parent
+      handleSubmit(e, updatedData);
+    };
+
+    return (
+      <form onSubmit={handleLocalSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Tên danh mục <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            placeholder="Nhập tên danh mục..."
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (localErrors.name) {
+                setLocalErrors((prev) => ({ ...prev, name: "" }));
+              }
+            }}
+            onBlur={validateLocalForm}
+            className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+              localErrors.name
+                ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+                : "border-gray-300 dark:border-gray-600"
+            } bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
+            disabled={isSubmitting}
+            autoComplete="off"
+            maxLength={100}
+          />
+          {localErrors.name && (
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+              {localErrors.name}
+            </p>
           )}
-        </button>
-      </div>
-    </form>
-  );
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            {name?.length || 0}/100 ký tự
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Mô tả
+          </label>
+          <textarea
+            placeholder="Nhập mô tả danh mục..."
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value);
+              if (localErrors.description) {
+                setLocalErrors((prev) => ({ ...prev, description: "" }));
+              }
+            }}
+            rows="4"
+            className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical transition-colors ${
+              localErrors.description
+                ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+                : "border-gray-300 dark:border-gray-600"
+            } bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
+            disabled={isSubmitting}
+            autoComplete="off"
+            maxLength={500}
+          />
+          {localErrors.description && (
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+              {localErrors.description}
+            </p>
+          )}
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            {description?.length || 0}/500 ký tự
+          </p>
+        </div>
+
+        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <button
+            type="button"
+            onClick={closeAllModals}
+            disabled={isSubmitting}
+            className="px-6 py-3 text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Hủy
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+          >
+            {isSubmitting ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                {showCreateModal ? "Đang tạo..." : "Đang cập nhật..."}
+              </>
+            ) : showCreateModal ? (
+              "Tạo danh mục"
+            ) : (
+              "Cập nhật"
+            )}
+          </button>
+        </div>
+      </form>
+    );
+  };
 
   const CategoryDetail = ({ category }) => (
     <div className="space-y-6">

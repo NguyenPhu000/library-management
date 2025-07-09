@@ -5,6 +5,9 @@ import UserSearchForm from "../components/user/UserSearchForm";
 import ResponsiveUserTable from "../components/user/ResponsiveUserTable";
 import UserForm from "../components/user/UserForm";
 import UserPagination from "../components/user/UserPagination";
+import { useAuth } from "../../contexts/AuthContext";
+import { Navigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const UserManageContent = () => {
   const {
@@ -16,6 +19,19 @@ const UserManageContent = () => {
     users,
     error,
   } = useUserAdmin();
+
+  const { currentUser } = useAuth();
+
+  // Kiểm tra quyền truy cập
+  if (currentUser?.adminType !== "admin") {
+    Swal.fire({
+      icon: "error",
+      title: "Không có quyền truy cập",
+      text: "Bạn không có quyền truy cập vào trang quản lý tài khoản",
+      confirmButtonText: "Quay lại Dashboard",
+    });
+    return <Navigate to="/admin" replace />;
+  }
 
   useEffect(() => {
     fetchUsers();

@@ -85,8 +85,7 @@ const UserForm = ({ isEdit = false }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = (name, value) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -161,7 +160,7 @@ const UserForm = ({ isEdit = false }) => {
                 id="username"
                 name="username"
                 value={formData.username}
-                onChange={handleInputChange}
+                onChange={(e) => handleInputChange("username", e.target.value)}
                 placeholder="Username"
                 className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.username ? "border-red-500" : "border-gray-300"
@@ -191,7 +190,7 @@ const UserForm = ({ isEdit = false }) => {
                 id="password"
                 name="password"
                 value={formData.password}
-                onChange={handleInputChange}
+                onChange={(e) => handleInputChange("password", e.target.value)}
                 placeholder={
                   isEdit ? "Nhập mật khẩu mới (tùy chọn)" : "Mật khẩu"
                 }
@@ -219,7 +218,9 @@ const UserForm = ({ isEdit = false }) => {
                   id="firstName"
                   name="firstName"
                   value={formData.firstName}
-                  onChange={handleInputChange}
+                  onChange={(e) =>
+                    handleInputChange("firstName", e.target.value)
+                  }
                   placeholder="Tên"
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                     errors.firstName ? "border-red-500" : "border-gray-300"
@@ -245,7 +246,9 @@ const UserForm = ({ isEdit = false }) => {
                   id="lastName"
                   name="lastName"
                   value={formData.lastName}
-                  onChange={handleInputChange}
+                  onChange={(e) =>
+                    handleInputChange("lastName", e.target.value)
+                  }
                   placeholder="Họ"
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                     errors.lastName ? "border-red-500" : "border-gray-300"
@@ -271,7 +274,7 @@ const UserForm = ({ isEdit = false }) => {
                 id="email"
                 name="email"
                 value={formData.email}
-                onChange={handleInputChange}
+                onChange={(e) => handleInputChange("email", e.target.value)}
                 placeholder="Email"
                 className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.email ? "border-red-500" : "border-gray-300"
@@ -296,7 +299,7 @@ const UserForm = ({ isEdit = false }) => {
                 id="phone"
                 name="phone"
                 value={formData.phone}
-                onChange={handleInputChange}
+                onChange={(e) => handleInputChange("phone", e.target.value)}
                 placeholder="Điện Thoại"
                 className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.phone ? "border-red-500" : "border-gray-300"
@@ -321,7 +324,7 @@ const UserForm = ({ isEdit = false }) => {
                 id="address"
                 name="address"
                 value={formData.address}
-                onChange={handleInputChange}
+                onChange={(e) => handleInputChange("address", e.target.value)}
                 placeholder="Địa Chỉ"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 disabled={isSubmitting}
@@ -341,7 +344,7 @@ const UserForm = ({ isEdit = false }) => {
                   id="role"
                   name="role"
                   value={formData.role}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange("role", e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white ${
                     errors.role ? "border-red-500" : "border-gray-300"
                   }`}
@@ -367,7 +370,7 @@ const UserForm = ({ isEdit = false }) => {
                   id="gender"
                   name="gender"
                   value={formData.gender}
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange("gender", e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white ${
                     errors.gender ? "border-red-500" : "border-gray-300"
                   }`}

@@ -1,4 +1,5 @@
 import { API } from "../../services/api";
+import { getUploadsBase } from "../../services/urlHelper";
 
 class AdminBookService {
   // Helper function to format image URL like in bookservice.js
@@ -27,7 +28,7 @@ class AdminBookService {
     // Ensure we have a clean filename
     cleanImage = cleanImage.trim();
 
-    return `http://localhost:8081/uploads/${cleanImage}`;
+    return `${getUploadsBase()}${cleanImage}`;
   }
 
   // Helper function to format book data with image URL

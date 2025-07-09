@@ -118,7 +118,7 @@ const PaymentTable = ({
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl shadow-lg p-6">
         <div className="animate-pulse">
           <div className="h-4 bg-gray-200 rounded mb-4"></div>
           {[1, 2, 3, 4, 5].map((i) => (
@@ -130,16 +130,16 @@ const PaymentTable = ({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl shadow-lg overflow-hidden">
       {/* Table Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Danh sách thanh toán ({payments.length})
             </h3>
             {selectedPayments.length > 0 && (
-              <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+              <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full dark:bg-blue-900 dark:text-blue-200">
                 {selectedPayments.length} đã chọn
               </span>
             )}
@@ -170,7 +170,7 @@ const PaymentTable = ({
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-50 dark:bg-gray-900">
             <tr>
               <th className="px-6 py-3 text-left">
                 <input
@@ -184,7 +184,7 @@ const PaymentTable = ({
                 />
               </th>
               <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
                 onClick={() => handleSort("payment_id")}
               >
                 <div className="flex items-center">
@@ -236,9 +236,12 @@ const PaymentTable = ({
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 dark:text-gray-200 divide-y divide-gray-200 dark:divide-gray-700">
             {payments.map((payment) => (
-              <tr key={payment.payment_id} className="hover:bg-gray-50">
+              <tr
+                key={payment.payment_id}
+                className="hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <input
                     type="checkbox"
@@ -248,34 +251,34 @@ const PaymentTable = ({
                   />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">
                     #{payment.payment_id}
                   </div>
                   {payment.Loan && (
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
                       Loan #{payment.Loan.loan_id}
                     </div>
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">
+                  <div className="text-sm text-gray-900 dark:text-white">
                     {payment.Member?.member_code || "N/A"}
                   </div>
                   {payment.User && (
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
                       {payment.User.username}
                     </div>
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">
                     {formatCurrency(payment.amount)}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     {getPaymentMethodIcon(payment.payment_method)}
-                    <span className="ml-2 text-sm text-gray-900 capitalize">
+                    <span className="ml-2 text-sm text-gray-900 dark:text-white capitalize">
                       {payment.payment_method === "cash"
                         ? "Tiền mặt"
                         : "QR Code"}
@@ -283,16 +286,58 @@ const PaymentTable = ({
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {getStatusBadge(payment.status)}
+                  {/* Badge dark mode */}
+                  {(() => {
+                    const status = payment.status;
+                    const statusConfig = {
+                      pending: {
+                        color:
+                          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+                        label: "Chờ xác nhận",
+                      },
+                      completed: {
+                        color:
+                          "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+                        label: "Đã hoàn thành",
+                      },
+                      APPROVED: {
+                        color:
+                          "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+                        label: "Đã duyệt",
+                      },
+                      cancelled: {
+                        color:
+                          "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+                        label: "Đã hủy",
+                      },
+                      failed: {
+                        color:
+                          "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+                        label: "Thất bại",
+                      },
+                    };
+                    const config = statusConfig[status] || {
+                      color:
+                        "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
+                      label: status,
+                    };
+                    return (
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}
+                      >
+                        {config.label}
+                      </span>
+                    );
+                  })()}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                   {formatDate(payment.payment_date)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => onView(payment)}
-                      className="text-blue-600 hover:text-blue-900 transition-colors"
+                      className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-200 transition-colors"
                       title="Xem chi tiết"
                     >
                       <FaEye />
@@ -302,14 +347,14 @@ const PaymentTable = ({
                       <>
                         <button
                           onClick={() => onConfirm(payment.payment_id)}
-                          className="text-green-600 hover:text-green-900 transition-colors"
+                          className="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-200 transition-colors"
                           title="Xác nhận thanh toán"
                         >
                           <FaCheck />
                         </button>
                         <button
                           onClick={() => onCancel(payment.payment_id)}
-                          className="text-red-600 hover:text-red-900 transition-colors"
+                          className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-200 transition-colors"
                           title="Hủy thanh toán"
                         >
                           <FaTimes />
@@ -319,7 +364,7 @@ const PaymentTable = ({
 
                     <button
                       onClick={() => onEdit(payment)}
-                      className="text-yellow-600 hover:text-yellow-900 transition-colors"
+                      className="text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-200 transition-colors"
                       title="Chỉnh sửa"
                     >
                       <FaEdit />
@@ -327,7 +372,7 @@ const PaymentTable = ({
 
                     <button
                       onClick={() => onDelete(payment.payment_id)}
-                      className="text-red-600 hover:text-red-900 transition-colors"
+                      className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-200 transition-colors"
                       title="Xóa"
                     >
                       <FaTrash />
@@ -343,11 +388,11 @@ const PaymentTable = ({
       {/* Empty State */}
       {payments.length === 0 && (
         <div className="px-6 py-12 text-center">
-          <FaMoneyBillWave className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <FaMoneyBillWave className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
             Không có thanh toán nào
           </h3>
-          <p className="text-gray-500">
+          <p className="text-gray-500 dark:text-gray-400">
             Chưa có dữ liệu thanh toán để hiển thị.
           </p>
         </div>
@@ -355,9 +400,9 @@ const PaymentTable = ({
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="px-6 py-4 border-t border-gray-200">
+        <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-gray-200">
           <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-700">
+            <div className="text-sm text-gray-700 dark:text-gray-300">
               Hiển thị {pagination.offset + 1} -{" "}
               {Math.min(
                 pagination.offset + pagination.limit,
@@ -369,7 +414,7 @@ const PaymentTable = ({
               <button
                 onClick={() => onPageChange(pagination.currentPage - 1)}
                 disabled={pagination.currentPage === 1}
-                className="px-3 py-1 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                className="px-3 py-1 border border-gray-300 dark:border-gray-700 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-800 dark:text-gray-200"
               >
                 Trước
               </button>
@@ -388,8 +433,8 @@ const PaymentTable = ({
                       onClick={() => onPageChange(page)}
                       className={`px-3 py-1 border rounded-lg text-sm ${
                         page === pagination.currentPage
-                          ? "bg-blue-600 text-white border-blue-600"
-                          : "border-gray-300 hover:bg-gray-50"
+                          ? "bg-blue-600 text-white border-blue-600 dark:bg-blue-700 dark:border-blue-700"
+                          : "border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-800 dark:text-gray-200"
                       }`}
                     >
                       {page}
@@ -400,7 +445,10 @@ const PaymentTable = ({
                   page === pagination.currentPage + 3
                 ) {
                   return (
-                    <span key={page} className="px-2 py-1 text-gray-500">
+                    <span
+                      key={page}
+                      className="px-2 py-1 text-gray-500 dark:text-gray-400"
+                    >
                       ...
                     </span>
                   );
@@ -411,7 +459,7 @@ const PaymentTable = ({
               <button
                 onClick={() => onPageChange(pagination.currentPage + 1)}
                 disabled={pagination.currentPage === pagination.totalPages}
-                className="px-3 py-1 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                className="px-3 py-1 border border-gray-300 dark:border-gray-700 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-800 dark:text-gray-200"
               >
                 Sau
               </button>

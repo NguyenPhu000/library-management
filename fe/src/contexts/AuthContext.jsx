@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
           setError(null);
         } else {
           setCurrentUser(null);
+          // Không set error khi không có token, đây là trường hợp bình thường
         }
       } catch (error) {
         console.error("Auth initialization error:", error);
@@ -156,6 +157,14 @@ export const AuthProvider = ({ children }) => {
     return currentUser && currentUser.role === "admin";
   };
 
+  const isSuperAdmin = () => {
+    return (
+      currentUser &&
+      currentUser.role === "admin" &&
+      currentUser.adminType === "admin"
+    );
+  };
+
   // Giá trị được chia sẻ cho context
   const authValue = {
     currentUser,
@@ -165,6 +174,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     isAdmin,
+    isSuperAdmin,
     checkAuth,
   };
 

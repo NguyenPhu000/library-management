@@ -30,15 +30,16 @@ const login = async (req, res) => {
     }
 
     // Tạo JWT token
-    const token = jwt.sign(
-      {
-        id: result.user.id,
-        username: result.user.username,
-        role: result.user.role,
-      },
-      config.secret,
-      { expiresIn: config.expiresIn }
-    );
+    const tokenPayload = {
+      id: result.user.id,
+      username: result.user.username,
+      role: result.user.role,
+      adminType: result.user.adminType,
+    };
+
+    const token = jwt.sign(tokenPayload, config.secret, {
+      expiresIn: config.expiresIn,
+    });
 
     // Lưu token vào cookie
     res.cookie("auth_token", token, {
@@ -192,6 +193,7 @@ const getCurrentUser = async (req, res) => {
           email: user.email,
           fullName: user.fullName,
           role: user.role,
+          adminType: user.adminType,
         },
       });
     } catch (err) {

@@ -232,18 +232,18 @@ const PaymentManagePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-gray-200">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
+      <div className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <FaMoneyBillWave className="text-blue-600 mr-3" size={24} />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                   Quản lý thanh toán
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Quản lý thu chi và thanh toán của hệ thống
                 </p>
               </div>
@@ -253,8 +253,8 @@ const PaymentManagePage = () => {
                 onClick={() => setShowStatsPanel(!showStatsPanel)}
                 className={`px-4 py-2 rounded-lg transition-colors flex items-center ${
                   showStatsPanel
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    ? "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                 }`}
               >
                 <FaChartBar className="mr-2" />
@@ -262,14 +262,14 @@ const PaymentManagePage = () => {
               </button>
               <button
                 onClick={handleExportData}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 transition-colors flex items-center"
               >
                 <FaFileExport className="mr-2" />
                 Xuất báo cáo
               </button>
               <button
                 onClick={handleRefresh}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-800 transition-colors flex items-center"
               >
                 <FaSyncAlt className="mr-2" />
                 Làm mới
@@ -297,13 +297,13 @@ const PaymentManagePage = () => {
           />
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg shadow-md p-6 mb-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Thao tác nhanh
               </h3>
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 dark:text-gray-300">
                   Tổng: {pagination.totalCount} thanh toán
                 </span>
               </div>
@@ -311,14 +311,14 @@ const PaymentManagePage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <button
                 onClick={() => handleFilterChange({ status: "pending" })}
-                className="p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors text-left"
+                className="p-4 bg-yellow-50 hover:bg-yellow-100 dark:bg-yellow-900 dark:hover:bg-yellow-800 rounded-lg transition-colors text-left"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-yellow-800">
+                    <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
                       Chờ xác nhận
                     </p>
-                    <p className="text-2xl font-bold text-yellow-600">
+                    <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-300">
                       {payments.filter((p) => p.status === "pending").length}
                     </p>
                   </div>
@@ -328,14 +328,14 @@ const PaymentManagePage = () => {
 
               <button
                 onClick={() => handleFilterChange({ status: "completed" })}
-                className="p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors text-left"
+                className="p-4 bg-green-50 hover:bg-green-100 dark:bg-green-900 dark:hover:bg-green-800 rounded-lg transition-colors text-left"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-green-800">
+                    <p className="text-sm font-medium text-green-800 dark:text-green-200">
                       Đã hoàn thành
                     </p>
-                    <p className="text-2xl font-bold text-green-600">
+                    <p className="text-2xl font-bold text-green-600 dark:text-green-300">
                       {
                         payments.filter(
                           (p) =>
@@ -350,14 +350,14 @@ const PaymentManagePage = () => {
 
               <button
                 onClick={() => handleFilterChange({ paymentMethod: "cash" })}
-                className="p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors text-left"
+                className="p-4 bg-purple-50 hover:bg-purple-100 dark:bg-purple-900 dark:hover:bg-purple-800 rounded-lg transition-colors text-left"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-purple-800">
+                    <p className="text-sm font-medium text-purple-800 dark:text-purple-200">
                       Tiền mặt
                     </p>
-                    <p className="text-2xl font-bold text-purple-600">
+                    <p className="text-2xl font-bold text-purple-600 dark:text-purple-300">
                       {
                         payments.filter((p) => p.payment_method === "cash")
                           .length
@@ -370,12 +370,14 @@ const PaymentManagePage = () => {
 
               <button
                 onClick={() => handleFilterChange({ paymentMethod: "qrcode" })}
-                className="p-4 bg-pink-50 hover:bg-pink-100 rounded-lg transition-colors text-left"
+                className="p-4 bg-pink-50 hover:bg-pink-100 dark:bg-pink-900 dark:hover:bg-pink-800 rounded-lg transition-colors text-left"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-pink-800">QR Code</p>
-                    <p className="text-2xl font-bold text-pink-600">
+                    <p className="text-sm font-medium text-pink-800 dark:text-pink-200">
+                      QR Code
+                    </p>
+                    <p className="text-2xl font-bold text-pink-600 dark:text-pink-300">
                       {
                         payments.filter((p) => p.payment_method === "qrcode")
                           .length

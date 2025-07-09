@@ -290,6 +290,20 @@ let deleteBook = async (bookId) => {
   }
 };
 
+// Lấy thống kê sách (tổng số sách, có thể mở rộng)
+let getBookStats = async () => {
+  try {
+    // Đếm tổng số sách trong hệ thống
+    const totalBooks = await db.Book.count();
+
+    // Trả về đơn giản để đáp ứng nhu cầu Dashboard hiện tại
+    return { totalBooks, topBooks: [] };
+  } catch (error) {
+    console.error("Lỗi khi lấy thống kê sách:", error);
+    throw error;
+  }
+};
+
 export default {
   getBookById,
   getAllBooks,
@@ -298,4 +312,5 @@ export default {
   deleteBook,
   searchBook,
   getBookByCategory,
+  getBookStats,
 };

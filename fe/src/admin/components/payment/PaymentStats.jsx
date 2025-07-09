@@ -68,14 +68,22 @@ const PaymentStats = () => {
 
   const StatCard = ({ title, value, icon: Icon, color, subtext, trend }) => (
     <div
-      className="bg-white rounded-xl shadow-lg p-6 border-l-4 hover:shadow-xl transition-shadow duration-300"
+      className="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl shadow-lg p-6 border-l-4 hover:shadow-xl transition-shadow duration-300"
       style={{ borderLeftColor: color }}
     >
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
-          {subtext && <p className="text-xs text-gray-500 mt-1">{subtext}</p>}
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+            {title}
+          </p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            {value}
+          </p>
+          {subtext && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {subtext}
+            </p>
+          )}
           {trend && (
             <div
               className={`flex items-center mt-2 text-xs ${
@@ -108,7 +116,10 @@ const PaymentStats = () => {
       <div className="animate-pulse">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-white rounded-xl shadow-lg p-6 h-32">
+            <div
+              key={i}
+              className="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl shadow-lg p-6 h-32"
+            >
               <div className="h-4 bg-gray-200 rounded mb-2"></div>
               <div className="h-8 bg-gray-200 rounded mb-2"></div>
               <div className="h-3 bg-gray-200 rounded"></div>
@@ -117,7 +128,10 @@ const PaymentStats = () => {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[1, 2].map((i) => (
-            <div key={i} className="bg-white rounded-xl shadow-lg p-6 h-48">
+            <div
+              key={i}
+              className="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl shadow-lg p-6 h-48"
+            >
               <div className="h-4 bg-gray-200 rounded mb-4"></div>
               <div className="h-32 bg-gray-200 rounded"></div>
             </div>
@@ -130,9 +144,9 @@ const PaymentStats = () => {
   return (
     <div className="space-y-6">
       {/* Date Range Filter */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl shadow-lg p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
             <FaCalendarAlt className="mr-2 text-blue-600" />
             Khoảng thời gian thống kê
           </h3>
@@ -145,7 +159,7 @@ const PaymentStats = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Từ ngày
             </label>
             <input
@@ -154,11 +168,11 @@ const PaymentStats = () => {
               onChange={(e) =>
                 setDateRange((prev) => ({ ...prev, startDate: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Đến ngày
             </label>
             <input
@@ -167,7 +181,7 @@ const PaymentStats = () => {
               onChange={(e) =>
                 setDateRange((prev) => ({ ...prev, endDate: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
             />
           </div>
         </div>
@@ -249,23 +263,23 @@ const PaymentStats = () => {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Payment Methods Chart */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Phương thức thanh toán
           </h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-purple-500 rounded mr-3"></div>
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Tiền mặt
                 </span>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-gray-900">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
                   {formatNumber(stats.cashPayments)}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {stats.totalPayments > 0
                     ? (
                         (stats.cashPayments / stats.totalPayments) *
@@ -276,7 +290,7 @@ const PaymentStats = () => {
                 </p>
               </div>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
               <div
                 className="bg-purple-500 h-2 rounded-full transition-all duration-300"
                 style={{
@@ -292,15 +306,15 @@ const PaymentStats = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-pink-500 rounded mr-3"></div>
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   QR Code
                 </span>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-gray-900">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
                   {formatNumber(stats.qrPayments)}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {stats.totalPayments > 0
                     ? ((stats.qrPayments / stats.totalPayments) * 100).toFixed(
                         1
@@ -310,7 +324,7 @@ const PaymentStats = () => {
                 </p>
               </div>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
               <div
                 className="bg-pink-500 h-2 rounded-full transition-all duration-300"
                 style={{
@@ -326,23 +340,23 @@ const PaymentStats = () => {
         </div>
 
         {/* Status Distribution */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Trạng thái thanh toán
           </h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-green-500 rounded mr-3"></div>
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Đã hoàn thành
                 </span>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-gray-900">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
                   {formatNumber(stats.completedPayments)}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {stats.totalPayments > 0
                     ? (
                         (stats.completedPayments / stats.totalPayments) *
@@ -353,7 +367,7 @@ const PaymentStats = () => {
                 </p>
               </div>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
               <div
                 className="bg-green-500 h-2 rounded-full transition-all duration-300"
                 style={{
@@ -369,15 +383,15 @@ const PaymentStats = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-yellow-500 rounded mr-3"></div>
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Chờ xác nhận
                 </span>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-gray-900">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
                   {formatNumber(stats.pendingPayments)}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {stats.totalPayments > 0
                     ? (
                         (stats.pendingPayments / stats.totalPayments) *
@@ -388,7 +402,7 @@ const PaymentStats = () => {
                 </p>
               </div>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
               <div
                 className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
                 style={{

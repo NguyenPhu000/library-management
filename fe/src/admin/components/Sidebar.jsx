@@ -3,7 +3,6 @@ import { useAuth } from "../../contexts/AuthContext";
 
 const Sidebar = ({ mobile = false, onClose = () => {} }) => {
   const { currentUser } = useAuth();
-
   const navItems = [
     {
       name: "Dashboard",
@@ -68,6 +67,7 @@ const Sidebar = ({ mobile = false, onClose = () => {} }) => {
     {
       name: "Người dùng",
       path: "/admin/users",
+      superAdminOnly: true,
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -81,6 +81,27 @@ const Sidebar = ({ mobile = false, onClose = () => {} }) => {
             strokeLinejoin="round"
             strokeWidth="2"
             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
+      ),
+    },
+    {
+      name: "Nhân sự",
+      path: "/admin/admins",
+      superAdminOnly: true,
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M16 11V7a4 4 0 10-8 0v4M6 11h12M6 11a6 6 0 016 6v4m0-10a6 6 0 00-6 6v4m12-10a6 6 0 00-6 6v4"
           />
         </svg>
       ),
@@ -153,24 +174,29 @@ const Sidebar = ({ mobile = false, onClose = () => {} }) => {
 
       {/* Navigation links */}
       <nav className="flex-1 px-2 py-4 space-y-1">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              `flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                isActive
-                  ? "bg-blue-100 text-blue-700"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`
-            }
-            onClick={() => mobile && onClose()}
-            end={item.path === "/admin"}
-          >
-            <span className="mr-3">{item.icon}</span>
-            {item.name}
-          </NavLink>
-        ))}
+        {navItems
+          .filter(
+            (item) =>
+              !(item.superAdminOnly && currentUser?.adminType !== "admin")
+          )
+          .map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center px-4 py-2 text-sm font-medium rounded-md ${
+                  isActive
+                    ? "bg-blue-100 text-blue-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`
+              }
+              onClick={() => mobile && onClose()}
+              end={item.path === "/admin"}
+            >
+              <span className="mr-3">{item.icon}</span>
+              {item.name}
+            </NavLink>
+          ))}
       </nav>
 
       {/* Bottom section */}

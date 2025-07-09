@@ -123,35 +123,35 @@ const BookForm = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleChange = (e) => {
-    const { name, value, type, files, options } = e.target;
-
-    if (type === "file") {
-      const file = files[0];
-      if (file) {
-        setFormData((prev) => ({ ...prev, cover_image: file }));
-
-        // Tạo preview ảnh
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreview(reader.result);
-        };
-        reader.readAsDataURL(file);
-      }
-    } else if (type === "select-multiple") {
-      const selectedOptions = Array.from(options)
-        .filter((option) => option.selected)
-        .map((option) => option.value);
-
-      setFormData((prev) => ({ ...prev, [name]: selectedOptions }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
+  const handleTextChange = (name, value) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
     // Xóa lỗi khi người dùng đã sửa
     if (formErrors[name]) {
       setFormErrors((prev) => ({ ...prev, [name]: "" }));
     }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, cover_image: file }));
+
+      // Tạo preview ảnh
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleMultiSelectChange = (e) => {
+    const selectedOptions = Array.from(e.target.options)
+      .filter((option) => option.selected)
+      .map((option) => option.value);
+
+    setFormData((prev) => ({ ...prev, category_id: selectedOptions }));
   };
 
   // Xử lý khi thay đổi tổng số để cập nhật số lượng có sẵn
@@ -258,7 +258,7 @@ const BookForm = () => {
                   id="isbn"
                   name="isbn"
                   value={formData.isbn}
-                  onChange={handleChange}
+                  onChange={(e) => handleTextChange("isbn", e.target.value)}
                   placeholder="Nhập ISBN"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -276,7 +276,7 @@ const BookForm = () => {
                   id="title"
                   name="title"
                   value={formData.title}
-                  onChange={handleChange}
+                  onChange={(e) => handleTextChange("title", e.target.value)}
                   required
                   placeholder="Nhập tiêu đề sách"
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -302,7 +302,7 @@ const BookForm = () => {
                   id="author"
                   name="author"
                   value={formData.author}
-                  onChange={handleChange}
+                  onChange={(e) => handleTextChange("author", e.target.value)}
                   required
                   placeholder="Nhập tên tác giả"
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -328,7 +328,9 @@ const BookForm = () => {
                   id="publication_year"
                   name="publication_year"
                   value={formData.publication_year}
-                  onChange={handleChange}
+                  onChange={(e) =>
+                    handleTextChange("publication_year", e.target.value)
+                  }
                   placeholder="Nhập năm xuất bản"
                   max={currentYear + 1}
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -356,7 +358,9 @@ const BookForm = () => {
                   id="publisher"
                   name="publisher"
                   value={formData.publisher}
-                  onChange={handleChange}
+                  onChange={(e) =>
+                    handleTextChange("publisher", e.target.value)
+                  }
                   placeholder="Nhập tên nhà xuất bản"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -373,7 +377,9 @@ const BookForm = () => {
                   id="description"
                   name="description"
                   value={formData.description}
-                  onChange={handleChange}
+                  onChange={(e) =>
+                    handleTextChange("description", e.target.value)
+                  }
                   placeholder="Nhập mô tả sách"
                   rows="6"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -424,7 +430,9 @@ const BookForm = () => {
                   id="available_copies"
                   name="available_copies"
                   value={formData.available_copies}
-                  onChange={handleChange}
+                  onChange={(e) =>
+                    handleTextChange("available_copies", e.target.value)
+                  }
                   min="0"
                   max={formData.total_copies}
                   placeholder="Nhập số lượng sách có sẵn"
@@ -458,7 +466,7 @@ const BookForm = () => {
                   id="status"
                   name="status"
                   value={formData.status}
-                  onChange={handleChange}
+                  onChange={(e) => handleTextChange("status", e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   disabled={!isEditMode}
                 >
@@ -484,7 +492,7 @@ const BookForm = () => {
                   name="category_id"
                   multiple
                   value={formData.category_id}
-                  onChange={handleChange}
+                  onChange={handleMultiSelectChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   size="5"
                 >
@@ -530,7 +538,7 @@ const BookForm = () => {
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onChange={handleChange}
+                        onChange={handleFileChange}
                       />
                     </label>
                   </div>

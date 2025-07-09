@@ -9,38 +9,46 @@ let router = express.Router();
 // Thống kê & Dashboard
 router.get(
   "/admin/stats",
-  authMiddleware.verifyAdmin,
+  authMiddleware.verifySuperAdmin,
   adminController.getAdminStats
 );
 
-// Quản lý Admin
+// Admin management routes (quản lý admin) - RESTful API (đặt TRƯỚC route param để tránh nhầm path)
 router.get(
-  "/admin/list",
-  authMiddleware.verifyAdmin,
+  "/admin/admins",
+  authMiddleware.verifySuperAdmin,
   adminController.getAllAdmins
 );
-
 router.post(
-  "/admin/update",
-  authMiddleware.verifyAdmin,
+  "/admin/admins",
+  authMiddleware.verifySuperAdmin,
   adminController.updateAdmin
 );
-
+router.put(
+  "/admin/admins/:id",
+  authMiddleware.verifySuperAdmin,
+  adminController.updateAdmin
+);
+router.delete(
+  "/admin/admins/:id",
+  authMiddleware.verifySuperAdmin,
+  adminController.deleteAdmin
+);
 router.post(
-  "/admin/sync",
-  authMiddleware.verifyAdmin,
+  "/admin/admins/sync",
+  authMiddleware.verifySuperAdmin,
   adminController.syncAdmin
 );
 
+// Quản lý Admin đơn lẻ
 router.get(
   "/admin/:id",
-  authMiddleware.verifyAdmin,
+  authMiddleware.verifySuperAdmin,
   adminController.getAdminById
 );
-
 router.delete(
   "/admin/:id",
-  authMiddleware.verifyAdmin,
+  authMiddleware.verifySuperAdmin,
   adminController.deleteAdmin
 );
 
@@ -48,32 +56,5 @@ router.delete(
 router.get("/admin*", (req, res) => {
   res.redirect("/");
 });
-
-// Admin management routes (quản lý admin) - RESTful API
-router.get(
-  "/admin/admins",
-  authMiddleware.verifyAdmin,
-  adminController.getAllAdmins
-);
-router.post(
-  "/admin/admins",
-  authMiddleware.verifyAdmin,
-  adminController.updateAdmin
-);
-router.put(
-  "/admin/admins/:id",
-  authMiddleware.verifyAdmin,
-  adminController.updateAdmin
-);
-router.delete(
-  "/admin/admins/:id",
-  authMiddleware.verifyAdmin,
-  adminController.deleteAdmin
-);
-router.post(
-  "/admin/admins/sync",
-  authMiddleware.verifyAdmin,
-  adminController.syncAdmin
-);
 
 export default router;

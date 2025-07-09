@@ -591,6 +591,18 @@ export const LoanAdminProvider = ({ children }) => {
 
   // Approve renewal request
   const approveRenewal = async (loanId, adminId) => {
+    const { isConfirmed } = await Swal.fire({
+      title: "Xác nhận duyệt gia hạn",
+      text: "Bạn có chắc chắn muốn DUYỆT yêu cầu gia hạn?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Duyệt",
+      cancelButtonText: "Hủy",
+      confirmButtonColor: "#10B981",
+    });
+
+    if (!isConfirmed) return { success: false, message: "Đã hủy" };
+
     try {
       setLoading(true);
 
@@ -603,11 +615,10 @@ export const LoanAdminProvider = ({ children }) => {
           text: result.message || "Yêu cầu gia hạn đã được duyệt thành công",
         });
 
-        await fetchLoans(); // Refresh data
+        await fetchLoans();
         return result;
-      } else {
-        throw new Error(result.message || "Không thể duyệt gia hạn");
       }
+      throw new Error(result.message || "Không thể duyệt gia hạn");
     } catch (err) {
       console.error("Error approving renewal:", err);
       Swal.fire({
@@ -620,9 +631,25 @@ export const LoanAdminProvider = ({ children }) => {
       setLoading(false);
     }
   };
-
   // Reject renewal request
-  const rejectRenewal = async (loanId, adminId, reason = "") => {
+  const rejectRenewal = async (loanId, adminId) => {
+    const { value: reason, isConfirmed } = await Swal.fire({
+      title: "Từ chối gia hạn",
+      text: "Nhập lý do từ chối (bắt buộc):",
+      input: "textarea",
+      inputPlaceholder: "Lý do...",
+      inputValidator: (val) => {
+        if (!val) return "Vui lòng nhập lý do";
+      },
+      showCancelButton: true,
+      confirmButtonText: "Từ chối",
+      cancelButtonText: "Hủy",
+      icon: "question",
+      confirmButtonColor: "#EF4444",
+    });
+
+    if (!isConfirmed) return { success: false, message: "Đã hủy" };
+
     try {
       setLoading(true);
 
@@ -636,16 +663,13 @@ export const LoanAdminProvider = ({ children }) => {
         Swal.fire({
           icon: "info",
           title: "Đã từ chối gia hạn",
-          text: `Yêu cầu gia hạn đã bị từ chối. ${
-            reason ? `Lý do: ${reason}` : ""
-          }`,
+          text: `Yêu cầu gia hạn đã bị từ chối. Lý do: ${reason}`,
         });
 
-        await fetchLoans(); // Refresh data
+        await fetchLoans();
         return result;
-      } else {
-        throw new Error(result.message || "Không thể từ chối gia hạn");
       }
+      throw new Error(result.message || "Không thể từ chối gia hạn");
     } catch (err) {
       console.error("Error rejecting renewal:", err);
       Swal.fire({

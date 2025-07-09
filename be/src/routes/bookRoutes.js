@@ -11,6 +11,14 @@ router.get(
   authMiddleware.verifyAdmin,
   bookController.listBooks
 );
+
+// Thống kê sách cho dashboard (totalBooks, topBooks, ...)
+router.get(
+  "/admin/books/stats",
+  authMiddleware.verifyAdmin,
+  bookController.getBookStats
+);
+
 router.post(
   "/admin/books",
   authMiddleware.verifyAdmin,

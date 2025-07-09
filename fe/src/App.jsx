@@ -28,6 +28,7 @@ import AdminRoute from "./admin/components/auth/AdminRoute";
 import MemberManagePage from "./admin/pages/MemberManagePage";
 import LoanManagePage from "./admin/pages/LoanManagePage";
 import PaymentManagePage from "./admin/pages/PaymentManagePage";
+import AdminManagePage from "./admin/pages/AdminManagePage";
 
 function App() {
   return (
@@ -76,6 +77,7 @@ function App() {
           <Route path="books/edit/:id" element={<BookForm />} />
           <Route path="books/view/:id" element={<BookView />} />
           <Route path="members" element={<MemberManagePage />} />
+          <Route path="admins" element={<AdminManagePage />} />
 
           {/* Add other admin routes here */}
           <Route path="categories" element={<CategoryManagePage />} />

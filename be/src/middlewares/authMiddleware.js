@@ -28,10 +28,31 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-// Middleware kiểm tra quyền admin
-const verifyAdmin = (req, res, next) => {
+// Middleware kiểm tra quyền staff (admin hoặc thủ thư)
+const verifyStaff = (req, res, next) => {
   verifyToken(req, res, () => {
-    if (req.user && req.user.role === "admin") {
+    if (
+      req.user &&
+      (req.user.role === "admin" || req.user.role === "librarian")
+    ) {
+      next();
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden: Staff privileges required",
+      });
+    }
+  });
+};
+
+// Middleware kiểm tra quyền admin cao nhất
+const verifySuperAdmin = (req, res, next) => {
+  verifyToken(req, res, () => {
+    if (
+      req.user &&
+      req.user.role === "admin" &&
+      (req.user.adminType === "admin" || !req.user.adminType)
+    ) {
       next();
     } else {
       return res.status(403).json({
@@ -41,6 +62,9 @@ const verifyAdmin = (req, res, next) => {
     }
   });
 };
+
+// Giữ verifyAdmin cũ nhưng giờ chuyển thành verifyStaff để tránh sửa route hàng loạt
+const verifyAdmin = verifyStaff;
 
 // Middleware kiểm tra quyền member
 const verifyMember = (req, res, next) => {
@@ -94,26 +118,27 @@ const verifyResourceOwner = (req, res, next) => {
   });
 };
 
-// Aliases for common usage
+// Aliases
 const requireAuth = verifyToken;
-const requireAdmin = verifyAdmin;
+const requireAdmin = verifySuperAdmin;
 const requireMember = verifyMember;
 
 export default {
   verifyToken,
-  verifyAdmin,
+  verifyAdmin, // staff (admin + librarian)
+  verifySuperAdmin,
   verifyMember,
   verifyUser,
   verifyResourceOwner,
   requireAuth,
-  requireAdmin,
+  requireAdmin, // super-admin only
   requireMember,
 };
 
-// Named exports for CommonJS compatibility
 export {
   verifyToken,
   verifyAdmin,
+  verifySuperAdmin,
   verifyMember,
   verifyUser,
   verifyResourceOwner,

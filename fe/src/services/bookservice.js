@@ -1,4 +1,11 @@
 import { API, PublicAPI } from "./api";
+import { getUploadsBase } from "./urlHelper";
+
+// Helper tạo URL ảnh bìa dựa trên biến môi trường
+const formatCoverImage = (filename) =>
+  filename
+    ? `${getUploadsBase()}${filename.replace(/['"']+/g, "")}`
+    : "https://via.placeholder.com/150";
 
 // Lấy danh sách tất cả sách - sử dụng PublicAPI vì đây là API công khai
 const getBooks = async () => {
@@ -12,12 +19,7 @@ const getBooks = async () => {
 
     const formattedBooks = response.data.books.map((book) => ({
       ...book,
-      cover_image: book.cover_image
-        ? `http://localhost:8081/uploads/${book.cover_image.replace(
-            /['"]+/g,
-            ""
-          )}`
-        : "https://via.placeholder.com/150",
+      cover_image: formatCoverImage(book.cover_image),
     }));
 
     return { books: formattedBooks };
@@ -39,12 +41,7 @@ const getBooksByCategory = async (categoryId) => {
 
     const formattedBooks = response.data.books.map((book) => ({
       ...book,
-      cover_image: book.cover_image
-        ? `http://localhost:8081/uploads/${book.cover_image.replace(
-            /['"]+/g,
-            ""
-          )}`
-        : "https://via.placeholder.com/150",
+      cover_image: formatCoverImage(book.cover_image),
     }));
 
     return { books: formattedBooks };
@@ -66,12 +63,7 @@ const getBookById = async (bookId) => {
 
     const book = {
       ...response.data.book,
-      cover_image: response.data.book.cover_image
-        ? `http://localhost:8081/uploads/${response.data.book.cover_image.replace(
-            /['"]+/g,
-            ""
-          )}`
-        : "https://via.placeholder.com/150",
+      cover_image: formatCoverImage(response.data.book.cover_image),
     };
 
     return { book };
@@ -98,12 +90,7 @@ const searchBooks = async (criteria, query) => {
     // Xử lý hình ảnh cho từng sách trong kết quả
     const booksWithImages = response.data.books.map((book) => ({
       ...book,
-      cover_image: book.cover_image
-        ? `http://localhost:8081/uploads/${book.cover_image.replace(
-            /['"]+/g,
-            ""
-          )}`
-        : "https://via.placeholder.com/150", // Hình ảnh placeholder nếu không có
+      cover_image: formatCoverImage(book.cover_image), // Hình ảnh placeholder nếu không có
     }));
 
     return { books: booksWithImages }; // Trả về danh sách sách đã xử lý

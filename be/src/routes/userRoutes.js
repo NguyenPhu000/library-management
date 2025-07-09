@@ -7,7 +7,7 @@ const router = express.Router();
 // Admin User routes (cần xác thực admin)
 router.get(
   "/admin/users",
-  authMiddleware.verifyAdmin,
+  authMiddleware.verifySuperAdmin,
   userController.listUsers
 );
 router.get(
@@ -17,32 +17,32 @@ router.get(
 );
 router.get(
   "/admin/users/:id",
-  authMiddleware.verifyAdmin,
+  authMiddleware.verifySuperAdmin,
   userController.getUserById
 );
 router.post(
   "/admin/users/create",
-  authMiddleware.verifyAdmin,
+  authMiddleware.verifySuperAdmin,
   userController.createUser
 );
 router.post(
   "/admin/users/update",
-  authMiddleware.verifyAdmin,
+  authMiddleware.verifySuperAdmin,
   userController.updateUser
 );
 router.post(
   "/admin/users/delete",
-  authMiddleware.verifyAdmin,
+  authMiddleware.verifySuperAdmin,
   userController.deleteUser
 );
 router.post(
   "/admin/users/toggle-active",
-  authMiddleware.verifyAdmin,
+  authMiddleware.verifySuperAdmin,
   userController.toggleActive
 );
 router.post(
   "/admin/users/sync",
-  authMiddleware.verifyAdmin,
+  authMiddleware.verifySuperAdmin,
   userController.syncUsers
 );
 

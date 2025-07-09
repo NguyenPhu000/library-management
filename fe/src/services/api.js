@@ -7,12 +7,21 @@ const baseConfig = {
 
 // Determine base URL based on environment
 const getBaseURL = () => {
-  // In production, use relative URLs (same domain)
+  // Ưu tiên biến môi trường Vite
+  if (
+    typeof import.meta !== "undefined" &&
+    import.meta.env &&
+    import.meta.env.VITE_API_URL
+  ) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  // Production fallback: same domain
   if (process.env.NODE_ENV === "production") {
     return "/api";
   }
 
-  // In development, use the backend server URL
+  // Development fallback
   return "http://localhost:8081/api";
 };
 
@@ -85,16 +94,19 @@ const handleError = (error) => {
     // Xóa token không hợp lệ
     localStorage.removeItem("auth_token");
 
-    // Lấy đường dẫn hiện tại
-    const currentPath = window.location.pathname;
+    // Kiểm tra xem window và window.location có tồn tại không (để tránh lỗi trong môi trường SSR)
+    if (typeof window !== "undefined" && window.location) {
+      // Lấy đường dẫn hiện tại
+      const currentPath = window.location.pathname;
 
-    // Chuyển hướng đến trang đăng nhập phù hợp
-    if (currentPath.startsWith("/admin")) {
-      console.log("Redirecting to admin login");
-      window.location.href = "/login?admin=true";
-    } else if (!currentPath.includes("/login")) {
-      console.log("Redirecting to user login");
-      window.location.href = "/login";
+      // Chuyển hướng đến trang đăng nhập phù hợp
+      if (currentPath.startsWith("/admin")) {
+        console.log("Redirecting to admin login");
+        window.location.href = "/login?admin=true";
+      } else if (!currentPath.includes("/login")) {
+        console.log("Redirecting to user login");
+        window.location.href = "/login";
+      }
     }
   }
 
@@ -107,7 +119,9 @@ PublicAPI.interceptors.response.use(handleResponse, handleError);
 AdminAPI.interceptors.response.use(handleResponse, handleError);
 
 // Kiểm tra current user
-console.log("Current path:", window.location.pathname);
+if (typeof window !== "undefined" && window.location) {
+  console.log("Current path:", window.location.pathname);
+}
 
 export { API, PublicAPI, AdminAPI };
 export default API;

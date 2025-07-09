@@ -169,10 +169,10 @@ const PickupCodeInput = ({ onConfirmSuccess }) => {
   return (
     <div className="pickup-code-input-container">
       <div className="pickup-input-header">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
           🎫 Xác nhận mã nhận sách
         </h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Nhập mã nhận sách từ thành viên để xác nhận đưa sách
         </p>
       </div>
@@ -186,11 +186,11 @@ const PickupCodeInput = ({ onConfirmSuccess }) => {
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
               placeholder="PICK-XXXX"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-center font-mono text-lg font-bold tracking-wider uppercase focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-center font-mono text-lg font-bold tracking-wider uppercase text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               maxLength={9}
               disabled={validating || confirming}
             />
-            <p className="text-xs text-gray-500 mt-1 text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">
               Định dạng: PICK-XXXX (4 ký tự)
             </p>
           </div>

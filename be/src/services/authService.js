@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { User } from "../models";
+import db from "../models/index.js";
 import userService from "./userService";
 
 // Hàm đăng nhập
@@ -33,6 +34,16 @@ const login = async (username, password) => {
       };
     }
 
+    // Lấy admin_type nếu user là admin
+    let adminType = null;
+    if (user.role === "admin") {
+      const adminRecord = await db.Admin.findOne({
+        where: { user_id: user.user_id },
+        attributes: ["admin_type"],
+      });
+      adminType = adminRecord ? adminRecord.admin_type : null;
+    }
+
     // Tạo đối tượng user trả về không chứa password
     const userObj = {
       id: user.user_id,
@@ -40,6 +51,7 @@ const login = async (username, password) => {
       email: user.email,
       fullName: user.full_name,
       role: user.role || "member",
+      adminType,
       isActive: user.is_active,
     };
 
@@ -99,6 +111,16 @@ const getUserById = async (userId) => {
       return null;
     }
 
+    // Lấy admin_type nếu là admin
+    let adminType = null;
+    if (user.role === "admin") {
+      const adminRecord = await db.Admin.findOne({
+        where: { user_id: user.user_id },
+        attributes: ["admin_type"],
+      });
+      adminType = adminRecord ? adminRecord.admin_type : null;
+    }
+
     // Trả về đối tượng user với tên trường chuẩn hóa
     return {
       id: user.user_id,
@@ -106,6 +128,7 @@ const getUserById = async (userId) => {
       email: user.email,
       fullName: user.full_name,
       role: user.role || "member",
+      adminType,
       isActive: user.is_active,
     };
   } catch (error) {
