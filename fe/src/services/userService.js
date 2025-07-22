@@ -4,7 +4,8 @@ import API from "./api";
 export const fetchUserById = async (userId) => {
   try {
     const { data } = await API.get(`/users/${userId}`);
-    return data;
+    // Backend trả về { success: true, user: {...} }
+    return data.user;
   } catch (error) {
     console.error("Lỗi khi lấy thông tin người dùng:", error);
     throw error;
@@ -18,7 +19,8 @@ export const updateMemberProfile = async (userId, data) => {
       ...data,
     });
 
-    return response.data;
+    // Backend trả về { success: true, message: "...", user: {...} }
+    return response.data.user;
   } catch (error) {
     console.error("Lỗi khi cập nhật thông tin thành viên:", error);
     throw error;

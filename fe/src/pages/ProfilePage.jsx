@@ -183,7 +183,10 @@ const ProfilePage = () => {
             items={[
               {
                 label: "Họ và Tên",
-                value: currentUser?.fullName || "Chưa cập nhật",
+                value:
+                  currentUser?.last_name && currentUser?.first_name
+                    ? `${currentUser.first_name} ${currentUser.last_name}`
+                    : "Chưa cập nhật",
                 icon: <FaUser />,
               },
               {

@@ -1,21 +1,25 @@
 import categoryService from "../services/categoryService.js";
 
-// GET /api/category
+// GET /api/category và GET /api/admin/categories
 const listCategories = async (_req, res) => {
   try {
     const categories = await categoryService.getAllCategory();
-    return res.json({ success: true, categories });
+    return res.json({
+      success: true,
+      categories: categories,
+      data: categories, // Thêm field data để tương thích với frontend
+    });
   } catch (error) {
     console.error("Lỗi khi lấy danh mục:", error);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// POST /api/category (create new)
+// POST /api/category (create new) và POST /api/admin/categories
 const createCategory = async (req, res) => {
   try {
-    const { category_id, name, description } = req.body;
-    await categoryService.createNewCategory({ category_id, name, description });
+    const { name, description } = req.body;
+    await categoryService.createNewCategory({ name, description });
     return res.json({ success: true, message: "Tạo danh mục thành công!" });
   } catch (error) {
     console.error("Lỗi khi tạo danh mục:", error);

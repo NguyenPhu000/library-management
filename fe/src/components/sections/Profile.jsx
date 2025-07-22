@@ -121,9 +121,12 @@ const Profile = () => {
           items={[
             {
               label: "Họ và Tên",
-              value: currentUser?.fullName || "Chưa cập nhật",
+              value:
+                `${currentUser?.first_name || ""} ${
+                  currentUser?.last_name || ""
+                }` || "Chưa cập nhật",
               icon: <FaUser />,
-              highlight: !!currentUser?.fullName,
+              highlight: !!(currentUser?.first_name || currentUser?.last_name),
             },
             {
               label: "Email",

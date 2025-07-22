@@ -47,8 +47,9 @@ const updateUser = async (req, res) => {
     const payload = {
       user_id: req.body.user_id || req.body.id,
       username: req.body.username,
-      first_name: req.body.firstName,
-      last_name: req.body.lastName,
+      // Theo yêu cầu user: họ là firstName/first_name, tên là lastName/last_name
+      first_name: req.body.firstName || req.body.first_name, // họ
+      last_name: req.body.lastName || req.body.last_name, // tên
       email: req.body.email,
       phone: req.body.phone,
       address: req.body.address,
@@ -121,18 +122,24 @@ const updateUserProfile = async (req, res) => {
   try {
     const payload = {
       username: req.body.username,
-      first_name: req.body.firstName,
-      last_name: req.body.lastName,
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
       email: req.body.email,
       phone: req.body.phone,
       address: req.body.address,
       gender: req.body.gender,
       password: req.body.password,
     };
-    await userService.updateUserProfile(req.params.userId, payload);
+
+    const updatedUser = await userService.updateUserProfile(
+      req.params.userId,
+      payload
+    );
+
     return res.json({
       success: true,
       message: "Cập nhật thông tin thành công",
+      user: updatedUser,
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật hồ sơ:", error);

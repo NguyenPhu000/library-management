@@ -60,15 +60,10 @@ const login = async (username, password) => {
 };
 
 // Hàm đăng ký
-const register = async (username, password, email, fullName) => {
+const register = async (data) => {
   try {
     // Sử dụng PublicAPI vì đây là request trước khi có token
-    const response = await PublicAPI.post("/register", {
-      username,
-      password,
-      email,
-      fullName,
-    });
+    const response = await PublicAPI.post("/register", data);
 
     if (response.data.success) {
       console.log("Registration successful");

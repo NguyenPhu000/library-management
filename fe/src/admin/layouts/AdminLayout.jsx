@@ -223,7 +223,7 @@ const AdminLayout = () => {
                 </div>
                 <div>
                   <h1 className="text-lg font-bold text-gray-900 dark:text-white">
-                    Library Admin
+                    Góc Thư Viện
                   </h1>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     v2.0.0

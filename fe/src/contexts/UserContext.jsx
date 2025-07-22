@@ -6,8 +6,9 @@ const UserContext = createContext();
 
 // Cung cấp thông tin người dùng và các hàm liên quan
 export const UserProvider = ({ children }) => {
-  const { user } = useAuth();
-  const userId = user ? user.user_id : null;
+  const { currentUser } = useAuth();
+  // Backend /me trả về user.id không phải user.user_id
+  const userId = currentUser ? currentUser.id : null;
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

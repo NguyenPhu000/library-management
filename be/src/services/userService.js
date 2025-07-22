@@ -22,16 +22,16 @@ const validateName = (name) => {
 let createNewUser = async (data) => {
   try {
     if (!data.username || data.username.length < 6) {
-      throw new Error("Tên người dùng ít nhất 6 ký tự");
+      throw new Error("Tên người dùng phải ít nhất 6 ký tự");
     }
     if (!data.password || data.password.length < 6) {
       throw new Error("Mật khẩu phải ít nhất 6 ký tự");
     }
     if (!data.first_name || !validateName(data.first_name)) {
-      throw new Error("Tên không hợp lệ. Tên chỉ được chứa chữ cái.");
+      throw new Error("Họ không hợp lệ. Họ chỉ được chứa chữ cái.");
     }
     if (!data.last_name || !validateName(data.last_name)) {
-      throw new Error("Họ không hợp lệ. Họ chỉ được chứa chữ cái.");
+      throw new Error("Tên không hợp lệ. Tên chỉ được chứa chữ cái.");
     }
     if (!data.email || !validateEmail(data.email)) {
       throw new Error("Email không hợp lệ");
@@ -58,7 +58,7 @@ let createNewUser = async (data) => {
 
     let hashPasswordFromBcrypt = await bcrypt.hash(data.password, salt);
 
-    await db.User.create({
+    const newUser = await db.User.create({
       username: data.username,
       password: hashPasswordFromBcrypt,
       first_name: data.first_name,
@@ -69,6 +69,8 @@ let createNewUser = async (data) => {
       phone: data.phone,
       address: data.address,
     });
+
+    return newUser;
   } catch (error) {
     throw new Error("Lỗi khi tạo người dùng: " + error.message);
   }
@@ -99,14 +101,14 @@ let getUserInfoById = async (userId) => {
 // Hàm cập nhật dữ liệu người dùng
 let updateUserData = async (data) => {
   try {
-    if (!data.username || data.username.length <= 6) {
-      throw new Error("Tên người dùng phải lớn hơn 6 ký tự");
+    if (!data.username || data.username.length < 6) {
+      throw new Error("Tên người dùng phải ít nhất 6 ký tự");
     }
     if (!data.first_name || !validateName(data.first_name)) {
-      throw new Error("Tên không hợp lệ. Tên chỉ được chứa chữ cái.");
+      throw new Error("Họ không hợp lệ. Họ chỉ được chứa chữ cái.");
     }
     if (!data.last_name || !validateName(data.last_name)) {
-      throw new Error("Họ không hợp lệ. Họ chỉ được chứa chữ cái.");
+      throw new Error("Tên không hợp lệ. Tên chỉ được chứa chữ cái.");
     }
     if (!data.email || !validateEmail(data.email)) {
       throw new Error("Email không hợp lệ");
@@ -186,14 +188,14 @@ let searchUser = async (filters) => {
 // Hàm cập nhật hồ sơ người dùng
 let updateUserProfile = async (userId, data) => {
   try {
-    if (!data.username || data.username.length <= 6) {
-      throw new Error("Tên người dùng phải lớn hơn 6 ký tự");
+    if (!data.username || data.username.length < 6) {
+      throw new Error("Tên người dùng phải ít nhất 6 ký tự");
     }
     if (!data.first_name || !validateName(data.first_name)) {
-      throw new Error("Tên không hợp lệ. Tên chỉ được chứa chữ cái.");
+      throw new Error("Họ không hợp lệ. Họ chỉ được chứa chữ cái.");
     }
     if (!data.last_name || !validateName(data.last_name)) {
-      throw new Error("Họ không hợp lệ. Họ chỉ được chứa chữ cái.");
+      throw new Error("Tên không hợp lệ. Tên chỉ được chứa chữ cái.");
     }
     if (!data.email || !validateEmail(data.email)) {
       throw new Error("Email không hợp lệ");
@@ -246,6 +248,15 @@ let updateUserProfile = async (userId, data) => {
     }
 
     await db.User.update(updates, { where: { user_id: userId } });
+
+    // Trả về thông tin user đã cập nhật (không bao gồm password)
+    const updatedUser = await db.User.findOne({
+      where: { user_id: userId },
+      attributes: { exclude: ["password"] },
+      raw: true,
+    });
+
+    return updatedUser;
   } catch (error) {
     throw new Error("Lỗi khi cập nhật hồ sơ người dùng: " + error.message);
   }

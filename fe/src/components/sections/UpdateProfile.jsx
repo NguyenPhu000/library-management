@@ -140,14 +140,14 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
           {/* First Name */}
           <div>
             <label className="block text-gray-300 text-sm font-semibold mb-2">
-              Họ
+              Tên
             </label>
             <input
               type="text"
               name="first_name"
               value={formData.first_name}
               onChange={(e) => handleInputChange("first_name", e.target.value)}
-              placeholder="Nhập họ"
+              placeholder="Nhập Tên"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
             />
           </div>
@@ -155,14 +155,14 @@ const UpdateProfileModal = ({ isOpen, onClose }) => {
           {/* Last Name */}
           <div>
             <label className="block text-gray-300 text-sm font-semibold mb-2">
-              Tên
+              Họ
             </label>
             <input
               type="text"
               name="last_name"
               value={formData.last_name}
               onChange={(e) => handleInputChange("last_name", e.target.value)}
-              placeholder="Nhập tên"
+              placeholder="Nhập Họ"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
             />
           </div>

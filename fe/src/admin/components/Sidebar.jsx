@@ -156,7 +156,7 @@ const Sidebar = ({ mobile = false, onClose = () => {} }) => {
     >
       {/* Logo/header */}
       <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200">
-        <h1 className="text-xl font-bold text-gray-800">SERN Library Admin</h1>
+        <h1 className="text-xl font-bold text-gray-800">Góc Thư Viện</h1>
       </div>
 
       {/* User info */}
