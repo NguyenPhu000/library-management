@@ -1,11 +1,5 @@
 import { API, PublicAPI } from "./api";
-import { getUploadsBase } from "./urlHelper";
-
-// Helper tạo URL ảnh bìa dựa trên biến môi trường
-const formatCoverImage = (filename) =>
-  filename
-    ? `${getUploadsBase()}${filename.replace(/['"']+/g, "")}`
-    : "https://via.placeholder.com/150";
+import { formatCoverImage } from "../utils/imageHelper";
 
 // Lấy danh sách tất cả sách - sử dụng PublicAPI vì đây là API công khai
 const getBooks = async () => {

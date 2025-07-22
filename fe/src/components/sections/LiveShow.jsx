@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import Slider from "react-slick";
 import { useBook } from "../../contexts/BookContext";
 import { generateSlug } from "../../utils/slugify";
+import { formatCoverImage } from "../../utils/imageHelper";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -158,9 +159,7 @@ const LiveShow = () => {
                       >
                         <div className="relative h-[300px] md:h-[350px] lg:h-[400px] overflow-hidden rounded-t-lg">
                           <img
-                            src={
-                              book.cover_image || "/placeholder-image-dark.jpg"
-                            }
+                            src={formatCoverImage(book.cover_image)}
                             alt={book.title || "Không có tiêu đề"}
                             className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
                             loading="lazy"

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import bookService from "../../services/bookservice";
 import { Link } from "react-router-dom";
 import { generateSlug } from "../../utils/slugify";
+import { formatCoverImage } from "../../utils/imageHelper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faClock,
@@ -94,10 +95,7 @@ const UpdatedBook = () => {
                     >
                       <div className="relative overflow-hidden aspect-[3/4]">
                         <img
-                          src={
-                            book.cover_image ||
-                            "https://via.placeholder.com/150"
-                          }
+                          src={formatCoverImage(book.cover_image)}
                           alt={book.title || "Không có tiêu đề"}
                           loading="lazy"
                           className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"

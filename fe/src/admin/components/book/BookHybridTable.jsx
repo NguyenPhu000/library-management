@@ -12,6 +12,7 @@ import {
   FaCopy,
   FaBuilding,
 } from "react-icons/fa";
+import { formatCoverImage } from "../../../utils/imageHelper";
 import Swal from "sweetalert2";
 import HybridTable from "../common/HybridTable";
 
@@ -119,7 +120,7 @@ const BookHybridTable = ({
         <div className="flex-shrink-0 h-20 w-16">
           {book.cover_image && !imageErrors[book.book_id] ? (
             <img
-              src={book.cover_image}
+              src={formatCoverImage(book.cover_image)}
               alt={book.title}
               className="h-20 w-16 object-cover rounded-md border border-gray-200 dark:border-gray-600"
               onError={() => handleImageError(book.book_id)}
@@ -259,7 +260,7 @@ const BookHybridTable = ({
             <div className="w-16 h-20">
               {book.cover_image && !imageErrors[book.book_id] ? (
                 <img
-                  src={book.cover_image}
+                  src={formatCoverImage(book.cover_image)}
                   alt={book.title}
                   className="w-16 h-20 object-cover rounded-md border border-gray-200 dark:border-gray-600"
                   onError={() => handleImageError(book.book_id)}

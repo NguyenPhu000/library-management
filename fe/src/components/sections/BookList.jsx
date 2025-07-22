@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Pagination from "../common/Pagination";
 import { Link } from "react-router-dom";
 import { generateSlug } from "../../utils/slugify";
+import { formatCoverImage } from "../../utils/imageHelper";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -110,7 +111,7 @@ const BookList = ({ books, loading, error }) => {
                     <div className="relative overflow-hidden aspect-[3/4]">
                       {" "}
                       <img
-                        src={book.cover_image}
+                        src={formatCoverImage(book.cover_image)}
                         alt={book.title || "Bìa sách"}
                         loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"

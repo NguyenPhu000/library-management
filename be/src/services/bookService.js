@@ -51,7 +51,9 @@ let createNewBooks = async (req) => {
     available_copies: req.body.total_copies || 0,
     status: req.body.status,
     description: req.body.description,
-    cover_image: req.file ? req.file.filename : null,
+    cover_image: req.file
+      ? `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`
+      : null,
   };
 
   // Tạo sách mới
@@ -128,7 +130,19 @@ let updateBook = async (req) => {
     }
   }
 
-  let coverImage = req.file?.filename || currentCover || existingCover;
+  let coverImage;
+  if (req.file) {
+    // Có file mới upload -> chuyển thành Base64 (ưu tiên)
+    coverImage = `data:${req.file.mimetype};base64,${req.file.buffer.toString(
+      "base64"
+    )}`;
+  } else if (currentCover) {
+    // Giữ ảnh hiện tại (Base64 hoặc filename)
+    coverImage = currentCover;
+  } else {
+    // Giữ ảnh cũ (Base64 hoặc filename)
+    coverImage = existingCover;
+  }
 
   let allCategories = await db.Category.findAll({
     attributes: ["category_id"],

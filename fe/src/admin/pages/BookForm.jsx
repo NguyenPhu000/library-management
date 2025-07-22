@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { FaArrowLeft, FaSave, FaTimes, FaImage } from "react-icons/fa";
+import { formatCoverImage } from "../../utils/imageHelper";
 import adminBookService from "../services/adminBookService";
 import adminCategoryService from "../services/adminCategoryService";
 import Swal from "sweetalert2";
@@ -68,11 +69,14 @@ const BookForm = () => {
           status: book.status || "available",
           category_id: categoryIds,
           cover_image: null,
-          current_cover: book.cover_image || "",
+          current_cover:
+            book.cover_image && !book.cover_image.startsWith("data:")
+              ? book.cover_image
+              : "",
         });
 
         if (book.cover_image) {
-          setImagePreview(book.cover_image);
+          setImagePreview(formatCoverImage(book.cover_image));
         }
       } catch (error) {
         console.error("Error fetching book details:", error);

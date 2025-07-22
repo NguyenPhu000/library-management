@@ -118,12 +118,10 @@ const Header = () => {
     <header className="bg-gradient-to-r from-gray-900 via-black to-gray-900 text-white py-4 px-6 md:px-10 flex items-center justify-between shadow-lg sticky top-0 z-50 border-b border-gray-700/50">
       {/* Logo */}
       <Link
-        to="/home"
-        className="text-2xl md:text-3xl font-bold tracking-tight flex items-center space-x-1.5 hover:opacity-90 transition-opacity duration-300 cursor-pointer"
+        to="/"
+        className="text-2xl font-bold text-lightGreen hover:text-green-400 transition-colors vietnamese-heading"
       >
-        <span className="text-lightGreen">Góc</span>
-        <span className="text-white">Thư</span>
-        <span className="text-lightGreen">Viện</span>
+        📚 Thư viện
       </Link>
 
       {/* Navigation */}

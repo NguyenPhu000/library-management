@@ -15,6 +15,7 @@ import {
   FaTags,
   FaImage,
 } from "react-icons/fa";
+import { formatCoverImage } from "../../utils/imageHelper";
 import adminBookService from "../services/adminBookService";
 import adminCategoryService from "../services/adminCategoryService";
 import ResponsiveBookTable from "../components/book/ResponsiveBookTable";
@@ -236,12 +237,7 @@ const BookManageTablePage = () => {
         {};
 
       // Xử lý URL ảnh bìa
-      let imageUrl = "";
-      if (bookData.cover_image) {
-        imageUrl = bookData.cover_image.startsWith("http")
-          ? bookData.cover_image
-          : `/uploads/${bookData.cover_image}`;
-      }
+      const imageUrl = formatCoverImage(bookData.cover_image);
 
       // Ghép tên danh mục
       const categoriesNames = (bookData.categories || [])
@@ -479,26 +475,10 @@ const BookManageTablePage = () => {
       }
 
       setEditingBook(bookData);
-      // Extract clean filename for current_cover
-      let currentCoverFilename = "";
-      if (bookData.cover_image) {
-        if (bookData.cover_image.startsWith("http")) {
-          // Extract filename from full URL: http://localhost:8081/uploads/filename.jpg -> filename.jpg
-          const urlParts = bookData.cover_image.split("/");
-          currentCoverFilename = urlParts[urlParts.length - 1];
-        } else {
-          // Already just filename
-          currentCoverFilename = bookData.cover_image;
-        }
-
-        // Clean up filename - remove brackets, quotes, duplicates
-        if (typeof currentCoverFilename === "string") {
-          currentCoverFilename = currentCoverFilename.replace(/[\[\]'"]+/g, "");
-          if (currentCoverFilename.includes(",")) {
-            currentCoverFilename = currentCoverFilename.split(",")[0];
-          }
-          currentCoverFilename = currentCoverFilename.trim();
-        }
+      // Giữ nguyên cover_image như backend trả về (Base64 hoặc filename)
+      let currentCover = "";
+      if (bookData.cover_image && !bookData.cover_image.startsWith("data:")) {
+        currentCover = bookData.cover_image;
       }
 
       setEditFormData({
@@ -513,18 +493,11 @@ const BookManageTablePage = () => {
         status: bookData.status || "available",
         category_id: categoryIds,
         cover_image: null,
-        current_cover: currentCoverFilename,
+        current_cover: currentCover,
       });
 
-      // Set image preview with proper URL handling
-      if (bookData.cover_image) {
-        const imageUrl = bookData.cover_image.startsWith("http")
-          ? bookData.cover_image
-          : `/uploads/${bookData.cover_image}`;
-        setImagePreview(imageUrl);
-      } else {
-        setImagePreview("");
-      }
+      // Set image preview với helper
+      setImagePreview(formatCoverImage(bookData.cover_image));
 
       setIsEditModalOpen(true);
     } catch (error) {

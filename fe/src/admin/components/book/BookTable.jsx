@@ -12,6 +12,7 @@ import {
   FaCopy,
   FaBuilding,
 } from "react-icons/fa";
+import { formatCoverImage } from "../../../utils/imageHelper";
 import Swal from "sweetalert2";
 
 const BookTable = ({
@@ -200,7 +201,7 @@ const BookTable = ({
                   <div className="flex-shrink-0 h-20 w-16">
                     {book.cover_image && !imageErrors[book.book_id] ? (
                       <img
-                        src={book.cover_image}
+                        src={formatCoverImage(book.cover_image)}
                         alt={book.title}
                         className="h-20 w-16 object-cover rounded-md border border-gray-200 dark:border-gray-600"
                         onError={() => handleImageError(book.book_id)}

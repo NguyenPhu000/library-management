@@ -10,6 +10,7 @@ import {
   FaTimes,
   FaSave,
 } from "react-icons/fa";
+import { formatCoverImage } from "../../utils/imageHelper";
 import adminBookService from "../services/adminBookService";
 import adminCategoryService from "../services/adminCategoryService";
 import Swal from "sweetalert2";
@@ -446,7 +447,7 @@ const BookManagePage = () => {
                     <td className="px-4 py-4 whitespace-nowrap">
                       {book.cover_image ? (
                         <img
-                          src={book.cover_image}
+                          src={formatCoverImage(book.cover_image)}
                           alt={book.title}
                           className="h-16 w-12 object-cover rounded"
                         />

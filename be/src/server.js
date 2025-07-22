@@ -33,8 +33,8 @@ app.use(express.static(publicPath));
 app.use("/uploads", express.static(path.join(publicPath, "uploads")));
 
 // Configure app middlewares
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
 // Initialize routes (chỉ API routes)
 initWebRoutes(app);

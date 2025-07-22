@@ -37,9 +37,8 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       cover_image: {
-        type: DataTypes.JSON,
+        type: DataTypes.TEXT("long"),
         allowNull: true,
-        defaultValue: [],
       },
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,

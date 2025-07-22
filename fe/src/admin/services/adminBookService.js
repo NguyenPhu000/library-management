@@ -1,57 +1,14 @@
 import { API } from "../../services/api";
-import { getUploadsBase } from "../../services/urlHelper";
 
 class AdminBookService {
-  // Helper function to format image URL like in bookservice.js
-  formatImageUrl(coverImage) {
-    if (!coverImage) {
-      return "https://via.placeholder.com/150";
-    }
-
-    // Xử lý nếu coverImage là array
-    let cleanImage = coverImage;
-    if (Array.isArray(coverImage)) {
-      cleanImage = coverImage[0];
-    }
-
-    // Xử lý string có format lỗi như "[filename,filename]" hoặc "[filename"
-    if (typeof cleanImage === "string") {
-      // Remove brackets and quotes
-      cleanImage = cleanImage.replace(/[\[\]'"]+/g, "");
-
-      // If contains comma, take first part
-      if (cleanImage.includes(",")) {
-        cleanImage = cleanImage.split(",")[0];
-      }
-    }
-
-    // Ensure we have a clean filename
-    cleanImage = cleanImage.trim();
-
-    return `${getUploadsBase()}${cleanImage}`;
-  }
-
-  // Helper function to format book data with image URL
-  formatBookData(book) {
-    return {
-      ...book,
-      cover_image: this.formatImageUrl(book.cover_image),
-    };
-  }
   getAllBooks(params = {}) {
     return API.get("/admin/books", { params })
       .then((response) => {
-        // Format image URLs like in bookservice.js
-        if (response.data.data) {
-          response.data.data = response.data.data.map((book) =>
-            this.formatBookData(book)
-          );
-        }
-
+        // Trả về raw data, để component tự format
         return response.data;
       })
       .catch((error) => {
-        console.error("💥 Error in AdminBookService.getAllBooks:", error);
+        console.error("Error in AdminBookService.getAllBooks:", error);
         throw error;
       });
   }
@@ -59,11 +16,7 @@ class AdminBookService {
   // Sử dụng GET /books/:bookId từ bookRoutes (public route)
   getBookById(id) {
     return API.get(`/books/${id}`).then((response) => {
-      // Format image URL like in bookservice.js
-      if (response.data.book) {
-        response.data.book = this.formatBookData(response.data.book);
-      }
-
+      // Trả về raw data, để component tự format
       return response.data;
     });
   }
@@ -108,13 +61,7 @@ class AdminBookService {
         limit,
       },
     }).then((response) => {
-      // Format image URLs like in bookservice.js
-      if (response.data.data) {
-        response.data.data = response.data.data.map((book) =>
-          this.formatBookData(book)
-        );
-      }
-
+      // Trả về raw data, để component tự format
       return response.data;
     });
   }
@@ -179,7 +126,12 @@ class AdminBookService {
     }
 
     // Thêm cover hiện tại nếu có (để giữ lại nếu không có ảnh mới)
-    if (bookData.current_cover) {
+    if (
+      bookData.current_cover &&
+      typeof bookData.current_cover === "string" &&
+      !bookData.current_cover.startsWith("data:")
+    ) {
+      // Chỉ gửi current_cover nếu là filename để tránh vượt giới hạn field size
       formData.append("current_cover", bookData.current_cover);
     }
 
