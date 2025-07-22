@@ -80,7 +80,7 @@ const LoginPage = () => {
               text: "Bạn không có quyền truy cập vào trang quản trị",
             });
             // Chuyển về trang chủ
-            navigate("/", { replace: true });
+            navigate("/home", { replace: true });
           }
         } else {
           // Đăng nhập thông thường
@@ -328,7 +328,7 @@ const LoginPage = () => {
             {isAdminLogin && (
               <div className="mt-6 text-center">
                 <button
-                  onClick={() => navigate("/")}
+                  onClick={() => navigate("/home")}
                   className="text-lightGreen hover:text-green-300 transition-all duration-300 hover:underline"
                 >
                   Quay lại trang chủ thư viện

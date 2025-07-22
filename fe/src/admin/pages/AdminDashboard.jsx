@@ -15,7 +15,31 @@ import {
   FaCheckCircle,
   FaHourglassHalf,
   FaTicketAlt,
+  FaTachometerAlt,
+  FaChartLine,
+  FaChartPie,
+  FaBookReader,
+  FaHandHoldingUsd,
+  FaUserClock,
 } from "react-icons/fa";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  ComposedChart,
+} from "recharts";
 import adminBookService from "../services/adminBookService";
 import adminUserService from "../services/adminUserService";
 import adminLoanService from "../services/adminLoanService";
@@ -37,11 +61,11 @@ const AdminDashboard = () => {
       loans: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       returns: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     },
-    // Enhanced loan statistics
     activeLoans: 0,
     overdueLoans: 0,
     pendingRenewals: 0,
     totalFines: 0,
+    onlineUsers: 0,
     librarySettings: null,
   });
   const [loading, setLoading] = useState(true);
@@ -52,12 +76,11 @@ const AdminDashboard = () => {
       try {
         setLoading(true);
 
-        // Fetch all statistics in parallel with Enhanced APIs
         const [booksResponse, usersResponse, loanStatRes, paymentsResponse] =
           await Promise.all([
             adminBookService.getBookStats(),
             adminUserService.getUserStats(),
-            adminLoanService.getLoanStatistics(), // NEW unified statistics
+            adminLoanService.getLoanStatistics(),
             adminPaymentService.getPaymentStats(),
           ]);
 
@@ -65,7 +88,6 @@ const AdminDashboard = () => {
           ? loanStatRes.statistics || {}
           : loanStatRes.stats || loanStatRes || {};
 
-        // Gọi library settings nếu service có triển khai
         let settingsResponse = null;
         if (typeof adminLoanService.getLibrarySettings === "function") {
           try {
@@ -75,13 +97,10 @@ const AdminDashboard = () => {
           }
         }
 
-        // Enhanced loan stats processing
         const enhancedStats = {
           totalBooks: booksResponse.data?.totalBooks || 0,
           totalUsers: usersResponse.data?.totalUsers || 0,
           totalMembers: usersResponse.data?.totalMembers || 0,
-
-          // Enhanced loan statistics
           totalLoans:
             loansResponse.total ||
             loansResponse.totalLoans ||
@@ -95,11 +114,9 @@ const AdminDashboard = () => {
             loansResponse.pendingRenewal || loansResponse.pendingRenewals || 0,
           returnsToday:
             loansResponse.returnsToday || loansResponse.returnedBooks || 0,
-
           totalPayments: paymentsResponse.data?.totalPayments || 0,
           totalFines: loansResponse.totalFines || 0,
-
-          // Legacy compatibility
+          onlineUsers: usersResponse.data?.onlineUsers || 0,
           pendingReturns:
             loansResponse.activeLoans ||
             loansResponse.data?.pendingReturns ||
@@ -107,13 +124,10 @@ const AdminDashboard = () => {
           recentLoans: loansResponse.data?.recentLoans || [],
           recentReturns: loansResponse.data?.recentReturns || [],
           topBooks: booksResponse.data?.topBooks || [],
-
           monthlyStats: {
             loans: loansResponse.monthlyStats?.loans || Array(12).fill(0),
             returns: loansResponse.monthlyStats?.returns || Array(12).fill(0),
           },
-
-          // Library settings
           librarySettings: settingsResponse?.data || null,
         };
 
@@ -129,7 +143,7 @@ const AdminDashboard = () => {
     fetchStats();
   }, []);
 
-  // Helper function to format date
+  // Helper functions
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("vi-VN", {
@@ -139,7 +153,6 @@ const AdminDashboard = () => {
     }).format(date);
   };
 
-  // Helper function to format currency
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -147,12 +160,65 @@ const AdminDashboard = () => {
     }).format(amount);
   };
 
-  // Calculate compliance rate
   const getComplianceRate = () => {
     if (stats.totalLoans === 0) return 100;
     const onTimeLoans = stats.totalLoans - stats.overdueLoans;
     return Math.round((onTimeLoans / stats.totalLoans) * 100);
   };
+
+  // Data for charts
+  const monthNames = [
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T8",
+    "T9",
+    "T10",
+    "T11",
+    "T12",
+  ];
+
+  const monthlyData = monthNames.map((month, index) => ({
+    month,
+    loans: stats.monthlyStats.loans[index] || 0,
+    returns: stats.monthlyStats.returns[index] || 0,
+  }));
+
+  const loanStatusData = [
+    { name: "Đang mượn", value: stats.activeLoans, color: "#3B82F6" },
+    { name: "Quá hạn", value: stats.overdueLoans, color: "#EF4444" },
+    { name: "Chờ nhận", value: stats.awaitingPickup, color: "#8B5CF6" },
+    { name: "Chờ gia hạn", value: stats.pendingRenewals, color: "#F59E0B" },
+  ];
+
+  const systemOverviewData = [
+    { name: "Sách", value: stats.totalBooks, color: "#10B981" },
+    { name: "Thành viên", value: stats.totalMembers, color: "#3B82F6" },
+    { name: "Đang mượn", value: stats.activeLoans, color: "#8B5CF6" },
+    { name: "Thanh toán", value: stats.totalPayments, color: "#F59E0B" },
+  ];
+
+  const performanceData = [
+    { metric: "Tuân thủ", value: getComplianceRate(), target: 90 },
+    {
+      metric: "Hiệu suất",
+      value: Math.round(
+        (stats.activeLoans / Math.max(stats.totalBooks, 1)) * 100
+      ),
+      target: 70,
+    },
+    {
+      metric: "Thu phí",
+      value: Math.round(
+        (stats.totalFines / Math.max(stats.totalPayments * 10000, 1)) * 100
+      ),
+      target: 20,
+    },
+  ];
 
   if (loading) {
     return (
@@ -172,295 +238,282 @@ const AdminDashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-6 bg-gray-50 dark:bg-gray-900 dark:text-white">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-          Dashboard - Hệ thống Quản lý Thư viện
-        </h1>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
+            <FaTachometerAlt className="mr-3 text-blue-600" />
+            Dashboard Analytics
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Hệ thống Quản lý Thư viện - Tổng quan chi tiết
+          </p>
+        </div>
         {stats.librarySettings && (
-          <div className="text-sm text-gray-600">
-            <span>
-              Quy tắc: {stats.librarySettings.maxBooksPerMember || 5} sách/thành
-              viên,{" "}
-            </span>
-            <span>{stats.librarySettings.loanDurationDays || 10} ngày, </span>
-            <span>
-              phạt {(stats.librarySettings.finePerDay || 2000).toLocaleString()}{" "}
-              VND/ngày
-            </span>
+          <div className="bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-lg">
+            <div className="text-sm text-blue-800 dark:text-blue-200">
+              <div>
+                📚 {stats.librarySettings.maxBooksPerMember || 5} sách/thành
+                viên
+              </div>
+              <div>
+                ⏰ {stats.librarySettings.loanDurationDays || 10} ngày mượn
+              </div>
+              <div>
+                💰 {(stats.librarySettings.finePerDay || 2000).toLocaleString()}{" "}
+                VND/ngày phạt
+              </div>
+            </div>
           </div>
         )}
       </div>
 
-      {/* Enhanced Statistics Cards */}
+      {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {/* Tổng số sách */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-blue-500 dark:border-blue-400">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-lg">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500 text-sm">Tổng số sách</p>
-              <p className="text-2xl font-bold">{stats.totalBooks}</p>
+              <p className="text-blue-100 text-sm">Tổng số sách</p>
+              <p className="text-3xl font-bold">
+                {stats.totalBooks.toLocaleString()}
+              </p>
+              <p className="text-blue-100 text-xs mt-1">
+                {Math.round(
+                  (stats.activeLoans / Math.max(stats.totalBooks, 1)) * 100
+                )}
+                % đang được mượn
+              </p>
             </div>
-            <div className="bg-blue-100 p-3 rounded-full">
-              <FaBook className="text-blue-500 text-xl" />
+            <div className="bg-white/20 p-4 rounded-full">
+              <FaBook className="text-2xl" />
             </div>
           </div>
-          <div className="mt-4">
+          <div className="mt-4 pt-4 border-t border-blue-400">
             <Link
               to="/admin/books"
-              className="text-blue-500 text-sm hover:underline"
+              className="text-blue-100 hover:text-white text-sm font-medium"
             >
-              Xem chi tiết
+              Quản lý sách →
             </Link>
           </div>
         </div>
 
-        {/* Tổng số thành viên */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-green-500 dark:border-green-400">
+        <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-xl shadow-lg">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500 text-sm">Tổng số thành viên</p>
-              <p className="text-2xl font-bold">{stats.totalMembers}</p>
-              <p className="text-xs text-gray-400">
-                Giới hạn: {stats.librarySettings?.maxBooksPerMember || 5}{" "}
-                sách/thành viên
+              <p className="text-green-100 text-sm">Thành viên</p>
+              <p className="text-3xl font-bold">
+                {stats.totalMembers.toLocaleString()}
+              </p>
+              <p className="text-green-100 text-xs mt-1">
+                {Math.round(
+                  (stats.activeLoans / Math.max(stats.totalMembers, 1)) * 100
+                ) / 100}{" "}
+                sách/người
               </p>
             </div>
-            <div className="bg-green-100 p-3 rounded-full">
-              <FaUserTag className="text-green-500 text-xl" />
+            <div className="bg-white/20 p-4 rounded-full">
+              <FaUsers className="text-2xl" />
             </div>
           </div>
-          <div className="mt-4">
+          <div className="mt-4 pt-4 border-t border-green-400">
             <Link
               to="/admin/members"
-              className="text-green-500 text-sm hover:underline"
+              className="text-green-100 hover:text-white text-sm font-medium"
             >
-              Xem chi tiết
+              Quản lý thành viên →
             </Link>
           </div>
         </div>
 
-        {/* Sách đang được mượn (Active Loans) */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-purple-500 dark:border-purple-400">
+        <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-lg">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500 text-sm">Đang được mượn</p>
-              <p className="text-2xl font-bold">{stats.activeLoans}</p>
-              <p className="text-xs text-gray-400">
-                Tổng cộng: {stats.totalLoans} lượt mượn
+              <p className="text-purple-100 text-sm">Đang mượn</p>
+              <p className="text-3xl font-bold">
+                {stats.activeLoans.toLocaleString()}
+              </p>
+              <p className="text-purple-100 text-xs mt-1">
+                {stats.overdueLoans > 0 && `${stats.overdueLoans} quá hạn`}
               </p>
             </div>
-            <div className="bg-purple-100 p-3 rounded-full">
-              <FaExchangeAlt className="text-purple-500 text-xl" />
+            <div className="bg-white/20 p-4 rounded-full">
+              <FaBookReader className="text-2xl" />
             </div>
           </div>
-          <div className="mt-4">
+          <div className="mt-4 pt-4 border-t border-purple-400">
             <Link
               to="/admin/loans"
-              className="text-purple-500 text-sm hover:underline"
+              className="text-purple-100 hover:text-white text-sm font-medium"
             >
-              Xem chi tiết
+              Quản lý mượn trả →
             </Link>
           </div>
         </div>
 
-        {/* Tổng phí phạt */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-orange-500 dark:border-orange-400">
+        <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-xl shadow-lg">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500 text-sm">Tổng phí phạt</p>
-              <p className="text-2xl font-bold text-orange-600">
-                {formatCurrency(stats.totalFines)}
+              <p className="text-orange-100 text-sm">Tổng phí phạt</p>
+              <p className="text-3xl font-bold">
+                {formatCurrency(stats.totalFines).replace("₫", "")}
               </p>
-              <p className="text-xs text-gray-400">
-                {(stats.librarySettings?.finePerDay || 2000).toLocaleString()}{" "}
-                VND/ngày
-              </p>
+              <p className="text-orange-100 text-xs mt-1">VND</p>
             </div>
-            <div className="bg-orange-100 p-3 rounded-full">
-              <FaMoneyBill className="text-orange-500 text-xl" />
+            <div className="bg-white/20 p-4 rounded-full">
+              <FaHandHoldingUsd className="text-2xl" />
             </div>
           </div>
-          <div className="mt-4">
+          <div className="mt-4 pt-4 border-t border-orange-400">
             <Link
               to="/admin/payments"
-              className="text-orange-500 text-sm hover:underline"
+              className="text-orange-100 hover:text-white text-sm font-medium"
             >
-              Xem chi tiết
+              Quản lý thanh toán →
             </Link>
+          </div>
+        </div>
+
+        {/* Online Users */}
+        <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white p-6 rounded-xl shadow-lg">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-indigo-100 text-sm">Online</p>
+              <p className="text-3xl font-bold">
+                {(stats.onlineUsers || 0).toLocaleString()}
+              </p>
+              <p className="text-indigo-100 text-xs mt-1">đang hoạt động</p>
+            </div>
+            <div className="bg-white/20 p-4 rounded-full">
+              <FaUserClock className="text-2xl" />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Enhanced Status Cards */}
+      {/* Alert Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {/* Chờ nhận sách */}
         <div
-          className={`bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 ${
-            stats.awaitingPickup > 0 ? "border-purple-500" : "border-gray-300"
-          } dark:border-purple-400`}
+          className={`p-4 rounded-lg border-l-4 ${
+            stats.awaitingPickup > 0
+              ? "bg-purple-50 border-purple-500 dark:bg-purple-900/20"
+              : "bg-gray-50 border-gray-300 dark:bg-gray-800"
+          }`}
         >
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm dark:text-gray-300">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Chờ nhận sách
               </p>
               <p
                 className={`text-2xl font-bold ${
-                  stats.awaitingPickup > 0 ? "text-purple-600" : "text-gray-600"
+                  stats.awaitingPickup > 0 ? "text-purple-600" : "text-gray-400"
                 }`}
               >
                 {stats.awaitingPickup}
               </p>
-              <p className="text-xs text-gray-400">Thành viên chưa đến nhận</p>
             </div>
-            <div
-              className={`p-3 rounded-full ${
-                stats.awaitingPickup > 0 ? "bg-purple-100" : "bg-gray-100"
-              }`}
-            >
-              <FaTicketAlt
-                className={`text-xl ${
-                  stats.awaitingPickup > 0 ? "text-purple-500" : "text-gray-400"
-                }`}
-              />
-            </div>
-          </div>
-          <div className="mt-4">
-            <Link
-              to="/admin/loans?filter=pending_pickup"
-              className={`text-sm hover:underline ${
+            <FaTicketAlt
+              className={`text-2xl ${
                 stats.awaitingPickup > 0 ? "text-purple-500" : "text-gray-400"
               }`}
-            >
-              Xem chi tiết
-            </Link>
+            />
           </div>
+          {stats.awaitingPickup > 0 && (
+            <div className="mt-2">
+              <Link
+                to="/admin/loans?filter=pending_pickup"
+                className="text-purple-600 text-sm hover:underline"
+              >
+                Xem chi tiết →
+              </Link>
+            </div>
+          )}
         </div>
 
-        {/* Sách quá hạn */}
         <div
-          className={`bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 ${
-            stats.overdueLoans > 0 ? "border-red-500" : "border-gray-300"
-          } dark:border-red-400`}
+          className={`p-4 rounded-lg border-l-4 ${
+            stats.overdueLoans > 0
+              ? "bg-red-50 border-red-500 dark:bg-red-900/20"
+              : "bg-gray-50 border-gray-300 dark:bg-gray-800"
+          }`}
         >
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm dark:text-gray-300">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Sách quá hạn
               </p>
               <p
                 className={`text-2xl font-bold ${
-                  stats.overdueLoans > 0 ? "text-red-600" : "text-gray-600"
+                  stats.overdueLoans > 0 ? "text-red-600" : "text-gray-400"
                 }`}
               >
                 {stats.overdueLoans}
               </p>
-              <p className="text-xs text-gray-400">Cần xử lý ngay</p>
             </div>
-            <div
-              className={`p-3 rounded-full ${
-                stats.overdueLoans > 0 ? "bg-red-100" : "bg-gray-100"
-              }`}
-            >
-              <FaExclamationTriangle
-                className={`text-xl ${
-                  stats.overdueLoans > 0 ? "text-red-500" : "text-gray-400"
-                }`}
-              />
-            </div>
-          </div>
-          <div className="mt-4">
-            <Link
-              to="/admin/loans?filter=overdue"
-              className={`text-sm hover:underline ${
+            <FaExclamationTriangle
+              className={`text-2xl ${
                 stats.overdueLoans > 0 ? "text-red-500" : "text-gray-400"
               }`}
-            >
-              Xem chi tiết
-            </Link>
+            />
           </div>
+          {stats.overdueLoans > 0 && (
+            <div className="mt-2">
+              <Link
+                to="/admin/loans?filter=overdue"
+                className="text-red-600 text-sm hover:underline"
+              >
+                Xử lý ngay →
+              </Link>
+            </div>
+          )}
         </div>
 
-        {/* Chờ duyệt gia hạn */}
         <div
-          className={`bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 ${
-            stats.pendingRenewals > 0 ? "border-yellow-500" : "border-gray-300"
-          } dark:border-yellow-400`}
+          className={`p-4 rounded-lg border-l-4 ${
+            stats.pendingRenewals > 0
+              ? "bg-yellow-50 border-yellow-500 dark:bg-yellow-900/20"
+              : "bg-gray-50 border-gray-300 dark:bg-gray-800"
+          }`}
         >
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm dark:text-gray-300">
-                Chờ duyệt gia hạn
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Chờ gia hạn
               </p>
               <p
                 className={`text-2xl font-bold ${
                   stats.pendingRenewals > 0
                     ? "text-yellow-600"
-                    : "text-gray-600"
+                    : "text-gray-400"
                 }`}
               >
                 {stats.pendingRenewals}
               </p>
-              <p className="text-xs text-gray-400">
-                Tối đa {stats.librarySettings?.maxRenewals || 1} lần/sách
-              </p>
             </div>
-            <div
-              className={`p-3 rounded-full ${
-                stats.pendingRenewals > 0 ? "bg-yellow-100" : "bg-gray-100"
-              }`}
-            >
-              <FaClock
-                className={`text-xl ${
-                  stats.pendingRenewals > 0
-                    ? "text-yellow-500"
-                    : "text-gray-400"
-                }`}
-              />
-            </div>
-          </div>
-          <div className="mt-4">
-            <Link
-              to="/admin/loans?filter=pending"
-              className={`text-sm hover:underline ${
+            <FaUserClock
+              className={`text-2xl ${
                 stats.pendingRenewals > 0 ? "text-yellow-500" : "text-gray-400"
               }`}
-            >
-              Xem chi tiết
-            </Link>
+            />
           </div>
+          {stats.pendingRenewals > 0 && (
+            <div className="mt-2">
+              <Link
+                to="/admin/loans?filter=pending"
+                className="text-yellow-600 text-sm hover:underline"
+              >
+                Duyệt ngay →
+              </Link>
+            </div>
+          )}
         </div>
 
-        {/* Trả sách hôm nay */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-green-500 dark:border-green-400">
-          <div className="flex justify-between items-center">
+        <div className="p-4 rounded-lg border-l-4 bg-green-50 border-green-500 dark:bg-green-900/20">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm">Trả sách hôm nay</p>
-              <p className="text-2xl font-bold text-green-600">
-                {stats.returnsToday}
-              </p>
-              <p className="text-xs text-gray-400">Đã xử lý</p>
-            </div>
-            <div className="bg-green-100 p-3 rounded-full">
-              <FaCheckCircle className="text-green-500 text-xl" />
-            </div>
-          </div>
-          <div className="mt-4">
-            <Link
-              to="/admin/loans?filter=returned_today"
-              className="text-green-500 text-sm hover:underline"
-            >
-              Xem chi tiết
-            </Link>
-          </div>
-        </div>
-
-        {/* Tỷ lệ tuân thủ */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-indigo-500 dark:border-indigo-400">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-gray-500 text-sm dark:text-gray-300">
-                Tỷ lệ tuân thủ
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Tuân thủ
               </p>
               <p
                 className={`text-2xl font-bold ${
@@ -473,159 +526,258 @@ const AdminDashboard = () => {
               >
                 {getComplianceRate()}%
               </p>
-              <p className="text-xs text-gray-400">Trả đúng hạn</p>
             </div>
-            <div className="bg-indigo-100 p-3 rounded-full">
-              <FaChartBar className="text-indigo-500 text-xl" />
-            </div>
-          </div>
-          <div className="mt-4">
-            <span
-              className={`text-sm ${
+            <FaChartLine
+              className={`text-2xl ${
                 getComplianceRate() >= 90
                   ? "text-green-500"
                   : getComplianceRate() >= 70
                   ? "text-yellow-500"
                   : "text-red-500"
               }`}
-            >
-              {getComplianceRate() >= 90
-                ? "Xuất sắc"
-                : getComplianceRate() >= 70
-                ? "Tốt"
-                : "Cần cải thiện"}
-            </span>
+            />
           </div>
         </div>
       </div>
 
-      {/* Business Rules Summary */}
-      {stats.librarySettings && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-          <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center">
-            <FaHourglassHalf className="mr-2" />
-            Quy tắc Nghiệp vụ Thư viện
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-            <div className="bg-white p-3 rounded border">
-              <span className="font-medium text-blue-700">Giới hạn mượn:</span>
-              <span className="ml-2">
-                {stats.librarySettings.maxBooksPerMember || 5} sách/thành viên
-              </span>
-            </div>
-            <div className="bg-white p-3 rounded border">
-              <span className="font-medium text-blue-700">Thời hạn:</span>
-              <span className="ml-2">
-                {stats.librarySettings.loanDurationDays || 10} ngày
-              </span>
-            </div>
-            <div className="bg-white p-3 rounded border">
-              <span className="font-medium text-blue-700">Phí phạt:</span>
-              <span className="ml-2">
-                {(stats.librarySettings.finePerDay || 2000).toLocaleString()}{" "}
-                VND/ngày
-              </span>
-            </div>
-            <div className="bg-white p-3 rounded border">
-              <span className="font-medium text-blue-700">Gia hạn tối đa:</span>
-              <span className="ml-2">
-                {stats.librarySettings.maxRenewals || 1} lần
-              </span>
-            </div>
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Monthly Loans vs Returns */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+          <div className="flex items-center mb-4">
+            <FaChartBar className="text-blue-600 text-xl mr-2" />
+            <h3 className="text-lg font-semibold">
+              Thống kê mượn trả theo tháng
+            </h3>
+          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <ComposedChart data={monthlyData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="loans" fill="#3B82F6" name="Mượn sách" />
+              <Line
+                type="monotone"
+                dataKey="returns"
+                stroke="#10B981"
+                strokeWidth={3}
+                name="Trả sách"
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Loan Status Distribution */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+          <div className="flex items-center mb-4">
+            <FaChartPie className="text-purple-600 text-xl mr-2" />
+            <h3 className="text-lg font-semibold">
+              Phân bổ trạng thái mượn sách
+            </h3>
+          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={loanStatusData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) =>
+                  `${name} ${(percent * 100).toFixed(0)}%`
+                }
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {loanStatusData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* System Overview */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+          <div className="flex items-center mb-4">
+            <FaChartLine className="text-green-600 text-xl mr-2" />
+            <h3 className="text-lg font-semibold">Tổng quan hệ thống</h3>
+          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={systemOverviewData} layout="horizontal">
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis type="number" />
+              <YAxis dataKey="name" type="category" />
+              <Tooltip />
+              <Bar dataKey="value" fill="#10B981" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Performance Metrics */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+          <div className="flex items-center mb-4">
+            <FaTachometerAlt className="text-orange-600 text-xl mr-2" />
+            <h3 className="text-lg font-semibold">Chỉ số hiệu suất</h3>
+          </div>
+          <div className="space-y-4">
+            {performanceData.map((item, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="font-medium">{item.metric}</span>
+                  <span
+                    className={`font-bold ${
+                      item.value >= item.target
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {item.value}% / {item.target}%
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full ${
+                      item.value >= item.target ? "bg-green-500" : "bg-red-500"
+                    }`}
+                    style={{ width: `${Math.min(item.value, 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Các thống kê phụ */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* Quick Actions */}
-        <div className="bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold mb-4">Thao tác nhanh</h3>
-          <div className="space-y-3">
+      {/* Recent Activities */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h3 className="text-lg font-semibold mb-4 flex items-center">
+            <FaClock className="text-blue-600 mr-2" />
+            Hoạt động gần đây
+          </h3>
+          <div className="space-y-3 max-h-64 overflow-y-auto">
+            {stats.recentLoans.length > 0 ? (
+              stats.recentLoans.slice(0, 5).map((loan, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-400"
+                >
+                  <div>
+                    <p className="font-medium text-gray-800 dark:text-gray-200">
+                      {loan.Book?.title || "N/A"}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {loan.Member?.full_name || "N/A"}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {formatDate(loan.loan_date)}
+                    </p>
+                    <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                      Mượn sách
+                    </span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <FaClock className="text-3xl mb-2 mx-auto opacity-50" />
+                <p>Chưa có hoạt động gần đây</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+          <h3 className="text-lg font-semibold mb-4 flex items-center">
+            <FaExchangeAlt className="text-green-600 mr-2" />
+            Thao tác nhanh
+          </h3>
+          <div className="grid grid-cols-1 gap-3">
             <Link
               to="/admin/loans?filter=pending"
-              className="flex items-center justify-between p-3 bg-yellow-50 hover:bg-yellow-100 dark:bg-yellow-900/20 dark:hover:bg-yellow-900/40 rounded-lg transition-colors"
+              className="flex items-center justify-between p-4 bg-yellow-50 hover:bg-yellow-100 dark:bg-yellow-900/20 dark:hover:bg-yellow-900/40 rounded-lg transition-all duration-200 border border-yellow-200 hover:border-yellow-300"
             >
-              <span className="flex items-center">
-                <FaClock className="text-yellow-500 mr-2" />
-                Duyệt gia hạn
-              </span>
-              <span className="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs">
+              <div className="flex items-center">
+                <FaClock className="text-yellow-600 mr-3 text-lg" />
+                <div>
+                  <p className="font-medium text-gray-800 dark:text-gray-200">
+                    Duyệt gia hạn
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Yêu cầu đang chờ
+                  </p>
+                </div>
+              </div>
+              <span className="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-bold">
                 {stats.pendingRenewals}
               </span>
             </Link>
 
             <Link
               to="/admin/loans?filter=overdue"
-              className="flex items-center justify-between p-3 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 rounded-lg transition-colors"
+              className="flex items-center justify-between p-4 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 rounded-lg transition-all duration-200 border border-red-200 hover:border-red-300"
             >
-              <span className="flex items-center">
-                <FaExclamationTriangle className="text-red-500 mr-2" />
-                Xử lý quá hạn
-              </span>
-              <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs">
+              <div className="flex items-center">
+                <FaExclamationTriangle className="text-red-600 mr-3 text-lg" />
+                <div>
+                  <p className="font-medium text-gray-800 dark:text-gray-200">
+                    Xử lý quá hạn
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Cần xử lý ngay
+                  </p>
+                </div>
+              </div>
+              <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
                 {stats.overdueLoans}
               </span>
             </Link>
 
             <Link
-              to="/admin/loans"
-              className="flex items-center justify-between p-3 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 rounded-lg transition-colors"
-            >
-              <span className="flex items-center">
-                <FaExchangeAlt className="text-blue-500 mr-2" />
-                Quản lý mượn trả
-              </span>
-              <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">
-                {stats.activeLoans}
-              </span>
-            </Link>
-
-            {/* Chờ nhận sách */}
-            <Link
               to="/admin/loans?filter=pending_pickup"
-              className="flex items-center justify-between p-3 bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/40 rounded-lg transition-colors"
+              className="flex items-center justify-between p-4 bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/40 rounded-lg transition-all duration-200 border border-purple-200 hover:border-purple-300"
             >
-              <span className="flex items-center">
-                <FaTicketAlt className="text-purple-500 mr-2" />
-                Chờ nhận sách
-              </span>
-              <span className="bg-purple-500 text-white px-2 py-1 rounded-full text-xs">
+              <div className="flex items-center">
+                <FaTicketAlt className="text-purple-600 mr-3 text-lg" />
+                <div>
+                  <p className="font-medium text-gray-800 dark:text-gray-200">
+                    Chờ nhận sách
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Thành viên chưa đến
+                  </p>
+                </div>
+              </div>
+              <span className="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold">
                 {stats.awaitingPickup}
               </span>
             </Link>
-          </div>
-        </div>
 
-        {/* Recent Activities */}
-        <div className="bg-white dark:bg-gray-800 dark:text-gray-200 p-6 rounded-lg shadow-md flex-1">
-          <h3 className="text-lg font-semibold mb-4">Hoạt động gần đây</h3>
-          <div className="space-y-3 max-h-64 overflow-y-auto">
-            {stats.recentLoans.length > 0 ? (
-              stats.recentLoans.slice(0, 5).map((loan, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 border-l-4 border-blue-400 bg-blue-50"
-                >
-                  <div>
-                    <p className="font-medium">{loan.Book?.title || "N/A"}</p>
-                    <p className="text-sm text-gray-600">
-                      {loan.Member?.full_name || "N/A"}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">
-                      {formatDate(loan.loan_date)}
-                    </p>
-                    <p className="text-xs text-blue-600">Mượn sách</p>
-                  </div>
+            <Link
+              to="/admin/loans"
+              className="flex items-center justify-between p-4 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 rounded-lg transition-all duration-200 border border-blue-200 hover:border-blue-300"
+            >
+              <div className="flex items-center">
+                <FaBookReader className="text-blue-600 mr-3 text-lg" />
+                <div>
+                  <p className="font-medium text-gray-800 dark:text-gray-200">
+                    Quản lý mượn trả
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Tất cả hoạt động
+                  </p>
                 </div>
-              ))
-            ) : (
-              <p className="text-gray-500 text-center py-4">
-                Chưa có hoạt động gần đây
-              </p>
-            )}
+              </div>
+              <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                {stats.activeLoans}
+              </span>
+            </Link>
           </div>
         </div>
       </div>

@@ -896,9 +896,34 @@ const getAllLoans = async () => {
   try {
     return await Loan.findAll({
       include: [
-        { model: Member, attributes: ["member_code"] },
-        { model: Book, attributes: ["title"] },
+        {
+          model: Member,
+          attributes: ["member_code", "user_id"],
+          include: [
+            {
+              model: User,
+              attributes: ["username", "email", "first_name", "last_name"],
+            },
+          ],
+        },
+        {
+          model: Book,
+          attributes: ["title", "author", "isbn"],
+        },
+        {
+          model: Admin,
+          as: "approver",
+          attributes: ["admin_id"],
+          include: [
+            {
+              model: User,
+              attributes: ["username", "first_name", "last_name"],
+            },
+          ],
+          required: false,
+        },
       ],
+      order: [["request_date", "DESC"]],
     });
   } catch (error) {
     throw new Error("Lỗi lấy danh sách mượn: " + error.message);

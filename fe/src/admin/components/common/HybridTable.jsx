@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const HybridTable = ({
   columns,
@@ -10,6 +10,8 @@ const HybridTable = ({
   mobileBreakpoint = "md",
 }) => {
   const [isMobile, setIsMobile] = useState(false);
+  const scrollRef = useRef(null);
+  const [showScrollHint, setShowScrollHint] = useState(false);
 
   // Define breakpoint sizes
   const breakpoints = {
@@ -24,15 +26,26 @@ const HybridTable = ({
       const breakpointSize = breakpoints[mobileBreakpoint] || 768;
       setIsMobile(window.innerWidth < breakpointSize);
     };
+    const checkOverflow = () => {
+      if (scrollRef.current) {
+        const { scrollWidth, clientWidth } = scrollRef.current;
+        setShowScrollHint(scrollWidth > clientWidth);
+      }
+    };
 
     // Check initial screen size
     checkScreenSize();
+    checkOverflow();
 
     // Add event listener for window resize
     window.addEventListener("resize", checkScreenSize);
+    window.addEventListener("resize", checkOverflow);
 
     // Cleanup event listener
-    return () => window.removeEventListener("resize", checkScreenSize);
+    return () => {
+      window.removeEventListener("resize", checkScreenSize);
+      window.removeEventListener("resize", checkOverflow);
+    };
   }, [mobileBreakpoint]);
 
   if (loading) {
@@ -97,7 +110,12 @@ const HybridTable = ({
       {/* Desktop Table View */}
       {!isMobile && (
         <div className="responsive-table-wrapper">
-          <div className="responsive-table-scroll">
+          {showScrollHint && (
+            <div className="bg-blue-50 dark:bg-blue-900/20 px-4 py-2 text-sm text-blue-800 dark:text-blue-300 border-b border-blue-200 dark:border-blue-800">
+              💡 Kéo ngang để xem thêm thông tin
+            </div>
+          )}
+          <div ref={scrollRef} className="responsive-table-scroll">
             <table className="responsive-table">
               <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>

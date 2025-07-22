@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import categoryService from "../services/categoryService";
 
 const CACHE_KEY = "categories_cache_v1";
@@ -36,7 +42,7 @@ export const CategoryProvider = ({ children }) => {
     }
   };
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -50,7 +56,7 @@ export const CategoryProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Initial load (cache first)
   useEffect(() => {
@@ -68,8 +74,7 @@ export const CategoryProvider = ({ children }) => {
     };
     window.addEventListener("online", handleOnline);
     return () => window.removeEventListener("online", handleOnline);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchCategories]);
 
   return (
     <CategoryContext.Provider

@@ -32,7 +32,7 @@ const Footer = () => {
         {/* Links */}
         <nav className="grid grid-cols-1 md:grid-cols-2 lg:flex justify-center gap-8 lg:space-x-16 mb-10 text-lg">
           <Link
-            to="/"
+            to="/home"
             className="hover:text-lightGreen transition-colors flex items-center space-x-3"
           >
             <FontAwesomeIcon icon={faHome} className="text-xl" />

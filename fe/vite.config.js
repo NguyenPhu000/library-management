@@ -6,16 +6,10 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     server: {
-      host: "localhost",
+      host: true,
       port: env.VITE_PORT || 5137,
       strictPort: true,
-      proxy: {
-        "/api": {
-          target: "http://localhost:8081",
-          changeOrigin: true,
-          secure: false,
-        },
-      },
+      hmr: false,
     },
   };
 });

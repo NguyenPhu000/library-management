@@ -27,15 +27,6 @@ router.use("/api", paymentRoutes);
 // Admin routes với middleware xác thực được tích hợp sẵn
 router.use("/api", adminRoutes); // Mount tại /api để match với frontend
 
-// Xử lý chuyển hướng đến frontend cho các route không phải API
-router.get("*", (req, res, next) => {
-  if (req.path.startsWith("/api")) {
-    next();
-  } else {
-    res.redirect("/");
-  }
-});
-
 const initWebRoutes = (app) => {
   app.use("/", router);
 };

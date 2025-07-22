@@ -118,7 +118,7 @@ const Header = () => {
     <header className="bg-gradient-to-r from-gray-900 via-black to-gray-900 text-white py-4 px-6 md:px-10 flex items-center justify-between shadow-lg sticky top-0 z-50 border-b border-gray-700/50">
       {/* Logo */}
       <Link
-        to="/"
+        to="/home"
         className="text-2xl md:text-3xl font-bold tracking-tight flex items-center space-x-1.5 hover:opacity-90 transition-opacity duration-300 cursor-pointer"
       >
         <span className="text-lightGreen">Góc</span>
@@ -128,7 +128,7 @@ const Header = () => {
 
       {/* Navigation */}
       <nav className="hidden md:flex items-center space-x-2">
-        <NavLink to="/" icon={FiHome}>
+        <NavLink to="/home" icon={FiHome}>
           Trang Chủ
         </NavLink>
         <NavLink to="/books" icon={FiList}>

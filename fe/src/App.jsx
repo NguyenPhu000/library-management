@@ -29,26 +29,29 @@ import MemberManagePage from "./admin/pages/MemberManagePage";
 import LoanManagePage from "./admin/pages/LoanManagePage";
 import PaymentManagePage from "./admin/pages/PaymentManagePage";
 import AdminManagePage from "./admin/pages/AdminManagePage";
+import AdminProfile from "./admin/pages/AdminProfile";
 
 function App() {
   return (
     <AppProviders>
       <Routes>
+        {/* Root path luôn redirect về trang chủ */}
+        <Route path="/" element={<Navigate to="/home" replace />} />
+
         {/* Main site routes */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<LibraryHomePage />} />
-          <Route path="books" element={<BookListPage />} />
-          <Route path="books/:slug" element={<BookDetail />} />
-          <Route path="contact" element={<ContactPage />} />
-          <Route path="login" element={<LoginPage />} />
+        <Route element={<Layout />}>
+          <Route path="/home" element={<LibraryHomePage />} />
+          <Route path="/books" element={<BookListPage />} />
+          <Route path="/books/:slug" element={<BookDetail />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/login" element={<LoginPage />} />
 
           {/* Protected routes */}
-          {/* Protected routes need to be wrapped by a parent RequireAuth route */}
           <Route element={<RequireAuth />}>
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="loans" element={<LoanPage />} />
-            <Route path="history" element={<HistoryPage />} />
-            <Route path="payments" element={<PaymentPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/loans" element={<LoanPage />} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/payments" element={<PaymentPage />} />
           </Route>
         </Route>
 
@@ -67,6 +70,7 @@ function App() {
           }
         >
           <Route index element={<AdminDashboard />} />
+          <Route path="profile" element={<AdminProfile />} />
           <Route
             path="books"
             element={<Navigate to="/admin/books/table" replace />}

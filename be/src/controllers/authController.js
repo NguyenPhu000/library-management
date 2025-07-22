@@ -191,9 +191,15 @@ const getCurrentUser = async (req, res) => {
           id: user.id,
           username: user.username,
           email: user.email,
-          fullName: user.fullName,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          phone: user.phone,
+          address: user.address,
+          gender: user.gender,
           role: user.role,
           adminType: user.adminType,
+          isActive: user.isActive,
+          created_at: user.created_at,
         },
       });
     } catch (err) {

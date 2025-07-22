@@ -199,9 +199,21 @@ const LoanTable = () => {
             {loan.Member?.member_code || "N/A"}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {loan.Member?.User?.full_name ||
-              loan.Member?.User?.username ||
-              "N/A"}
+            {(() => {
+              const user = loan.Member?.User;
+              if (!user) return "N/A";
+
+              // Try to construct full name from first_name and last_name
+              const fullName = `${user.first_name || ""} ${
+                user.last_name || ""
+              }`.trim();
+              if (fullName) return fullName;
+
+              // Fallback to username
+              if (user.username) return user.username;
+
+              return "N/A";
+            })()}
           </div>
           {loan.Member?.User?.email && (
             <div className="text-xs text-gray-400 dark:text-gray-500 truncate max-w-32">
@@ -318,17 +330,30 @@ const LoanTable = () => {
             </div>
           )}
 
-          {/* Renew Count */}
-          {loan.renew_count > 0 && (
-            <div className="text-blue-600 dark:text-blue-400">
-              Gia hạn: {loan.renew_count}/1 lần
-            </div>
-          )}
+          {/* Renew Count - luôn hiển thị để người quản lý dễ quan sát */}
+          <div className="text-blue-600 dark:text-blue-400">
+            Gia hạn: {loan.renew_count}/1 lần
+          </div>
 
           {/* Approver */}
-          {loan.approver?.full_name && (
+          {loan.approver && (
             <div className="text-gray-600 dark:text-gray-400">
-              Duyệt bởi: {loan.approver.full_name}
+              Duyệt bởi:{" "}
+              {(() => {
+                const user = loan.approver?.User;
+                if (!user) return "N/A";
+
+                // Try to construct full name from first_name and last_name
+                const fullName = `${user.first_name || ""} ${
+                  user.last_name || ""
+                }`.trim();
+                if (fullName) return fullName;
+
+                // Fallback to username
+                if (user.username) return user.username;
+
+                return "N/A";
+              })()}
             </div>
           )}
 

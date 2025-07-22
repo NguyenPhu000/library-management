@@ -49,10 +49,15 @@ const login = async (username, password) => {
       id: user.user_id,
       username: user.username,
       email: user.email,
-      fullName: user.full_name,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      phone: user.phone,
+      address: user.address,
+      gender: user.gender,
       role: user.role || "member",
       adminType,
       isActive: user.is_active,
+      created_at: user.create_at,
     };
 
     return { success: true, user: userObj };
@@ -84,9 +89,14 @@ const register = async (data) => {
       id: newUser.user_id,
       username: newUser.username,
       email: newUser.email,
-      fullName: newUser.full_name,
+      first_name: newUser.first_name,
+      last_name: newUser.last_name,
+      phone: newUser.phone,
+      address: newUser.address,
+      gender: newUser.gender,
       role: newUser.role || "member",
       isActive: newUser.is_active,
+      created_at: newUser.create_at,
     };
 
     return { success: true, message: "Đăng ký thành công!", user: userObj };
@@ -126,10 +136,15 @@ const getUserById = async (userId) => {
       id: user.user_id,
       username: user.username,
       email: user.email,
-      fullName: user.full_name,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      phone: user.phone,
+      address: user.address,
+      gender: user.gender,
       role: user.role || "member",
       adminType,
       isActive: user.is_active,
+      created_at: user.create_at, // Add this line
     };
   } catch (error) {
     console.error("Lỗi lấy thông tin user:", error);

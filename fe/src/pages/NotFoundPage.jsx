@@ -12,7 +12,7 @@ const NotFoundPage = () => {
           Trang bạn đang tìm kiếm không tồn tại hoặc đã bị di chuyển.
         </p>
         <Link
-          to="/"
+          to="/home"
           className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors"
         >
           Quay lại trang chủ

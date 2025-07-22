@@ -16,13 +16,13 @@ const getBaseURL = () => {
     return import.meta.env.VITE_API_URL;
   }
 
-  // Production fallback: same domain
-  if (process.env.NODE_ENV === "production") {
-    return "/api";
+  // Development: gọi trực tiếp đến backend API
+  if (process.env.NODE_ENV !== "production") {
+    return "http://localhost:8081/api";
   }
 
-  // Development fallback
-  return "http://localhost:8081/api";
+  // Production: same domain
+  return "/api";
 };
 
 const baseURL = getBaseURL();

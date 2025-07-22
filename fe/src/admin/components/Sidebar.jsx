@@ -202,7 +202,7 @@ const Sidebar = ({ mobile = false, onClose = () => {} }) => {
       {/* Bottom section */}
       <div className="px-4 py-4 border-t border-gray-200">
         <NavLink
-          to="/"
+          to="/home"
           className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100"
           onClick={() => mobile && onClose()}
         >
