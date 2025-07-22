@@ -120,7 +120,7 @@ const CategoryLiveShow = () => {
       )}
 
       {/* Custom slick dots */}
-      <style jsx>{`
+      <style>{`
         .slick-dots {
           bottom: -35px;
         }

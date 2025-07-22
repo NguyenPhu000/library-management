@@ -22,8 +22,14 @@ import {
 import Swal from "sweetalert2";
 
 const LoanPage = () => {
-  const { loans, loading, error, requestRenewLoan, fetchLoans } =
-    useContext(LoanContext);
+  const {
+    loans,
+    loading,
+    error,
+    requestRenewLoan,
+    fetchLoans,
+    cancelLoanRequest,
+  } = useContext(LoanContext);
   const [expandedCard, setExpandedCard] = useState(null);
   const [filter, setFilter] = useState("all"); // all, overdue, normal, pending, pickup
   const [searchTerm, setSearchTerm] = useState("");
@@ -755,6 +761,17 @@ const LoanPage = () => {
 
                     {/* Actions */}
                     <div className="flex gap-3">
+                      {/* Nút hủy yêu cầu cho trạng thái pending_pickup */}
+                      {loan.status === "pending_pickup" && (
+                        <button
+                          onClick={() => cancelLoanRequest(loan.loan_id)}
+                          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-red-500/25"
+                        >
+                          <FontAwesomeIcon icon={faExclamationTriangle} />
+                          <span>Hủy yêu cầu</span>
+                        </button>
+                      )}
+
                       {/* Chỉ hiển thị nút Gia hạn khi status = "borrowed" */}
                       {loan.status === "borrowed" && (
                         <>

@@ -121,7 +121,9 @@ const Header = () => {
         to="/"
         className="text-2xl font-bold text-lightGreen hover:text-green-400 transition-colors vietnamese-heading"
       >
-        📚 Thư viện
+        <span className="font-sans font-black text-3xl tracking-tight bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+          GÓC THƯ VIỆN
+        </span>
       </Link>
 
       {/* Navigation */}

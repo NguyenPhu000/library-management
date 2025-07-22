@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import viewEngine from "./config/viewEngine";
+import loanService from "./services/loanService.js";
 dotenv.config();
 
 const app = express();
@@ -13,7 +14,24 @@ const app = express();
 // Cấu hình CORS cho phép React Frontend gọi API
 app.use(
   cors({
-    origin: ["http://localhost:5137"], // Các cổng phát triển React
+    origin: (origin, callback) => {
+      // Cho phép request không có origin (mobile apps, Postman)
+      if (!origin) return callback(null, true);
+
+      // Cho phép localhost và các domain trong env
+      const allowedOrigins = [
+        "http://localhost:5137",
+        "http://localhost:3000",
+        process.env.FRONTEND_URL,
+        process.env.ALLOWED_ORIGIN,
+      ].filter(Boolean);
+
+      if (allowedOrigins.includes(origin) || origin.includes("localhost")) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
@@ -58,7 +76,25 @@ app.use("*", (req, res) => {
 // Set the port
 const port = process.env.PORT || 8081;
 
+// Auto cleanup expired loan requests - chạy mỗi giờ
+const startAutoCleanup = () => {
+  const CLEANUP_INTERVAL = 60 * 60 * 1000; // 1 giờ
+
+  // Chạy lần đầu sau 5 phút
+  setTimeout(() => {
+    loanService.autoCleanupExpiredRequests();
+  }, 5 * 60 * 1000);
+
+  // Sau đó chạy mỗi giờ
+  setInterval(() => {
+    loanService.autoCleanupExpiredRequests();
+  }, CLEANUP_INTERVAL);
+
+  console.log("🧹 Auto cleanup scheduler started");
+};
+
 // Start the server
 app.listen(port, () => {
   console.log(`API Server is running on port: ${port}`);
+  startAutoCleanup();
 });

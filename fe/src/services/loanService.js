@@ -82,6 +82,20 @@ const loanService = {
     }
   },
 
+  // Member hủy yêu cầu mượn sách
+  async cancelLoanRequest(loanId, memberId) {
+    try {
+      const response = await API.post(`/loans/cancel/${loanId}`, {
+        member_id: memberId,
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Không thể hủy yêu cầu mượn sách."
+      );
+    }
+  },
+
   // === PICKUP CODE FUNCTIONS ===
 
   // Admin xác thực pickup code

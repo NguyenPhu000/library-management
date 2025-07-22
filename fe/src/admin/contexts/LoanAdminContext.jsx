@@ -347,22 +347,43 @@ export const LoanAdminProvider = ({ children }) => {
     /* BẮT BUỘC thủ thư nhập lại mã để xác nhận */
     const { value: inputCode } = await Swal.fire({
       title: "Nhập mã nhận sách",
-      text: "Vui lòng nhập mã (PICK-XXXX) để xác nhận giao sách",
+      text: "Vui lòng nhập 4 ký tự cuối của mã nhận sách để xác nhận giao sách",
       input: "text",
-      inputPlaceholder: pickupCode || "PICK-XXXX",
+      inputPlaceholder: pickupCode ? pickupCode.replace(/^PICK-/, "") : "XXXX",
+      html: `
+        <div style="margin-bottom: 15px;">
+          <p style="margin-bottom: 10px;">Vui lòng nhập 4 ký tự cuối của mã nhận sách để xác nhận giao sách</p>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+            <span style="font-family: monospace; font-weight: bold; color: #666;">PICK-</span>
+            <div id="pickup-input-container" style="display: inline-block;"></div>
+          </div>
+        </div>
+      `,
+      didOpen: () => {
+        const input = Swal.getInput();
+        input.style.fontFamily = "monospace";
+        input.style.fontWeight = "bold";
+        input.style.textTransform = "uppercase";
+        input.style.textAlign = "center";
+        input.style.fontSize = "16px";
+        input.maxLength = 4;
+        input.addEventListener("input", (e) => {
+          e.target.value = e.target.value
+            .replace(/[^A-Z0-9]/gi, "")
+            .toUpperCase();
+        });
+      },
       confirmButtonText: "Xác nhận",
       showCancelButton: true,
       inputValidator: (value) => {
         if (!value) return "Bạn phải nhập mã!";
-        if (value.trim().toUpperCase() !== pickupCode.toUpperCase())
+        const fullCode = `PICK-${value}`;
+        if (fullCode.toUpperCase() !== pickupCode.toUpperCase())
           return "Mã không khớp!";
       },
     });
 
-    if (
-      !inputCode ||
-      inputCode.trim().toUpperCase() !== pickupCode.toUpperCase()
-    ) {
+    if (!inputCode) {
       return { success: false, message: "Mã xác nhận không hợp lệ" };
     }
 
@@ -539,14 +560,40 @@ export const LoanAdminProvider = ({ children }) => {
       // Nhập mã PICK-XXXX để xác nhận
       const { value: inputCode } = await Swal.fire({
         title: "Nhập mã nhận sách",
-        text: "Vui lòng nhập mã PICK-XXXX để xác nhận trả sách",
+        text: "Vui lòng nhập 4 ký tự cuối của mã nhận sách để xác nhận trả sách",
         input: "text",
-        inputPlaceholder: pickupCode || "PICK-XXXX",
+        inputPlaceholder: pickupCode
+          ? pickupCode.replace(/^PICK-/, "")
+          : "XXXX",
+        html: `
+          <div style="margin-bottom: 15px;">
+            <p style="margin-bottom: 10px;">Vui lòng nhập 4 ký tự cuối của mã nhận sách để xác nhận trả sách</p>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+              <span style="font-family: monospace; font-weight: bold; color: #666;">PICK-</span>
+              <div id="pickup-input-container" style="display: inline-block;"></div>
+            </div>
+          </div>
+        `,
+        didOpen: () => {
+          const input = Swal.getInput();
+          input.style.fontFamily = "monospace";
+          input.style.fontWeight = "bold";
+          input.style.textTransform = "uppercase";
+          input.style.textAlign = "center";
+          input.style.fontSize = "16px";
+          input.maxLength = 4;
+          input.addEventListener("input", (e) => {
+            e.target.value = e.target.value
+              .replace(/[^A-Z0-9]/gi, "")
+              .toUpperCase();
+          });
+        },
         confirmButtonText: "Xác nhận",
         showCancelButton: true,
         inputValidator: (value) => {
           if (!value) return "Bạn phải nhập mã!";
-          if (value.trim().toUpperCase() !== pickupCode.toUpperCase())
+          const fullCode = `PICK-${value}`;
+          if (fullCode.toUpperCase() !== pickupCode.toUpperCase())
             return "Mã không khớp!";
         },
       });

@@ -30,6 +30,147 @@ const generatePickupCode = () => {
   return result;
 };
 
+// === AUTO CLEANUP EXPIRED REQUESTS ===
+
+// Tự động hủy các yêu cầu mượn quá hạn - "viết clean code thôi đừng bao giờ hard code"
+const autoCleanupExpiredRequests = async () => {
+  const transaction = await sequelize.transaction();
+  try {
+    // Tìm các yêu cầu quá hạn chưa được nhận
+    const expiredLoans = await Loan.findAll({
+      where: {
+        status: "pending_pickup",
+        hold_until: {
+          [Op.lt]: new Date(), // Đã quá hạn
+        },
+      },
+      include: [{ model: Book }],
+      transaction,
+    });
+
+    if (expiredLoans.length === 0) {
+      await transaction.rollback();
+      return {
+        success: true,
+        message: "Không có yêu cầu nào quá hạn",
+        cancelled: 0,
+      };
+    }
+
+    let cancelledCount = 0;
+
+    for (const loan of expiredLoans) {
+      // Cập nhật trạng thái thành cancelled
+      await loan.update(
+        {
+          status: "cancelled",
+          rejection_reason: "Tự động hủy do quá hạn nhận sách",
+          notes:
+            (loan.notes || "") +
+            `\nTự động hủy vào ${new Date().toISOString()}`,
+        },
+        { transaction }
+      );
+
+      // Hoàn lại số lượng sách có sẵn
+      await Book.increment("available_copies", {
+        where: { book_id: loan.book_id },
+        transaction,
+      });
+
+      cancelledCount++;
+    }
+
+    await transaction.commit();
+
+    console.log(
+      `🧹 Auto cleanup: Cancelled ${cancelledCount} expired loan requests`
+    );
+
+    return {
+      success: true,
+      message: `Đã tự động hủy ${cancelledCount} yêu cầu quá hạn`,
+      cancelled: cancelledCount,
+    };
+  } catch (error) {
+    await transaction.rollback();
+    console.error("❌ Auto cleanup error:", error);
+    return {
+      success: false,
+      message: "Lỗi khi tự động hủy yêu cầu quá hạn: " + error.message,
+    };
+  }
+};
+
+// Member hủy yêu cầu mượn sách
+const cancelLoanRequest = async (member_id, loan_id) => {
+  const transaction = await sequelize.transaction();
+  try {
+    // Tìm loan thuộc về member và có thể hủy
+    const loan = await Loan.findOne({
+      where: {
+        loan_id,
+        member_id,
+        status: { [Op.in]: ["pending_pickup", "requested"] }, // Chỉ hủy được khi chưa nhận sách
+      },
+      include: [{ model: Book }],
+      transaction,
+    });
+
+    if (!loan) {
+      await transaction.rollback();
+      return {
+        success: false,
+        message: "Không tìm thấy yêu cầu mượn sách hoặc không thể hủy!",
+      };
+    }
+
+    // Kiểm tra xem đã quá hạn hủy chưa (có thể hủy trong vòng 1 giờ sau khi tạo)
+    const requestTime = new Date(loan.request_date);
+    const now = new Date();
+    const hoursSinceRequest = (now - requestTime) / (1000 * 60 * 60);
+
+    if (hoursSinceRequest > 24) {
+      await transaction.rollback();
+      return {
+        success: false,
+        message: "Không thể hủy yêu cầu sau 24 giờ. Vui lòng liên hệ thủ thư!",
+      };
+    }
+
+    // Cập nhật trạng thái thành cancelled
+    await loan.update(
+      {
+        status: "cancelled",
+        rejection_reason: "Hủy bởi người dùng",
+        notes:
+          (loan.notes || "") +
+          `\nHủy bởi member vào ${new Date().toISOString()}`,
+      },
+      { transaction }
+    );
+
+    // Hoàn lại số lượng sách có sẵn
+    await Book.increment("available_copies", {
+      where: { book_id: loan.book_id },
+      transaction,
+    });
+
+    await transaction.commit();
+    return {
+      success: true,
+      message: "Đã hủy yêu cầu mượn sách thành công!",
+      loan: loan,
+    };
+  } catch (error) {
+    await transaction.rollback();
+    return {
+      success: false,
+      message: "Lỗi khi hủy yêu cầu mượn sách: " + error.message,
+    };
+  }
+};
+
 // Member yêu cầu mượn sách - TỰ ĐỘNG SINH MÃ
 const requestBook = async (member_id, book_id, notes = "") => {
   const transaction = await sequelize.transaction();
@@ -1150,6 +1291,8 @@ export default {
   requestBook, // Member yêu cầu + tự động sinh mã
   validatePickupCode, // Admin xác thực mã
   confirmPickupWithCode, // Admin xác nhận đưa sách bằng mã
+  cancelLoanRequest, // Member hủy yêu cầu
+  autoCleanupExpiredRequests, // Tự động hủy yêu cầu quá hạn
 
   // Traditional workflow functions (legacy)
   approveBookRequest,

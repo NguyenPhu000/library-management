@@ -16,6 +16,9 @@ router.get("/member/:memberId/current", loanController.getMemberCurrentLoans);
 // Member lấy lịch sử mượn sách
 router.get("/member/:memberId/history", loanController.getMemberLoanHistory);
 
+// Member hủy yêu cầu mượn sách
+router.post("/cancel/:loan_id", loanController.cancelLoanRequest);
+
 // === PICKUP CODE ROUTES (NEW WORKFLOW) ===
 // Admin xác thực pickup code
 router.post("/admin/validate-pickup-code", loanController.validatePickupCode);
@@ -24,6 +27,12 @@ router.post("/admin/validate-pickup-code", loanController.validatePickupCode);
 router.post(
   "/admin/confirm-pickup-with-code",
   loanController.confirmPickupWithCode
+);
+
+// Admin cleanup expired requests
+router.post(
+  "/admin/cleanup-expired-requests",
+  loanController.cleanupExpiredRequests
 );
 
 // === ADMIN ROUTES (TRADITIONAL WORKFLOW) ===

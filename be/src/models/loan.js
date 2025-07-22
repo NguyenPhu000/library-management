@@ -41,7 +41,8 @@ module.exports = (sequelize, DataTypes) => {
           "rejected",
           "borrowed",
           "returned",
-          "overdue"
+          "overdue",
+          "cancelled"
         ),
         allowNull: false,
         defaultValue: "requested",

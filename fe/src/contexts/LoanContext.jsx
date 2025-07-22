@@ -365,6 +365,65 @@ export const LoanProvider = ({ children }) => {
     throw new Error("Không thể tải thông tin khoản vay");
   };
 
+  // Member hủy yêu cầu mượn sách
+  const cancelLoanRequest = async (loanId) => {
+    if (!currentUser || !memberId) {
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Bạn cần đăng nhập để hủy yêu cầu mượn sách.",
+      });
+      return { success: false, message: "Chưa đăng nhập" };
+    }
+
+    try {
+      // Xác nhận hủy
+      const { isConfirmed } = await Swal.fire({
+        title: "Xác nhận hủy yêu cầu",
+        text: "Bạn có chắc chắn muốn hủy yêu cầu mượn sách này?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Hủy yêu cầu",
+        cancelButtonText: "Giữ lại",
+        confirmButtonColor: "#EF4444",
+        cancelButtonColor: "#6B7280",
+      });
+
+      if (!isConfirmed) {
+        return { success: false, message: "Đã hủy thao tác" };
+      }
+
+      const result = await loanService.cancelLoanRequest(loanId, memberId);
+
+      if (result.success) {
+        Swal.fire({
+          icon: "success",
+          title: "Đã hủy yêu cầu",
+          text: result.message || "Yêu cầu mượn sách đã được hủy thành công!",
+          confirmButtonColor: "#10B981",
+        });
+
+        // Refresh danh sách loans
+        fetchLoans();
+        fetchLoanHistory();
+
+        return { success: true, message: result.message };
+      } else {
+        throw new Error(result.message || "Không thể hủy yêu cầu");
+      }
+    } catch (err) {
+      console.error("Lỗi khi hủy yêu cầu mượn sách:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text:
+          err.message ||
+          "Không thể hủy yêu cầu mượn sách. Vui lòng thử lại sau.",
+      });
+      return { success: false, message: err.message };
+    }
+  };
+
   // =============================================================================
   // UTILITY FUNCTIONS
   // =============================================================================
@@ -437,6 +496,7 @@ export const LoanProvider = ({ children }) => {
         borrowBook: borrowBookContext,
         requestRenewLoan,
         getLoanDetail,
+        cancelLoanRequest,
 
         // Utility functions
         getLoanStatistics,

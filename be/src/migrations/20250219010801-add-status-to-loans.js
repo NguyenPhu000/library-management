@@ -12,7 +12,8 @@ module.exports = {
         "pending_pickup", // Đã duyệt, chờ nhận sách
         "borrowed", // Đang mượn
         "returned", // Đã trả
-        "rejected" // Từ chối
+        "rejected", // Từ chối
+        "cancelled" // Hủy bởi user
       ),
       allowNull: false,
       defaultValue: "requested",

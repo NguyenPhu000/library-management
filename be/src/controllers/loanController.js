@@ -183,9 +183,64 @@ const confirmPickupWithCode = async (req, res) => {
       loan: result.loan,
     });
   } catch (error) {
+    console.error("confirmPickupWithCode error:", error);
     res.status(500).json({
       success: false,
       message: "Có lỗi khi xác nhận nhận sách: " + error.message,
+    });
+  }
+};
+
+// Member hủy yêu cầu mượn sách
+const cancelLoanRequest = async (req, res) => {
+  try {
+    const { loan_id } = req.params;
+    const { member_id } = req.body;
+
+    if (!loan_id || !member_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Thiếu thông tin loan_id hoặc member_id",
+      });
+    }
+
+    const result = await loanService.cancelLoanRequest(member_id, loan_id);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.message,
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: result.message,
+      loan: result.loan,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Có lỗi khi hủy yêu cầu mượn sách: " + error.message,
+    });
+  }
+};
+
+// Admin cleanup expired requests
+const cleanupExpiredRequests = async (req, res) => {
+  try {
+    const result = await loanService.autoCleanupExpiredRequests();
+
+    return res.json({
+      success: true,
+      message: result.message,
+      cancelled: result.cancelled,
+    });
+  } catch (error) {
+    console.error("Cleanup controller error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Có lỗi khi cleanup: " + error.message,
     });
   }
 };
@@ -699,6 +754,8 @@ export default {
   requestRenewal, // POST /api/loans/renewal/request
   getMemberCurrentLoans, // GET /api/loans/member/:memberId/current
   getMemberLoanHistory, // GET /api/loans/member/:memberId/history
+  cancelLoanRequest, // POST /api/loans/cancel/:loan_id
+  cleanupExpiredRequests, // POST /api/loans/admin/cleanup-expired-requests
 
   // Traditional admin endpoints
   getPendingRequests, // GET /api/loans/admin/pending-requests

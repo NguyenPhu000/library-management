@@ -68,14 +68,43 @@ const LoanSearchForm = () => {
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <FaSearch className="h-4 w-4 text-gray-400 dark:text-gray-500" />
             </div>
-            <input
-              type="text"
-              id="query"
-              value={localSearchTerm}
-              onChange={(e) => setLocalSearchTerm(e.target.value)}
-              placeholder="Nhập từ khóa tìm kiếm..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            {localCriteria === "pickup_code" ? (
+              <div className="relative">
+                <div className="absolute inset-y-0 left-10 flex items-center pointer-events-none text-gray-500 dark:text-gray-400 text-sm font-mono">
+                  PICK-
+                </div>
+                <input
+                  type="text"
+                  id="query"
+                  value={localSearchTerm.replace(/^PICK-/, "")}
+                  onChange={(e) => {
+                    const value = e.target.value
+                      .replace(/[^A-Z0-9]/gi, "")
+                      .toUpperCase()
+                      .slice(0, 4);
+                    setLocalSearchTerm(value ? `PICK-${value}` : "");
+                  }}
+                  placeholder="XXXX"
+                  className="w-full pl-20 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                  maxLength={4}
+                />
+              </div>
+            ) : (
+              <input
+                type="text"
+                id="query"
+                value={localSearchTerm}
+                onChange={(e) => setLocalSearchTerm(e.target.value)}
+                placeholder={
+                  localCriteria === "member_code"
+                    ? "Nhập mã thành viên..."
+                    : localCriteria === "book_title"
+                    ? "Nhập tên sách..."
+                    : "Nhập từ khóa tìm kiếm..."
+                }
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            )}
           </div>
         </div>
 

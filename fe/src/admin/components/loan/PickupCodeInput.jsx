@@ -37,16 +37,6 @@ const PickupCodeInput = ({ onConfirmSuccess }) => {
     return codePart ? `PICK-${codePart}` : "PICK-";
   };
 
-  const handleInputChange = (e) => {
-    const formatted = formatPickupCode(e.target.value);
-    setPickupCode(formatted);
-
-    // Clear validation when user types
-    if (validationResult) {
-      setValidationResult(null);
-    }
-  };
-
   const validateCode = async () => {
     if (!pickupCode || pickupCode.length < 8) {
       Swal.fire({
@@ -180,18 +170,33 @@ const PickupCodeInput = ({ onConfirmSuccess }) => {
       <div className="pickup-input-form">
         <div className="flex gap-3 mb-4">
           <div className="flex-1">
-            <input
-              type="text"
-              value={pickupCode}
-              onChange={handleInputChange}
-              onKeyPress={handleKeyPress}
-              placeholder="PICK-XXXX"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-center font-mono text-lg font-bold tracking-wider uppercase text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              maxLength={9}
-              disabled={validating || confirming}
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 dark:text-gray-400 font-mono text-lg font-bold tracking-wider">
+                PICK-
+              </div>
+              <input
+                type="text"
+                value={pickupCode.replace(/^PICK-/, "")}
+                onChange={(e) => {
+                  const value = e.target.value
+                    .replace(/[^A-Z0-9]/gi, "")
+                    .toUpperCase()
+                    .slice(0, 4);
+                  setPickupCode(value ? `PICK-${value}` : "");
+                  // Clear validation when user types
+                  if (validationResult) {
+                    setValidationResult(null);
+                  }
+                }}
+                onKeyPress={handleKeyPress}
+                placeholder="XXXX"
+                className="w-full pl-20 pr-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-center font-mono text-lg font-bold tracking-wider uppercase text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                maxLength={4}
+                disabled={validating || confirming}
+              />
+            </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">
-              Định dạng: PICK-XXXX (4 ký tự)
+              Chỉ nhập 4 ký tự cuối (PICK- sẽ tự động thêm)
             </p>
           </div>
 
