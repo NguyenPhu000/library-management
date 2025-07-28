@@ -2,12 +2,15 @@ import { AdminAPI } from "../../services/api";
 
 const adminPaymentService = {
   // Lấy danh sách tất cả thanh toán với phân trang
-  getAllPayments: async (page = 1, limit = 10, filters = {}) => {
+  getAllPayments: async (page = 1, limit = 10, allParams = {}) => {
     try {
+      const { sort, order, ...filters } = allParams; // Destructure sort and order from allParams
       const params = {
         page,
         limit,
-        ...filters,
+        sort, // Pass sort explicitly
+        order, // Pass order explicitly
+        ...filters, // Pass remaining filters
       };
 
       const response = await AdminAPI.get("/payments", { params });
@@ -161,6 +164,8 @@ const adminPaymentService = {
           dailyRevenue: 0,
           averagePayment: 0,
           revenueGrowth: 0,
+          monthlyRevenueData: Array(12).fill(0), // Thêm mặc định
+          monthlyRevenueLabels: Array(12).fill("T X"), // Thêm mặc định
         },
       };
     } catch (error) {
@@ -180,6 +185,8 @@ const adminPaymentService = {
           dailyRevenue: 0,
           averagePayment: 0,
           revenueGrowth: 0,
+          monthlyRevenueData: Array(12).fill(0), // Thêm mặc định
+          monthlyRevenueLabels: Array(12).fill("T X"), // Thêm mặc định
         },
       };
     }

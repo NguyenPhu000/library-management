@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2"; // Thêm SweetAlert2
 import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 import {
   FaMoneyBillWave,
   FaPlus,
@@ -44,7 +46,8 @@ const PaymentManagePage = () => {
 
   // Fetch payments with filters, pagination, and sorting
   const fetchPayments = useCallback(
-    async (page = 1, newFilters = filters) => {
+    async (page = 1, currentFilters = filters) => {
+      // Rename newFilters to currentFilters for clarity
       try {
         setLoading(true);
         const params = {
@@ -52,13 +55,13 @@ const PaymentManagePage = () => {
           limit: pagination.limit,
           sort: sortConfig.key,
           order: sortConfig.direction,
-          ...newFilters,
+          ...currentFilters,
         };
 
         const response = await adminPaymentService.getAllPayments(
           params.page,
           params.limit,
-          params.status
+          params // Pass the entire params object as filters to the service
         );
 
         if (response.success) {
@@ -80,13 +83,13 @@ const PaymentManagePage = () => {
         setLoading(false);
       }
     },
-    [filters, pagination.limit, sortConfig]
+    [filters, pagination.limit, sortConfig] // Add filters to dependency array
   );
 
   // Initial load
   useEffect(() => {
     fetchPayments();
-  }, []);
+  }, [fetchPayments]); // Add fetchPayments to dependency array to react to its changes
 
   // Handle filter changes
   const handleFilterChange = (newFilters) => {
@@ -203,18 +206,45 @@ const PaymentManagePage = () => {
       );
 
       if (response.success) {
-        // Create and download file
-        const blob = new Blob([JSON.stringify(response.data, null, 2)], {
-          type: "application/json",
+        const payments = response.data.data.payments; // Access the payments array
+        console.log("Payments data for Excel export:", payments);
+
+        // Prepare data for Excel
+        const wsData = payments.map((payment) => [
+          payment.payment_id,
+          payment.payment_date,
+          payment.payment_method,
+          payment.amount,
+          payment.status,
+          payment.member_code,
+          payment.loan_id,
+        ]);
+
+        // Add header row
+        const headers = [
+          "ID Thanh toán",
+          "Ngày thanh toán",
+          "Phương thức",
+          "Số tiền",
+          "Trạng thái",
+          "Mã thành viên",
+          "Mã khoản vay",
+        ];
+        wsData.unshift(headers);
+
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Báo cáo thanh toán");
+
+        // Write and download file
+        const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+        const blob = new Blob([excelBuffer], {
+          type: "application/octet-stream",
         });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `payment-report-${
-          new Date().toISOString().split("T")[0]
-        }.json`;
-        link.click();
-        window.URL.revokeObjectURL(url);
+        saveAs(
+          blob,
+          `payment-report-${new Date().toISOString().split("T")[0]}.xlsx`
+        );
 
         toast.success("Xuất dữ liệu thành công!");
       } else {

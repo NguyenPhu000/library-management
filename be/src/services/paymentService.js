@@ -4,25 +4,110 @@ const { Sequelize } = db;
 import vietqrService from "./vietqrService.js";
 import { isTestMode } from "../config/testConfig.js";
 
-// Lấy danh sách tất cả các payment với tất cả các thuộc tính
-const getAllPayments = async () => {
+// Lấy danh sách tất cả các payment với tất cả các thuộc tính và hỗ trợ lọc, phân trang, sắp xếp
+const getAllPayments = async (
+  page = 1,
+  limit = 10,
+  sort = "payment_date",
+  order = "desc",
+  filters = {}
+) => {
   try {
-    return await Payment.findAll({
-      include: [
-        {
-          model: Member,
-          attributes: ["member_code"],
-        },
-        {
-          model: Loan,
-          attributes: ["loan_id", "fine_amount"],
-        },
-        {
-          model: User,
-          attributes: ["username"],
-        },
-      ],
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+    const whereClause = {};
+    const includeClause = [
+      { model: Member, attributes: ["member_code"] },
+      {
+        model: Loan,
+        attributes: ["loan_id", "fine_amount", "book_id"],
+        include: [{ model: db.Book, attributes: ["title"] }],
+      },
+      { model: User, attributes: ["username"] },
+    ];
+
+    // Apply filters
+    if (filters.status) {
+      // Map 'completed' status from frontend to 'APPROVED' in backend
+      if (filters.status.toLowerCase() === "completed") {
+        whereClause.status = "APPROVED";
+      } else {
+        whereClause.status = filters.status.toUpperCase();
+      }
+    }
+    if (filters.paymentMethod) {
+      whereClause.payment_method = filters.paymentMethod.toLowerCase();
+    }
+    if (filters.startDate && filters.endDate) {
+      const startOfDay = new Date(filters.startDate);
+      const endOfDay = new Date(filters.endDate);
+      endOfDay.setDate(endOfDay.getDate() + 1); // Move to the next day to include the full end date
+      whereClause.payment_date = {
+        [Sequelize.Op.gte]: startOfDay,
+        [Sequelize.Op.lt]: endOfDay, // Use less than the beginning of the next day
+      };
+    } else if (filters.startDate) {
+      const startOfDay = new Date(filters.startDate);
+      whereClause.payment_date = {
+        [Sequelize.Op.gte]: startOfDay,
+      };
+    } else if (filters.endDate) {
+      const endOfDay = new Date(filters.endDate);
+      endOfDay.setDate(endOfDay.getDate() + 1); // Move to the next day to include the full end date
+      whereClause.payment_date = {
+        [Sequelize.Op.lt]: endOfDay, // Use less than the beginning of the next day
+      };
+    }
+    if (filters.memberId) {
+      whereClause.member_id = filters.memberId;
+    }
+    if (filters.minAmount && filters.maxAmount) {
+      whereClause.amount = {
+        [Sequelize.Op.between]: [
+          parseFloat(filters.minAmount),
+          parseFloat(filters.maxAmount),
+        ],
+      };
+    } else if (filters.minAmount) {
+      whereClause.amount = {
+        [Sequelize.Op.gte]: parseFloat(filters.minAmount),
+      };
+    } else if (filters.maxAmount) {
+      whereClause.amount = {
+        [Sequelize.Op.lte]: parseFloat(filters.maxAmount),
+      };
+    }
+
+    // Search term for member code or book title
+    if (filters.searchTerm) {
+      const searchTermLower = filters.searchTerm.toLowerCase();
+      whereClause[Sequelize.Op.or] = [
+        Sequelize.where(Sequelize.col("Member.member_code"), {
+          [Sequelize.Op.like]: `%${searchTermLower}%`,
+        }),
+        Sequelize.where(Sequelize.col("Loan.Book.title"), {
+          [Sequelize.Op.like]: `%${searchTermLower}%`,
+        }),
+        // Add other searchable fields if necessary
+      ];
+    }
+
+    const { count, rows } = await Payment.findAndCountAll({
+      where: whereClause,
+      include: includeClause,
+      limit: parseInt(limit),
+      offset: offset,
+      order: [[sort, order.toUpperCase()]],
+      distinct: true, // For accurate count with includes
     });
+
+    return {
+      payments: rows,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(count / parseInt(limit)),
+      totalCount: count,
+      limit: parseInt(limit),
+      offset: offset,
+    };
   } catch (error) {
     throw new Error("Lỗi lấy danh sách thanh toán: " + error.message);
   }
@@ -115,10 +200,22 @@ const createPayment = async (paymentData) => {
       );
     }
 
-    // Kiểm tra loan tồn tại
-    const loan = await Loan.findByPk(loan_id);
+    // Kiểm tra loan tồn tại và lấy thông tin sách
+    const loan = await Loan.findByPk(loan_id, {
+      include: [{ model: db.Book, attributes: ["title"] }],
+      transaction,
+    });
     if (!loan) {
       throw new Error("Không tìm thấy khoản vay.");
+    }
+
+    // Lấy thông tin member_code
+    const member = await Member.findByPk(member_id, {
+      attributes: ["member_code"],
+      transaction,
+    });
+    if (!member) {
+      throw new Error("Không tìm thấy thành viên.");
     }
 
     // Tạo payment record
@@ -144,6 +241,8 @@ const createPayment = async (paymentData) => {
           payment_id: payment.payment_id,
           amount: payment.amount,
           description: payment.description,
+          member_code: member.member_code,
+          book_title: loan.Book ? loan.Book.title : "Unknown Book",
         });
 
         if (qrResult.success) {
@@ -170,7 +269,7 @@ const createPayment = async (paymentData) => {
           );
         }
       } catch (qrError) {
-        console.error("QR Generation Error:", qrError);
+        // console.error("QR Generation Error:", qrError);
         // Vẫn tạo payment nhưng không có QR
         await payment.update(
           {
@@ -399,7 +498,20 @@ const getPaymentStats = async (startDate, endDate) => {
 
     const payments = await Payment.findAll({
       where: whereClause,
-      attributes: ["amount", "status", "payment_method", "payment_date"],
+      attributes: [
+        "amount",
+        "status",
+        "payment_method",
+        "payment_date",
+        "loan_id",
+      ], // Thêm loan_id
+      include: [
+        {
+          model: Loan,
+          attributes: ["fine_amount"], // Chỉ cần fine_amount từ Loan
+          required: false, // Không yêu cầu mọi payment phải có loan
+        },
+      ],
     });
 
     const stats = {
@@ -413,11 +525,34 @@ const getPaymentStats = async (startDate, endDate) => {
       dailyRevenue: 0,
       averagePayment: 0,
       revenueGrowth: 0,
+      totalFinesCollected: 0, // Trường mới để lưu tổng tiền phạt đã thu
     };
 
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
-    const today = new Date().toDateString();
+    const todayPaymentStats = new Date().toDateString();
+
+    const monthlyRevenueData = Array(12).fill(0);
+    const monthlyRevenueLabels = [];
+    const monthlyStatsCurrentMonth = new Date().getMonth(); // 0-indexed
+    const monthlyStatsCurrentYear = new Date().getFullYear();
+
+    // Khởi tạo nhãn tháng cho 12 tháng gần nhất (YYYY-MM)
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(
+        monthlyStatsCurrentYear,
+        monthlyStatsCurrentMonth - (11 - i),
+        1
+      ); // Bắt đầu từ 11 tháng trước, đến tháng hiện tại
+      monthlyRevenueLabels.push(
+        `${date.getFullYear()}-${(date.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}`
+      ); // Store YYYY-MM
+    }
+
+    // Use a Map to aggregate revenue by month (YYYY-MM) for better accuracy
+    const revenueByMonthMap = new Map();
 
     payments.forEach((payment) => {
       const amount = parseFloat(payment.amount) || 0;
@@ -437,7 +572,7 @@ const getPaymentStats = async (startDate, endDate) => {
         }
 
         // Daily revenue
-        if (paymentDate.toDateString() === today) {
+        if (paymentDate.toDateString() === todayPaymentStats) {
           stats.dailyRevenue += amount;
         }
       }
@@ -453,7 +588,42 @@ const getPaymentStats = async (startDate, endDate) => {
       } else if (payment.payment_method === "qrcode") {
         stats.qrPayments++;
       }
+
+      // Aggregate monthly revenue
+      const yearMonth = `${paymentDate.getFullYear()}-${(
+        paymentDate.getMonth() + 1
+      )
+        .toString()
+        .padStart(2, "0")}`;
+      if (payment.status === "completed" || payment.status === "APPROVED") {
+        revenueByMonthMap.set(
+          yearMonth,
+          (revenueByMonthMap.get(yearMonth) || 0) + amount
+        );
+      }
+
+      // Check if this payment is for a fine and sum it up
+      if (
+        (payment.status === "completed" || payment.status === "APPROVED") &&
+        payment.Loan &&
+        payment.Loan.fine_amount > 0
+      ) {
+        stats.totalFinesCollected += amount;
+      }
     });
+
+    // Populate monthlyRevenueData based on the monthlyRevenueLabels order
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(
+        monthlyStatsCurrentYear,
+        monthlyStatsCurrentMonth - (11 - i),
+        1
+      );
+      const yearMonth = `${date.getFullYear()}-${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}`;
+      monthlyRevenueData[i] = revenueByMonthMap.get(yearMonth) || 0;
+    }
 
     // Calculate average payment
     if (stats.completedPayments > 0) {
@@ -462,7 +632,11 @@ const getPaymentStats = async (startDate, endDate) => {
 
     return {
       success: true,
-      stats,
+      stats: {
+        ...stats,
+        monthlyRevenueData,
+        monthlyRevenueLabels,
+      },
     };
   } catch (error) {
     return {

@@ -1225,6 +1225,10 @@ const getLoanStatistics = async () => {
       borrowedTotal,
       returned,
       rejected,
+      // Fetch monthly loan counts
+      monthlyLoansRaw,
+      // Fetch monthly return counts
+      monthlyReturnsRaw,
     ] = await Promise.all([
       Loan.count(),
       Loan.count({ where: { status: "requested" } }),
@@ -1232,20 +1236,104 @@ const getLoanStatistics = async () => {
       Loan.count({ where: { status: "borrowed" } }),
       Loan.count({ where: { status: "returned" } }),
       Loan.count({ where: { status: "rejected" } }),
+
+      // Monthly loans
+      Loan.findAll({
+        attributes: [
+          [sequelize.fn("substr", sequelize.col("loan_date"), 1, 7), "month"], // YYYY-MM
+          [sequelize.fn("COUNT", sequelize.col("loan_id")), "count"],
+        ],
+        where: {
+          loan_date: { [Op.ne]: null },
+          status: "borrowed",
+          loan_date: {
+            [Op.gte]: new Date(
+              new Date().setFullYear(new Date().getFullYear() - 1)
+            ),
+          }, // last 12 months
+        },
+        group: [sequelize.fn("substr", sequelize.col("loan_date"), 1, 7)],
+        order: [
+          [sequelize.fn("substr", sequelize.col("loan_date"), 1, 7), "ASC"],
+        ],
+        raw: true,
+      }),
+      // Monthly returns
+      Loan.findAll({
+        attributes: [
+          [sequelize.fn("substr", sequelize.col("return_date"), 1, 7), "month"], // YYYY-MM
+          [sequelize.fn("COUNT", sequelize.col("loan_id")), "count"],
+        ],
+        where: {
+          return_date: { [Op.ne]: null },
+          status: "returned",
+          return_date: {
+            [Op.gte]: new Date(
+              new Date().setFullYear(new Date().getFullYear() - 1)
+            ),
+          }, // last 12 months
+        },
+        group: [sequelize.fn("substr", sequelize.col("return_date"), 1, 7)],
+        order: [
+          [sequelize.fn("substr", sequelize.col("return_date"), 1, 7), "ASC"],
+        ],
+        raw: true,
+      }),
     ]);
 
+    // Prepare monthly data for 12 months, ensuring all months are present
+    const monthlyStats = {
+      loans: Array(12).fill(0),
+      returns: Array(12).fill(0),
+    };
+    const currentStatsDate = new Date(); // Đổi tên biến để tránh trùng lặp
+    const currentMonth = currentStatsDate.getMonth(); // 0-indexed
+    const currentYear = currentStatsDate.getFullYear();
+
+    // Initialize with correct month names/labels
+    const monthLabels = [];
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(currentYear, currentMonth - 11 + i, 1); // Start 11 months ago
+      monthLabels.push(`T${date.getMonth() + 1}`);
+    }
+
+    // Populate actual loan data
+    monthlyLoansRaw.forEach((data) => {
+      const [year, month] = data.month.split("-").map(Number);
+      const date = new Date(year, month - 1, 1);
+      const index = monthLabels.indexOf(`T${date.getMonth() + 1}`);
+      if (index !== -1) {
+        monthlyStats.loans[index] = data.count;
+      }
+    });
+
+    // Populate actual return data
+    monthlyReturnsRaw.forEach((data) => {
+      const [year, month] = data.month.split("-").map(Number);
+      const date = new Date(year, month - 1, 1);
+      const index = monthLabels.indexOf(`T${date.getMonth() + 1}`);
+      if (index !== -1) {
+        monthlyStats.returns[index] = data.count;
+      }
+    });
+
     // Trong borrowedTotal, tách active vs overdue
-    const today = new Date();
+    const overdueCalculationDate = new Date(); // Đổi tên biến để tránh trùng lặp
     const [overdue] = await Promise.all([
       Loan.count({
         where: {
           status: "borrowed",
-          due_date: { [Op.lt]: today },
+          due_date: { [Op.lt]: overdueCalculationDate },
         },
       }),
     ]);
 
     const active = borrowedTotal - overdue;
+
+    // Tính tổng số tiền phạt từ các khoản vay đã trả
+    const totalFines = await Loan.sum("fine_amount", {
+      where: { status: "returned" },
+    });
 
     // Renewal pending: borrowed loans đã yêu cầu gia hạn
     const pendingRenewal = await Loan.count({
@@ -1276,6 +1364,12 @@ const getLoanStatistics = async () => {
         rejected,
         overduePercentage,
         completionRate,
+        totalFines: totalFines || 0, // Thêm totalFines vào đây
+        monthlyStats: {
+          loans: monthlyStats.loans,
+          returns: monthlyStats.returns,
+          labels: monthLabels,
+        }, // Thêm labels vào đây
       },
     };
   } catch (error) {

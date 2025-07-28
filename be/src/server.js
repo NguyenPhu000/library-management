@@ -74,7 +74,7 @@ app.use("*", (req, res) => {
 });
 
 // Set the port
-const port = process.env.PORT || 8081;
+const port = process.env.PORT || 8080;
 
 // Auto cleanup expired loan requests - chạy mỗi giờ
 const startAutoCleanup = () => {

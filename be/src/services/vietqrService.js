@@ -39,12 +39,20 @@ class VietQRService {
    */
   async generateQR(paymentData) {
     try {
-      const { payment_id, amount, description } = paymentData;
+      const { payment_id, amount, description, member_code, book_title } =
+        paymentData;
 
       // Create unique content for payment tracking
+      const formattedMemberCode = member_code
+        ? member_code.replace(/[^a-zA-Z0-9]/g, "")
+        : "UNKNOWN_MEMBER";
+      const formattedBookTitle = book_title
+        ? book_title.replace(/[^a-zA-Z0-9 ]/g, "").replace(/ /g, "_")
+        : "UNKNOWN_BOOK";
+
       const paymentContent = isTestMode()
-        ? `TEST_PAY${payment_id.toString().padStart(6, "0")}`
-        : `PAY${payment_id.toString().padStart(6, "0")}`;
+        ? `TEST_${formattedMemberCode}_${formattedBookTitle}`
+        : `${formattedMemberCode}_${formattedBookTitle}`;
 
       // Nếu là test mode, tạo QR giả lập
       if (isTestMode()) {
@@ -108,26 +116,15 @@ class VietQRService {
           }PAY${paymentData.payment_id}`,
           bank_account_no: this.config.accountNo,
           payment_content: `${
-            isTestMode() ? "TEST_" : ""
-          }PAY${paymentData.payment_id.toString().padStart(6, "0")}`,
+            isTestMode() ? "TEST." : ""
+          }P.${paymentData.payment_id
+            .toString()
+            .padStart(
+              6,
+              "0"
+            )}.M.${formattedMemberCode}.B.${formattedBookTitle}`,
         },
       };
-    }
-  }
-
-  /**
-   * Extract payment ID from webhook addInfo
-   * @param {string} addInfo - Payment content from webhook
-   * @returns {number|null} Payment ID
-   */
-  extractPaymentIdFromAddInfo(addInfo) {
-    try {
-      // Format: PAY000123 -> extract 123
-      const match = addInfo.match(/PAY(\d+)/);
-      return match ? parseInt(match[1]) : null;
-    } catch (error) {
-      console.error("Error extracting payment ID:", error);
-      return null;
     }
   }
 

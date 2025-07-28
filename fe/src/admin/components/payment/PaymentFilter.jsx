@@ -8,6 +8,9 @@ import {
   FaTimes,
   FaDownload,
 } from "react-icons/fa";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { parseISO, format } from "date-fns";
 
 const PaymentFilter = ({ onFilterChange, onExport, loading }) => {
   const [filters, setFilters] = useState({
@@ -144,11 +147,18 @@ const PaymentFilter = ({ onFilterChange, onExport, loading }) => {
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Từ ngày
           </label>
-          <input
-            type="date"
-            value={filters.startDate}
-            onChange={(e) => handleFilterChange("startDate", e.target.value)}
+          <DatePicker
+            selected={filters.startDate ? parseISO(filters.startDate) : null}
+            onChange={(date) =>
+              handleFilterChange(
+                "startDate",
+                date ? format(date, "yyyy-MM-dd") : ""
+              )
+            }
+            dateFormat="dd/MM/yy"
+            placeholderText="dd/mm/yy"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
+            wrapperClassName="w-full"
           />
         </div>
 
@@ -156,11 +166,18 @@ const PaymentFilter = ({ onFilterChange, onExport, loading }) => {
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Đến ngày
           </label>
-          <input
-            type="date"
-            value={filters.endDate}
-            onChange={(e) => handleFilterChange("endDate", e.target.value)}
+          <DatePicker
+            selected={filters.endDate ? parseISO(filters.endDate) : null}
+            onChange={(date) =>
+              handleFilterChange(
+                "endDate",
+                date ? format(date, "yyyy-MM-dd") : ""
+              )
+            }
+            dateFormat="dd/MM/yy"
+            placeholderText="dd/mm/yy"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
+            wrapperClassName="w-full"
           />
         </div>
       </div>
@@ -281,13 +298,13 @@ const PaymentFilter = ({ onFilterChange, onExport, loading }) => {
         </button>
         <button
           onClick={() => {
-            const today = new Date().toISOString().split("T")[0];
-            handleFilterChange("startDate", today);
-            handleFilterChange("endDate", today);
+            const today = new Date();
+            handleFilterChange("startDate", format(today, "yyyy-MM-dd"));
+            handleFilterChange("endDate", format(today, "yyyy-MM-dd"));
           }}
           className={`px-3 py-1 rounded-full text-sm transition-colors flex items-center ${
-            filters.startDate === new Date().toISOString().split("T")[0] &&
-            filters.endDate === new Date().toISOString().split("T")[0]
+            filters.startDate === format(new Date(), "yyyy-MM-dd") &&
+            filters.endDate === format(new Date(), "yyyy-MM-dd")
               ? "bg-blue-100 text-blue-800 border border-blue-300"
               : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
           }`}
@@ -305,15 +322,16 @@ const PaymentFilter = ({ onFilterChange, onExport, loading }) => {
             );
             handleFilterChange(
               "startDate",
-              firstDayOfMonth.toISOString().split("T")[0]
+              format(firstDayOfMonth, "yyyy-MM-dd")
             );
-            handleFilterChange("endDate", today.toISOString().split("T")[0]);
+            handleFilterChange("endDate", format(today, "yyyy-MM-dd"));
           }}
           className={`px-3 py-1 rounded-full text-sm transition-colors flex items-center ${
             filters.startDate ===
-            new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-              .toISOString()
-              .split("T")[0]
+            format(
+              new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+              "yyyy-MM-dd"
+            )
               ? "bg-blue-100 text-blue-800 border border-blue-300"
               : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
           }`}

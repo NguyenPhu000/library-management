@@ -304,14 +304,42 @@ let deleteBook = async (bookId) => {
   }
 };
 
-// Lấy thống kê sách (tổng số sách, có thể mở rộng)
+// Lấy thống kê sách (tổng số sách, sách phổ biến)
 let getBookStats = async () => {
   try {
     // Đếm tổng số sách trong hệ thống
     const totalBooks = await db.Book.count();
 
-    // Trả về đơn giản để đáp ứng nhu cầu Dashboard hiện tại
-    return { totalBooks, topBooks: [] };
+    // Lấy top 5 sách được mượn nhiều nhất
+    const topBooks = await db.Loan.findAll({
+      attributes: [
+        "Loan.book_id",
+        [
+          db.sequelize.fn("COUNT", db.sequelize.col("Loan.book_id")),
+          "borrow_count",
+        ],
+      ],
+      include: [
+        { model: db.Book, attributes: ["title", "author", "cover_image"] },
+      ],
+      group: ["Loan.book_id", "Book.title", "Book.author", "Book.cover_image"], // Include aliased columns in group for SQLite
+      order: [
+        [db.sequelize.fn("COUNT", db.sequelize.col("Loan.book_id")), "DESC"],
+      ],
+      limit: 5,
+      raw: true,
+    });
+
+    // Chuyển đổi dữ liệu topBooks để dễ sử dụng hơn
+    const formattedTopBooks = topBooks.map((item) => ({
+      book_id: item.book_id, // Thay đổi từ item.Loan.book_id
+      title: item["Book.title"],
+      author: item["Book.author"],
+      cover_image: item["Book.cover_image"],
+      borrow_count: item.borrow_count,
+    }));
+
+    return { totalBooks, topBooks: formattedTopBooks };
   } catch (error) {
     console.error("Lỗi khi lấy thống kê sách:", error);
     throw error;

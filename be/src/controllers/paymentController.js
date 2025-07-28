@@ -2,10 +2,17 @@ import paymentService from "../services/paymentService.js";
 
 // Lấy danh sách tất cả các payment
 // Hàm này lấy tất cả các thanh toán từ dịch vụ paymentService
-const getAllPayments = async (_req, res) => {
+const getAllPayments = async (req, res) => {
   try {
-    const payments = await paymentService.getAllPayments();
-    return res.json({ success: true, payments });
+    const { page, limit, sort, order, ...filters } = req.query;
+    const payments = await paymentService.getAllPayments(
+      page,
+      limit,
+      sort,
+      order,
+      filters
+    );
+    return res.json({ success: true, ...payments });
   } catch (error) {
     console.error("Lỗi khi lấy danh sách payments:", error);
     return res.status(500).json({ success: false, message: error.message });

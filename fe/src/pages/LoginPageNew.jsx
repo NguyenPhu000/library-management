@@ -96,16 +96,16 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-900">
+    <div className="min-h-screen flex bg-gradient-to-br from-orange-300 via-orange-400 to-orange-500">
       {/* Left side - Image and branding */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('/uploads/coverBook.jpg')`,
+            backgroundImage: `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><defs><linearGradient id="sunset" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23ff7e5f;stop-opacity:1" /><stop offset="50%" style="stop-color:%23feb47b;stop-opacity:1" /><stop offset="100%" style="stop-color:%23ff6b6b;stop-opacity:1" /></linearGradient></defs><rect width="800" height="600" fill="url(%23sunset)"/><polygon points="0,400 100,380 200,390 300,370 400,385 500,375 600,380 700,370 800,375 800,600 0,600" fill="%23333" opacity="0.3"/><polygon points="50,450 150,440 250,445 350,435 450,440 550,430 650,435 750,425 800,430 800,600 0,600" fill="%23555" opacity="0.4"/></svg>')`,
           }}
         >
-          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-600/20 to-red-600/20"></div>
         </div>
 
         {/* Overlay content */}
@@ -139,54 +139,58 @@ const LoginPage = () => {
       </div>
 
       {/* Right side - Login form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-900">
-        <div className="w-full max-w-md bg-gray-800 p-8 rounded-xl border border-gray-700 shadow-2xl">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+        <div className="w-full max-w-md">
           {/* Header with Sign In button */}
           <div className="flex justify-between items-center mb-8">
             <div className="lg:hidden flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#5E936C] to-[#3E5F44] rounded-lg flex items-center justify-center mr-3">
+              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center mr-3">
                 <FontAwesomeIcon icon={faHome} className="text-white text-sm" />
               </div>
-              <span className="text-lg font-semibold text-white">Thư Viện</span>
+              <span className="text-lg font-semibold text-gray-800">
+                Thư Viện
+              </span>
             </div>
             <div className="hidden lg:block">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#5E936C] to-[#3E5F44] rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
                 <FontAwesomeIcon icon={faHome} className="text-white text-sm" />
               </div>
             </div>
-            <button className="bg-gradient-to-r from-[#5E936C] to-[#93DA97] text-white px-6 py-2 rounded-full text-sm font-medium hover:from-[#3E5F44] hover:to-[#5E936C] transition-all duration-300 shadow-lg">
+            <button className="bg-gray-800 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-700 transition-colors">
               Sign In
             </button>
           </div>
 
           {/* Welcome text */}
           <div className="mb-8">
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-[#93DA97] to-[#E8FFD7] bg-clip-text text-transparent mb-3">
+            <h2 className="text-4xl font-bold text-gray-800 mb-3">
               Chào Mừng Trở Lại Thư Viện!
             </h2>
-            <p className="text-gray-300">Đăng nhập vào tài khoản của bạn</p>
+            <p className="text-gray-600">Đăng nhập vào tài khoản của bạn</p>
           </div>
 
           {/* Login Form */}
           <form onSubmit={handleLoginSubmit} className="space-y-6">
-            {/* Username Field */}
+            {/* Email Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">
-                {isAdminLogin ? "Tài khoản quản trị" : "Tên tài khoản của bạn"}
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {isAdminLogin ? "Tài khoản quản trị" : "Email của bạn"}
               </label>
               <input
                 type="text"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5E936C] focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
-                placeholder={isAdminLogin ? "admin123" : "member123"}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-800 placeholder-gray-400"
+                placeholder={
+                  isAdminLogin ? "admin123" : "info.madhu78@gmail.com"
+                }
               />
             </div>
 
             {/* Password Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Mật khẩu
               </label>
               <div className="relative">
@@ -195,12 +199,12 @@ const LoginPage = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 pr-12 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5E936C] focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-800 placeholder-gray-400"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-200 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                   onClick={togglePasswordVisibility}
                 >
                   <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
@@ -217,18 +221,18 @@ const LoginPage = () => {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 text-[#5E936C] focus:ring-[#93DA97] border-gray-600 rounded bg-gray-700"
+                  className="h-4 w-4 text-orange-500 focus:ring-orange-400 border-gray-300 rounded"
                 />
                 <label
                   htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-200"
+                  className="ml-2 block text-sm text-gray-700"
                 >
                   Ghi nhớ tôi
                 </label>
               </div>
               <a
                 href="#"
-                className="text-sm text-[#93DA97] hover:text-[#E8FFD7] transition-colors"
+                className="text-sm text-orange-500 hover:text-orange-600 transition-colors"
               >
                 Quên mật khẩu?
               </a>
@@ -238,7 +242,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full bg-gradient-to-r from-[#3E5F44] to-[#5E936C] text-white py-3 px-4 rounded-lg font-medium hover:from-[#5E936C] hover:to-[#93DA97] focus:outline-none focus:ring-2 focus:ring-[#5E936C] focus:ring-offset-2 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              className="w-full bg-gray-800 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? (
                 <div className="flex items-center justify-center">
@@ -250,13 +254,61 @@ const LoginPage = () => {
               )}
             </button>
 
+            {/* Or login with social */}
+            <div className="text-center">
+              <span className="text-gray-500 text-sm">hoặc Đăng nhập với</span>
+            </div>
+
+            {/* Social Login Buttons - tạm thời disable */}
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                disabled
+                className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-400 cursor-not-allowed"
+              >
+                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                  <path
+                    fill="currentColor"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="currentColor"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="currentColor"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  />
+                  <path
+                    fill="currentColor"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  />
+                </svg>
+                Tiếp tục với Google
+              </button>
+              <button
+                type="button"
+                disabled
+                className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-400 cursor-not-allowed"
+              >
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+                Tiếp tục với Facebook
+              </button>
+            </div>
+
             {/* Sign up link for non-admin login */}
             {!isAdminLogin && (
               <div className="text-center mt-6">
-                <span className="text-gray-300">Chưa có tài khoản? </span>
+                <span className="text-gray-600">Chưa có tài khoản? </span>
                 <Link
                   to="/register"
-                  className="text-[#93DA97] hover:text-[#E8FFD7] font-medium transition-colors"
+                  className="text-orange-500 hover:text-orange-600 font-medium transition-colors"
                 >
                   Đăng ký
                 </Link>
@@ -268,7 +320,7 @@ const LoginPage = () => {
               <div className="text-center mt-6">
                 <Link
                   to="/"
-                  className="text-[#93DA97] hover:text-[#E8FFD7] font-medium transition-colors"
+                  className="text-orange-500 hover:text-orange-600 font-medium transition-colors"
                 >
                   ← Quay lại trang chủ
                 </Link>

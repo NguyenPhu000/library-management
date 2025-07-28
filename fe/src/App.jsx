@@ -5,6 +5,7 @@ import LibraryHomePage from "./pages/LibraryHomePage";
 import BookListPage from "./pages/BookListPage";
 import ProfilePage from "./pages/ProfilePage";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import RequireAuth from "./components/ui/RequireAuth";
 import LoanPage from "./pages/LoanPage";
@@ -45,6 +46,7 @@ function App() {
           <Route path="/books/:slug" element={<BookDetail />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
           {/* Protected routes */}
           <Route element={<RequireAuth />}>

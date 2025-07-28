@@ -1,0 +1,39 @@
+/* Animations for RegisterPage */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+.float-animation-reverse {
+  animation: float 6s ease-in-out infinite reverse;
+}
+
+.float-animation-slow {
+  animation: float 8s ease-in-out infinite;
+}
+
+.float-animation-fast {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* 3D transform utilities */
+.transform-3d {
+  transform-style: preserve-3d;
+}
+
+.rotate-3d-1 {
+  transform: rotateX(15deg) rotateY(-15deg) rotateZ(12deg);
+}
+
+.rotate-3d-2 {
+  transform: rotateX(-10deg) rotateY(20deg) rotateZ(-8deg);
+}

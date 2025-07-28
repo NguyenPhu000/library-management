@@ -10,6 +10,9 @@ import {
   FaArrowUp,
   FaArrowDown,
 } from "react-icons/fa";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { parseISO, format } from "date-fns";
 import adminPaymentService from "../../services/adminPaymentService";
 
 const PaymentStats = () => {
@@ -27,10 +30,11 @@ const PaymentStats = () => {
   });
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState({
-    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-      .toISOString()
-      .split("T")[0],
-    endDate: new Date().toISOString().split("T")[0],
+    startDate: format(
+      new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+      "yyyy-MM-dd"
+    ),
+    endDate: format(new Date(), "yyyy-MM-dd"),
   });
 
   useEffect(() => {
@@ -162,26 +166,38 @@ const PaymentStats = () => {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Từ ngày
             </label>
-            <input
-              type="date"
-              value={dateRange.startDate}
-              onChange={(e) =>
-                setDateRange((prev) => ({ ...prev, startDate: e.target.value }))
+            <DatePicker
+              selected={
+                dateRange.startDate ? parseISO(dateRange.startDate) : null
               }
+              onChange={(date) =>
+                setDateRange((prev) => ({
+                  ...prev,
+                  startDate: date ? format(date, "yyyy-MM-dd") : "",
+                }))
+              }
+              dateFormat="dd/MM/yy"
+              placeholderText="dd/mm/yy"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
+              wrapperClassName="w-full"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Đến ngày
             </label>
-            <input
-              type="date"
-              value={dateRange.endDate}
-              onChange={(e) =>
-                setDateRange((prev) => ({ ...prev, endDate: e.target.value }))
+            <DatePicker
+              selected={dateRange.endDate ? parseISO(dateRange.endDate) : null}
+              onChange={(date) =>
+                setDateRange((prev) => ({
+                  ...prev,
+                  endDate: date ? format(date, "yyyy-MM-dd") : "",
+                }))
               }
+              dateFormat="dd/MM/yy"
+              placeholderText="dd/mm/yy"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
+              wrapperClassName="w-full"
             />
           </div>
         </div>

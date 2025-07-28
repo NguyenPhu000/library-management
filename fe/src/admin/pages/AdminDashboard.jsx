@@ -60,7 +60,23 @@ const AdminDashboard = () => {
     monthlyStats: {
       loans: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       returns: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      labels: [
+        "Tháng 1",
+        "Tháng 2",
+        "Tháng 3",
+        "Tháng 4",
+        "Tháng 5",
+        "Tháng 6",
+        "Tháng 7",
+        "Tháng 8",
+        "Tháng 9",
+        "Tháng 10",
+        "Tháng 11",
+        "Tháng 12",
+      ],
     },
+    monthlyRevenueData: Array(12).fill(0), // Khởi tạo mặc định
+    monthlyRevenueLabels: Array(12).fill("T X"), // Khởi tạo mặc định
     activeLoans: 0,
     overdueLoans: 0,
     pendingRenewals: 0,
@@ -81,7 +97,7 @@ const AdminDashboard = () => {
             adminBookService.getBookStats(),
             adminUserService.getUserStats(),
             adminLoanService.getLoanStatistics(),
-            adminPaymentService.getPaymentStats(),
+            adminPaymentService.getPaymentStats(), // Lấy thống kê thanh toán
           ]);
 
         const loansResponse = loanStatRes.success
@@ -115,7 +131,7 @@ const AdminDashboard = () => {
           returnsToday:
             loansResponse.returnsToday || loansResponse.returnedBooks || 0,
           totalPayments: paymentsResponse.data?.totalPayments || 0,
-          totalFines: loansResponse.totalFines || 0,
+          totalFines: loansResponse.totalFines || 0, // Đảm bảo lấy totalFines từ loansResponse
           onlineUsers: usersResponse.data?.onlineUsers || 0,
           pendingReturns:
             loansResponse.activeLoans ||
@@ -127,8 +143,17 @@ const AdminDashboard = () => {
           monthlyStats: {
             loans: loansResponse.monthlyStats?.loans || Array(12).fill(0),
             returns: loansResponse.monthlyStats?.returns || Array(12).fill(0),
+            labels:
+              loansResponse.monthlyStats?.labels || Array(12).fill("Tháng X"),
           },
+          // Thêm thống kê doanh thu hàng tháng từ paymentsResponse
+          monthlyRevenueData:
+            paymentsResponse.stats?.monthlyRevenueData || Array(12).fill(0),
+          monthlyRevenueLabels:
+            paymentsResponse.stats?.monthlyRevenueLabels ||
+            Array(12).fill("T X"),
           librarySettings: settingsResponse?.data || null,
+          totalFinesCollected: paymentsResponse.stats?.totalFinesCollected || 0, // Thêm totalFinesCollected
         };
 
         setStats(enhancedStats);
@@ -167,23 +192,10 @@ const AdminDashboard = () => {
   };
 
   // Data for charts
-  const monthNames = [
-    "T1",
-    "T2",
-    "T3",
-    "T4",
-    "T5",
-    "T6",
-    "T7",
-    "T8",
-    "T9",
-    "T10",
-    "T11",
-    "T12",
-  ];
+  const monthNamesFromBackend = stats.monthlyStats.labels || [];
 
-  const monthlyData = monthNames.map((month, index) => ({
-    month,
+  const monthlyData = monthNamesFromBackend.map((monthLabel, index) => ({
+    month: monthLabel,
     loans: stats.monthlyStats.loans[index] || 0,
     returns: stats.monthlyStats.returns[index] || 0,
   }));
@@ -195,12 +207,21 @@ const AdminDashboard = () => {
     { name: "Chờ gia hạn", value: stats.pendingRenewals, color: "#F59E0B" },
   ];
 
-  const systemOverviewData = [
-    { name: "Sách", value: stats.totalBooks, color: "#10B981" },
-    { name: "Thành viên", value: stats.totalMembers, color: "#3B82F6" },
-    { name: "Đang mượn", value: stats.activeLoans, color: "#8B5CF6" },
-    { name: "Thanh toán", value: stats.totalPayments, color: "#F59E0B" },
-  ];
+  // Dữ liệu cho biểu đồ Tổng quan hệ thống (loại bỏ nếu thay thế)
+  // const systemOverviewData = [
+  //   { name: "Sách", value: stats.totalBooks, color: "#10B981" },
+  //   { name: "Thành viên", value: stats.totalMembers, color: "#3B82F6" },
+  //   { name: "Đang mượn", value: stats.activeLoans, color: "#8B5CF6" },
+  //   { name: "Thanh toán", value: stats.totalPayments, color: "#F59E0B" },
+  // ];
+
+  // Dữ liệu cho biểu đồ Tổng quan doanh thu theo tháng
+  const monthlyRevenueChartData = stats.monthlyRevenueLabels.map(
+    (label, index) => ({
+      month: label,
+      revenue: stats.monthlyRevenueData[index] || 0,
+    })
+  );
 
   const performanceData = [
     { metric: "Tuân thủ", value: getComplianceRate(), target: 90 },
@@ -213,12 +234,22 @@ const AdminDashboard = () => {
     },
     {
       metric: "Thu phí",
+      // Sử dụng totalFinesCollected từ paymentStats. totalFines là tổng số tiền phạt phát sinh, totalFinesCollected là tổng số tiền phạt ĐÃ THU
       value: Math.round(
-        (stats.totalFines / Math.max(stats.totalPayments * 10000, 1)) * 100
+        (stats.totalFinesCollected / Math.max(stats.totalFines, 1)) * 100
       ),
       target: 20,
     },
   ];
+
+  // Dọn dẹp các console.log debugging (đã di chuyển vào fetchStats nếu cần)
+  // console.log("--- Debugging Performance Data ---");
+  // console.log("Raw paymentsResponse:", paymentsResponse);
+  // console.log("Raw loanStatRes:", loanStatRes);
+  // console.log("Stats Total Revenue:", stats.totalRevenue);
+  // console.log("Stats Total Fines:", stats.totalFines);
+  // console.log("Stats Total Fines Collected:", stats.totalFinesCollected);
+  // console.log("Calculated 'Thu phí' value:", Math.round((stats.totalFinesCollected / Math.max(stats.totalFines, 1)) * 100));
 
   if (loading) {
     return (
@@ -600,20 +631,33 @@ const AdminDashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* System Overview */}
+        {/* System Overview (Thay thế bằng Tổng quan doanh thu theo tháng) */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
           <div className="flex items-center mb-4">
-            <FaChartLine className="text-green-600 text-xl mr-2" />
-            <h3 className="text-lg font-semibold">Tổng quan hệ thống</h3>
+            <FaMoneyBill className="text-green-600 text-xl mr-2" />
+            <h3 className="text-lg font-semibold">
+              Tổng quan doanh thu theo tháng
+            </h3>
           </div>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={systemOverviewData} layout="horizontal">
+            <AreaChart data={monthlyRevenueChartData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="name" type="category" />
-              <Tooltip />
-              <Bar dataKey="value" fill="#10B981" />
-            </BarChart>
+              <XAxis
+                dataKey="month"
+                tickFormatter={(tick) => `T${parseInt(tick.split("-")[1])}`}
+              />
+              <YAxis tickFormatter={(value) => formatCurrency(value)} />
+              <Tooltip formatter={(value) => formatCurrency(value)} />
+              <Legend />
+              <Area
+                type="monotone"
+                dataKey="revenue"
+                stroke="#10B981"
+                fill="#10B981"
+                name="Doanh thu"
+                activeDot={{ r: 8 }}
+              />
+            </AreaChart>
           </ResponsiveContainer>
         </div>
 

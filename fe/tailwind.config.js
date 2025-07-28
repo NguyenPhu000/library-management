@@ -17,8 +17,8 @@ export default {
         poppins: ["Inter", "Roboto", "sans-serif"], // Fallback for legacy poppins usage
       },
       colors: {
-        lightGreen: "#10B981",
-        darkGreen: "#047857",
+        lightGreen: "#93DA97",
+        darkGreen: "#3E5F44",
         customGray: "#6B7280",
         customDark: "#1F2937",
       },
