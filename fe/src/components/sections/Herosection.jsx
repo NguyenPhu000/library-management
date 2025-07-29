@@ -21,7 +21,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 text-white py-20 md:py-32 px-4 flex flex-col lg:flex-row items-center justify-center overflow-hidden min-h-screen">
+    <section className="relative bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-gray-950 dark:via-slate-900 dark:to-gray-950 text-gray-900 dark:text-white py-20 md:py-32 px-4 flex flex-col lg:flex-row items-center justify-center overflow-hidden min-h-screen transition-colors duration-300">
       {/* Enhanced Background Effects */}
       <div className="absolute top-1/4 left-5 md:left-10 w-96 h-96 rounded-full bg-gradient-to-r from-[#5E936C] to-[#93DA97] filter blur-3xl opacity-30 animate-pulse" />
       <div className="absolute bottom-1/4 right-5 md:right-10 w-80 h-80 rounded-full bg-gradient-to-br from-[#93DA97] to-[#E8FFD7] filter blur-3xl opacity-25 animate-pulse delay-1000" />
@@ -51,24 +51,27 @@ const HeroSection = () => {
         {/* Left Content */}
         <div className="max-w-2xl text-center lg:text-left lg:mr-12 mb-12 lg:mb-0">
           {/* Badge */}
-          <div className="inline-flex items-center bg-gradient-to-r from-[#3E5F44]/20 to-[#5E936C]/20 backdrop-blur-sm border border-[#93DA97]/30 rounded-full px-4 py-2 mb-6 text-sm font-medium text-[#E8FFD7]">
-            <FontAwesomeIcon icon={faStar} className="mr-2 text-[#93DA97]" />
+          <div className="inline-flex items-center bg-gradient-to-r from-[#3E5F44]/20 to-[#5E936C]/20 backdrop-blur-sm border border-[#93DA97]/30 rounded-full px-4 py-2 mb-6 text-sm font-medium text-[#5E936C] dark:text-[#E8FFD7]">
+            <FontAwesomeIcon
+              icon={faStar}
+              className="mr-2 text-[#5E936C] dark:text-[#93DA97]"
+            />
             Thư viện số hiện đại nhất Việt Nam
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight tracking-tight mb-6">
-            <span className="bg-gradient-to-r from-white via-[#E8FFD7] to-[#93DA97] text-transparent bg-clip-text">
+            <span className="bg-gradient-to-r from-gray-900 via-[#3E5F44] to-[#5E936C] dark:from-white dark:via-[#E8FFD7] dark:to-[#93DA97] text-transparent bg-clip-text">
               Khám Phá
             </span>
             <br />
-            <span className="bg-gradient-to-r from-[#93DA97] to-[#5E936C] text-transparent bg-clip-text">
+            <span className="bg-gradient-to-r from-[#5E936C] to-[#3E5F44] dark:from-[#93DA97] dark:to-[#5E936C] text-transparent bg-clip-text">
               Tri Thức
             </span>
             <br />
-            <span className="text-white">Vô Hạn</span>
+            <span className="text-gray-900 dark:text-white">Vô Hạn</span>
           </h1>
 
-          <p className="mt-6 text-lg md:text-xl text-gray-300/90 leading-relaxed max-w-xl">
+          <p className="mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300/90 leading-relaxed max-w-xl">
             Trải nghiệm thư viện số hiện đại với hàng nghìn cuốn sách chọn lọc.
             Mượn sách dễ dàng, đọc mọi lúc mọi nơi, hoàn toàn miễn phí.
           </p>
@@ -76,16 +79,28 @@ const HeroSection = () => {
           {/* Stats */}
           <div className="flex items-center justify-center lg:justify-start space-x-8 mt-8 mb-8">
             <div className="text-center">
-              <div className="text-2xl font-bold text-[#93DA97]">10,000+</div>
-              <div className="text-sm text-gray-400">Cuốn sách</div>
+              <div className="text-2xl font-bold text-[#5E936C] dark:text-[#93DA97]">
+                10,000+
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Cuốn sách
+              </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-[#93DA97]">5,000+</div>
-              <div className="text-sm text-gray-400">Thành viên</div>
+              <div className="text-2xl font-bold text-[#5E936C] dark:text-[#93DA97]">
+                5,000+
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Thành viên
+              </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-[#93DA97]">24/7</div>
-              <div className="text-sm text-gray-400">Truy cập</div>
+              <div className="text-2xl font-bold text-[#5E936C] dark:text-[#93DA97]">
+                24/7
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Truy cập
+              </div>
             </div>
           </div>
 
@@ -104,7 +119,7 @@ const HeroSection = () => {
 
             <button
               onClick={handleRegisterClick}
-              className="bg-transparent border-2 border-[#93DA97] text-[#93DA97] hover:bg-[#93DA97] hover:text-gray-900 font-semibold text-lg py-4 px-8 rounded-full transition-all duration-300 ease-in-out hover:scale-105"
+              className="bg-transparent border-2 border-[#5E936C] dark:border-[#93DA97] text-[#5E936C] dark:text-[#93DA97] hover:bg-[#5E936C] dark:hover:bg-[#93DA97] hover:text-white dark:hover:text-gray-900 font-semibold text-lg py-4 px-8 rounded-full transition-all duration-300 ease-in-out hover:scale-105"
             >
               Đăng ký miễn phí
             </button>
@@ -158,8 +173,8 @@ const HeroSection = () => {
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-[#93DA97]/60 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-[#93DA97] rounded-full mt-2 animate-pulse"></div>
+        <div className="w-6 h-10 border-2 border-[#5E936C]/60 dark:border-[#93DA97]/60 rounded-full flex justify-center">
+          <div className="w-1 h-3 bg-[#5E936C] dark:bg-[#93DA97] rounded-full mt-2 animate-pulse"></div>
         </div>
       </div>
     </section>

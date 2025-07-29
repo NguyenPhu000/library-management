@@ -17,9 +17,12 @@ import {
   faTimes,
   faBookOpen,
   faChevronDown,
+  faMoon,
+  faSun,
 } from "@fortawesome/free-solid-svg-icons";
 import SearchBar from "../sections/SearchBar";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTheme } from "../../contexts/ThemeContext";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
@@ -28,6 +31,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { currentUser, logout } = useAuth();
+  const { darkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
 
   // Close dropdown when clicking outside
@@ -84,16 +88,16 @@ const Header = () => {
       }}
       className={`flex items-center ${
         isMobile
-          ? "px-4 py-3 border-l-4 border-transparent hover:border-[#93DA97] hover:bg-gray-800/50"
+          ? "px-4 py-3 border-l-4 border-transparent hover:border-[#5E936C] hover:bg-gray-200 dark:hover:bg-gray-800/50"
           : "px-4 py-2 rounded-lg"
-      } text-gray-300 hover:text-[#E8FFD7] hover:bg-gray-800/50 transition-all duration-300 ease-in-out group`}
+      } text-gray-600 dark:text-gray-300 hover:text-[#5E936C] dark:hover:text-[#E8FFD7] hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all duration-300 ease-in-out group`}
     >
       {icon && (
         <FontAwesomeIcon
           icon={icon}
           className={`${
             isMobile ? "mr-4 text-lg" : "mr-2"
-          } text-gray-400 group-hover:text-[#93DA97] transition-colors duration-300`}
+          } text-gray-500 dark:text-gray-400 group-hover:text-[#5E936C] dark:group-hover:text-[#93DA97] transition-colors duration-300`}
         />
       )}
       <span className="font-medium">{children}</span>
@@ -108,12 +112,12 @@ const Header = () => {
             setIsDropdownOpen(false);
             onClick && onClick();
           }}
-          className="flex items-center w-full px-4 py-3 text-sm text-red-400 hover:bg-red-900/20 hover:text-red-300 transition-all duration-300 ease-in-out group"
+          className="flex items-center w-full px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300 transition-all duration-300 ease-in-out group"
         >
           {icon && (
             <FontAwesomeIcon
               icon={icon}
-              className="mr-3 text-red-500 group-hover:text-red-400 transition-colors duration-300"
+              className="mr-3 text-red-600 dark:text-red-500 group-hover:text-red-700 dark:group-hover:text-red-400 transition-colors duration-300"
             />
           )}
           {children}
@@ -125,12 +129,12 @@ const Header = () => {
       <Link
         to={to}
         onClick={() => setIsDropdownOpen(false)}
-        className="flex items-center w-full px-4 py-3 text-sm text-gray-300 hover:bg-gray-700/50 hover:text-[#E8FFD7] transition-all duration-300 ease-in-out group"
+        className="flex items-center w-full px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-[#5E936C] dark:hover:text-[#E8FFD7] transition-all duration-300 ease-in-out group"
       >
         {icon && (
           <FontAwesomeIcon
             icon={icon}
-            className="mr-3 text-gray-400 group-hover:text-[#93DA97] transition-colors duration-300"
+            className="mr-3 text-gray-500 dark:text-gray-400 group-hover:text-[#5E936C] dark:group-hover:text-[#93DA97] transition-colors duration-300"
           />
         )}
         {children}
@@ -139,7 +143,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-gray-950 via-slate-900 to-gray-950 text-white shadow-2xl sticky top-0 z-50 border-b border-gray-700/30 backdrop-blur-sm">
+    <header className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-950 dark:via-slate-900 dark:to-gray-950 text-gray-900 dark:text-white shadow-2xl sticky top-0 z-50 border-b border-gray-300 dark:border-gray-700/30 backdrop-blur-sm transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -150,7 +154,7 @@ const Header = () => {
                 className="text-white text-lg"
               />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-[#E8FFD7] via-[#93DA97] to-[#5E936C] bg-clip-text text-transparent">
+            <span className="text-2xl font-bold bg-gradient-to-r from-[#2D4A32] via-[#5E936C] to-[#3E5F44] dark:from-[#E8FFD7] dark:via-[#93DA97] dark:to-[#5E936C] bg-clip-text text-transparent">
               Góc Thư Viện
             </span>
           </Link>
@@ -180,12 +184,26 @@ const Header = () => {
               <SearchBar />
             </div>
 
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleDarkMode}
+              className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-200 dark:bg-gray-800/50 border-2 border-gray-300 dark:border-gray-600/50 hover:border-[#5E936C] hover:bg-gray-300 dark:hover:bg-gray-600/50 text-gray-600 dark:text-gray-400 hover:text-[#5E936C] dark:hover:text-[#93DA97] transition-all duration-300 group"
+              title={
+                darkMode ? "Chuyển sang chế độ sáng" : "Chuyển sang chế độ tối"
+              }
+            >
+              <FontAwesomeIcon
+                icon={darkMode ? faSun : faMoon}
+                className="text-lg group-hover:scale-110 transition-transform duration-300"
+              />
+            </button>
+
             {/* User Section */}
             {currentUser ? (
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center space-x-3 px-4 py-2 rounded-xl bg-gray-800/50 border border-gray-700/50 hover:border-[#93DA97]/50 hover:bg-gray-700/50 transition-all duration-300 group"
+                  className="flex items-center space-x-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800/50 border-2 border-gray-300 dark:border-gray-600/50 hover:border-[#5E936C] dark:hover:border-[#93DA97]/50 hover:bg-gray-200 dark:hover:bg-gray-700/50 transition-all duration-300 group shadow-lg hover:shadow-xl"
                 >
                   <div className="w-8 h-8 bg-gradient-to-br from-[#5E936C] to-[#93DA97] rounded-full flex items-center justify-center">
                     <FontAwesomeIcon
@@ -194,16 +212,16 @@ const Header = () => {
                     />
                   </div>
                   <div className="hidden md:block text-left">
-                    <div className="text-sm font-medium text-white">
+                    <div className="text-sm font-medium text-gray-900 dark:text-white">
                       {currentUser.fullName || currentUser.username}
                     </div>
-                    <div className="text-xs text-gray-400 capitalize">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 capitalize">
                       {currentUser.role}
                     </div>
                   </div>
                   <FontAwesomeIcon
                     icon={faChevronDown}
-                    className={`text-gray-400 text-sm transition-transform duration-300 ${
+                    className={`text-gray-500 dark:text-gray-400 text-sm transition-transform duration-300 ${
                       isDropdownOpen ? "rotate-180" : ""
                     }`}
                   />
@@ -211,8 +229,8 @@ const Header = () => {
 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-64 origin-top-right bg-gray-800/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl ring-1 ring-black/20 overflow-hidden">
-                    <div className="p-4 border-b border-gray-700/50">
+                  <div className="absolute right-0 mt-2 w-64 origin-top-right bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-300 dark:border-gray-700/50 rounded-2xl shadow-2xl ring-1 ring-black/5 dark:ring-black/20 overflow-hidden">
+                    <div className="p-4 border-b border-gray-200 dark:border-gray-700/50">
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-[#5E936C] to-[#93DA97] rounded-full flex items-center justify-center">
                           <FontAwesomeIcon
@@ -221,10 +239,10 @@ const Header = () => {
                           />
                         </div>
                         <div>
-                          <div className="text-sm font-medium text-white">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
                             {currentUser.fullName || currentUser.username}
                           </div>
-                          <div className="text-xs text-gray-400 capitalize">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 capitalize">
                             {currentUser.role}
                           </div>
                         </div>
@@ -254,7 +272,7 @@ const Header = () => {
                           </DropdownItem>
                         </>
                       )}
-                      <div className="border-t border-gray-700/50 my-2"></div>
+                      <div className="border-t border-gray-200 dark:border-gray-700/50 my-2"></div>
                       <DropdownItem
                         onClick={handleLogout}
                         icon={faSignOutAlt}
@@ -279,7 +297,7 @@ const Header = () => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-gray-800/50 border border-gray-700/50 hover:border-[#93DA97]/50 text-gray-400 hover:text-[#93DA97] transition-all duration-300"
+              className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-gray-200 dark:bg-gray-800/50 border-2 border-gray-300 dark:border-gray-600/50 hover:border-[#5E936C] dark:hover:border-[#93DA97]/50 text-gray-600 dark:text-gray-400 hover:text-[#5E936C] dark:hover:text-[#93DA97] transition-all duration-300"
             >
               <FontAwesomeIcon
                 icon={isMobileMenuOpen ? faTimes : faBars}
@@ -292,7 +310,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-gray-900/95 backdrop-blur-xl border-t border-gray-700/50">
+        <div className="md:hidden bg-gray-100 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-300 dark:border-gray-700/50">
           <div className="px-4 py-4 space-y-2">
             {/* Mobile Search */}
             <div className="sm:hidden mb-4">

@@ -170,17 +170,22 @@ const BookDetail = () => {
     }
   };
 
-  const DetailItem = ({ icon, label, value, valueClass = "text-gray-300" }) => (
+  const DetailItem = ({
+    icon,
+    label,
+    value,
+    valueClass = "text-gray-800 dark:text-gray-300",
+  }) => (
     <motion.div
       variants={itemVariants}
-      className="flex items-start space-x-3 p-3 rounded-lg bg-gray-800/30 border border-gray-700/30 hover:border-lightGreen/30 transition-all duration-300"
+      className="flex items-start space-x-3 p-3 rounded-lg bg-white dark:bg-gray-800/30 border-2 border-gray-300 dark:border-gray-700/30 hover:border-lightGreen/50 dark:hover:border-lightGreen/30 transition-all duration-300 shadow-md hover:shadow-lg"
     >
       <FontAwesomeIcon
         icon={icon}
         className="text-lightGreen mt-1 w-4 h-4 flex-shrink-0"
       />
       <div className="flex-1">
-        <span className="font-semibold text-gray-400 text-sm uppercase tracking-wide">
+        <span className="font-semibold text-gray-600 dark:text-gray-400 text-sm uppercase tracking-wide">
           {label}
         </span>
         <div className={`${valueClass} break-words font-medium`}>{value}</div>
@@ -191,15 +196,19 @@ const BookDetail = () => {
   const StatCard = ({ icon, label, value, color = "text-lightGreen" }) => (
     <motion.div
       variants={itemVariants}
-      className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50 hover:border-lightGreen/30 transition-all duration-300"
+      className="bg-white dark:bg-gray-800/50 rounded-xl p-4 border-2 border-gray-300 dark:border-gray-700/50 hover:border-lightGreen/50 dark:hover:border-lightGreen/30 transition-all duration-300 shadow-lg hover:shadow-xl"
     >
       <div className="flex items-center space-x-3">
-        <div className={`p-2 rounded-lg bg-gray-700/50`}>
+        <div className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-700/50`}>
           <FontAwesomeIcon icon={icon} className={`w-5 h-5 ${color}`} />
         </div>
         <div>
-          <div className="text-2xl font-bold text-white">{value}</div>
-          <div className="text-sm text-gray-400">{label}</div>
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+            {value}
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            {label}
+          </div>
         </div>
       </div>
     </motion.div>
@@ -208,7 +217,7 @@ const BookDetail = () => {
   if (loading) {
     return (
       <motion.div
-        className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] min-h-screen flex flex-col justify-center items-center text-center p-4"
+        className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-[#0F172A] dark:to-[#1E293B] min-h-screen flex flex-col justify-center items-center text-center p-4"
         variants={pageVariants}
         initial="initial"
         animate="animate"
@@ -219,10 +228,10 @@ const BookDetail = () => {
           spin
           className="text-lightGreen text-5xl mb-4"
         />
-        <p className="text-gray-300 text-xl font-semibold">
+        <p className="text-gray-800 dark:text-gray-300 text-xl font-semibold">
           Đang tải thông tin sách...
         </p>
-        <p className="text-gray-500 text-sm mt-2">
+        <p className="text-gray-600 dark:text-gray-500 text-sm mt-2">
           Vui lòng chờ trong giây lát.
         </p>
       </motion.div>
@@ -232,7 +241,7 @@ const BookDetail = () => {
   if (error || !book) {
     return (
       <motion.div
-        className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] min-h-screen flex flex-col justify-center items-center text-center p-4"
+        className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-[#0F172A] dark:to-[#1E293B] min-h-screen flex flex-col justify-center items-center text-center p-4"
         variants={pageVariants}
         initial="initial"
         animate="animate"
@@ -242,7 +251,7 @@ const BookDetail = () => {
           icon={faExclamationTriangle}
           className="text-red-500 text-5xl mb-4"
         />
-        <p className="text-red-400 text-xl font-semibold">
+        <p className="text-red-600 dark:text-red-400 text-xl font-semibold">
           {error || "Không thể hiển thị thông tin sách."}
         </p>
         <Link
@@ -300,7 +309,7 @@ const BookDetail = () => {
 
   return (
     <motion.div
-      className="bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] min-h-screen py-8 md:py-12"
+      className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-[#0F172A] dark:via-[#1E293B] dark:to-[#0F172A] min-h-screen py-8 md:py-12 transition-colors duration-300"
       variants={pageVariants}
       initial="initial"
       animate="animate"
@@ -316,7 +325,7 @@ const BookDetail = () => {
         >
           <Link
             to="/books"
-            className="inline-flex items-center text-gray-400 hover:text-lightGreen transition duration-300 group mb-6"
+            className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-lightGreen transition duration-300 group mb-6"
           >
             <FontAwesomeIcon
               icon={faArrowLeft}
@@ -344,7 +353,7 @@ const BookDetail = () => {
                 <motion.img
                   src={formatCoverImage(book.cover_image)}
                   alt={book.title || "Bìa sách"}
-                  className="w-full max-w-md mx-auto xl:max-w-full rounded-2xl shadow-2xl border border-gray-700/50 object-cover aspect-[3/4]"
+                  className="w-full max-w-md mx-auto xl:max-w-full rounded-2xl shadow-2xl border-2 border-gray-300 dark:border-gray-700/50 object-cover aspect-[3/4]"
                   variants={imageVariants}
                   whileHover="hover"
                   loading="lazy"
@@ -355,10 +364,10 @@ const BookDetail = () => {
                 <div className="absolute top-4 right-4 flex flex-col space-y-2">
                   <motion.button
                     onClick={handleLike}
-                    className={`p-3 rounded-full backdrop-blur-sm transition-all duration-300 ${
+                    className={`p-3 rounded-full backdrop-blur-sm transition-all duration-300 shadow-lg ${
                       isLiked
                         ? "bg-red-500/80 text-white"
-                        : "bg-black/50 text-gray-300 hover:bg-red-500/80 hover:text-white"
+                        : "bg-white/90 dark:bg-black/50 text-gray-700 dark:text-gray-300 hover:bg-red-500/80 hover:text-white"
                     }`}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
@@ -479,14 +488,14 @@ const BookDetail = () => {
               <div className="space-y-4">
                 <motion.h1
                   variants={itemVariants}
-                  className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight vietnamese-heading"
+                  className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight vietnamese-heading"
                 >
                   {book.title || "Không có tiêu đề"}
                 </motion.h1>
 
                 <motion.div
                   variants={itemVariants}
-                  className="flex items-center space-x-4 text-xl text-gray-300 vietnamese-text"
+                  className="flex items-center space-x-4 text-xl text-gray-600 dark:text-gray-300 vietnamese-text"
                 >
                   <FontAwesomeIcon
                     icon={faUserPen}
@@ -502,24 +511,24 @@ const BookDetail = () => {
               {/* Description */}
               <motion.div
                 variants={itemVariants}
-                className="bg-gray-800/30 rounded-xl p-6 border border-gray-700/30"
+                className="bg-white/90 dark:bg-gray-800/30 rounded-xl p-6 border-2 border-gray-300 dark:border-gray-700/30 shadow-lg"
               >
                 <div className="flex items-center space-x-3 mb-4">
                   <FontAwesomeIcon
                     icon={faQuoteLeft}
                     className="text-lightGreen w-5 h-5"
                   />
-                  <h2 className="text-xl font-semibold text-white vietnamese-heading">
+                  <h2 className="text-xl font-semibold text-gray-800 dark:text-white vietnamese-heading">
                     Mô tả sách
                   </h2>
                 </div>
                 {book.description ? (
                   <div className="space-y-4">
-                    <p className="text-gray-300 leading-relaxed text-lg whitespace-pre-line vietnamese-body">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg whitespace-pre-line vietnamese-body">
                       {book.description}
                     </p>
                     {book.description.length > 300 && (
-                      <div className="text-sm text-gray-400 italic">
+                      <div className="text-sm text-gray-500 dark:text-gray-400 italic">
                         📖 Mô tả chi tiết giúp bạn hiểu rõ hơn về nội dung cuốn
                         sách
                       </div>
@@ -527,13 +536,13 @@ const BookDetail = () => {
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <div className="text-gray-500 text-lg mb-2">
+                    <div className="text-gray-400 dark:text-gray-500 text-lg mb-2">
                       <FontAwesomeIcon
                         icon={faFileAlt}
                         className="w-8 h-8 mb-3"
                       />
                     </div>
-                    <p className="text-gray-400">
+                    <p className="text-gray-600 dark:text-gray-400">
                       Chưa có mô tả chi tiết cho cuốn sách này
                     </p>
                     <p className="text-sm text-gray-500 mt-2">
@@ -550,7 +559,7 @@ const BookDetail = () => {
                     icon={faInfoCircle}
                     className="text-lightGreen w-6 h-6"
                   />
-                  <h2 className="text-2xl font-semibold text-white">
+                  <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
                     Thông tin chi tiết
                   </h2>
                 </div>
@@ -657,8 +666,12 @@ const BookDetail = () => {
                       className="text-blue-400 w-5 h-5"
                     />
                     <div>
-                      <div className="text-sm text-gray-400">Định dạng</div>
-                      <div className="font-semibold text-white">Sách in</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                        Định dạng
+                      </div>
+                      <div className="font-bold text-gray-900 dark:text-white">
+                        Sách in
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -670,8 +683,12 @@ const BookDetail = () => {
                       className="text-purple-400 w-5 h-5"
                     />
                     <div>
-                      <div className="text-sm text-gray-400">Chất lượng</div>
-                      <div className="font-semibold text-white">Tốt</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                        Chất lượng
+                      </div>
+                      <div className="font-bold text-gray-900 dark:text-white">
+                        Tốt
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -683,8 +700,12 @@ const BookDetail = () => {
                       className="text-green-400 w-5 h-5"
                     />
                     <div>
-                      <div className="text-sm text-gray-400">Tình trạng</div>
-                      <div className="font-semibold text-white">Mới</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                        Tình trạng
+                      </div>
+                      <div className="font-bold text-gray-900 dark:text-white">
+                        Mới
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -695,7 +716,7 @@ const BookDetail = () => {
                 variants={itemVariants}
                 className="bg-gradient-to-r from-blue-500/5 via-lightGreen/5 to-blue-500/5 rounded-xl p-6 border border-lightGreen/20"
               >
-                <h3 className="text-xl font-semibold text-white mb-6 flex items-center">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
                   <FontAwesomeIcon
                     icon={faInfoCircle}
                     className="text-lightGreen w-6 h-6 mr-3"
@@ -712,10 +733,10 @@ const BookDetail = () => {
                         />
                       </div>
                       <div>
-                        <p className="text-white font-semibold">
+                        <p className="text-gray-900 dark:text-white font-bold">
                           Thời gian mượn
                         </p>
-                        <p className="text-gray-300 text-sm">
+                        <p className="text-gray-700 dark:text-gray-300 text-sm font-medium">
                           Tối đa 10 ngày kể từ ngày nhận sách
                         </p>
                       </div>
@@ -729,10 +750,10 @@ const BookDetail = () => {
                         />
                       </div>
                       <div>
-                        <p className="text-white font-semibold">
+                        <p className="text-gray-900 dark:text-white font-bold">
                           Giới hạn mượn
                         </p>
-                        <p className="text-gray-300 text-sm">
+                        <p className="text-gray-700 dark:text-gray-300 text-sm font-medium">
                           Tối đa 5 cuốn sách cùng một lúc
                         </p>
                       </div>
@@ -746,10 +767,10 @@ const BookDetail = () => {
                         />
                       </div>
                       <div>
-                        <p className="text-white font-semibold">
+                        <p className="text-gray-900 dark:text-white font-bold">
                           Giữ chỗ đặt trước
                         </p>
-                        <p className="text-gray-300 text-sm">
+                        <p className="text-gray-700 dark:text-gray-300 text-sm font-medium">
                           Sách được giữ trong 3 ngày sau khi duyệt
                         </p>
                       </div>
@@ -765,8 +786,10 @@ const BookDetail = () => {
                         />
                       </div>
                       <div>
-                        <p className="text-white font-semibold">Gia hạn</p>
-                        <p className="text-gray-300 text-sm">
+                        <p className="text-gray-900 dark:text-white font-bold">
+                          Gia hạn
+                        </p>
+                        <p className="text-gray-700 dark:text-gray-300 text-sm font-medium">
                           Có thể gia hạn tối đa 1 lần
                         </p>
                       </div>
@@ -780,8 +803,10 @@ const BookDetail = () => {
                         />
                       </div>
                       <div>
-                        <p className="text-white font-semibold">Phí trễ hạn</p>
-                        <p className="text-gray-300 text-sm">
+                        <p className="text-gray-900 dark:text-white font-bold">
+                          Phí trễ hạn
+                        </p>
+                        <p className="text-gray-700 dark:text-gray-300 text-sm font-medium">
                           2,000đ mỗi ngày trễ hạn
                         </p>
                       </div>
@@ -795,10 +820,10 @@ const BookDetail = () => {
                         />
                       </div>
                       <div>
-                        <p className="text-white font-semibold">
+                        <p className="text-gray-900 dark:text-white font-bold">
                           Điều kiện mượn
                         </p>
-                        <p className="text-gray-300 text-sm">
+                        <p className="text-gray-700 dark:text-gray-300 text-sm font-medium">
                           Cần đăng ký thành viên thư viện
                         </p>
                       </div>
@@ -806,8 +831,8 @@ const BookDetail = () => {
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-gray-700/30">
-                  <p className="text-sm text-gray-400 flex items-center">
+                <div className="mt-6 pt-4 border-t border-gray-300 dark:border-gray-700/30">
+                  <p className="text-sm text-gray-700 dark:text-gray-400 flex items-center font-medium">
                     <FontAwesomeIcon
                       icon={faInfoCircle}
                       className="w-4 h-4 mr-2 text-lightGreen"

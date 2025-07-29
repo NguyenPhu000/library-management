@@ -96,7 +96,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-900">
+    <div className="min-h-screen flex bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Left side - Image and branding */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div
@@ -105,7 +105,7 @@ const LoginPage = () => {
             backgroundImage: `url('/uploads/coverBook.jpg')`,
           }}
         >
-          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="absolute inset-0 bg-black/50 dark:bg-black/60"></div>
         </div>
 
         {/* Overlay content */}
@@ -139,15 +139,17 @@ const LoginPage = () => {
       </div>
 
       {/* Right side - Login form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-900">
-        <div className="w-full max-w-md bg-gray-800 p-8 rounded-xl border border-gray-700 shadow-2xl">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-xl border border-gray-200 dark:border-gray-700 shadow-2xl transition-colors duration-300">
           {/* Header with Sign In button */}
           <div className="flex justify-between items-center mb-8">
             <div className="lg:hidden flex items-center">
               <div className="w-8 h-8 bg-gradient-to-br from-[#5E936C] to-[#3E5F44] rounded-lg flex items-center justify-center mr-3">
                 <FontAwesomeIcon icon={faHome} className="text-white text-sm" />
               </div>
-              <span className="text-lg font-semibold text-white">Thư Viện</span>
+              <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                Thư Viện
+              </span>
             </div>
             <div className="hidden lg:block">
               <div className="w-8 h-8 bg-gradient-to-br from-[#5E936C] to-[#3E5F44] rounded-lg flex items-center justify-center">
@@ -164,14 +166,16 @@ const LoginPage = () => {
             <h2 className="text-4xl font-bold bg-gradient-to-r from-[#93DA97] to-[#E8FFD7] bg-clip-text text-transparent mb-3">
               Chào Mừng Trở Lại Thư Viện!
             </h2>
-            <p className="text-gray-300">Đăng nhập vào tài khoản của bạn</p>
+            <p className="text-gray-600 dark:text-gray-300 transition-colors duration-300">
+              Đăng nhập vào tài khoản của bạn
+            </p>
           </div>
 
           {/* Login Form */}
           <form onSubmit={handleLoginSubmit} className="space-y-6">
             {/* Username Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 transition-colors duration-300">
                 {isAdminLogin ? "Tài khoản quản trị" : "Tên tài khoản của bạn"}
               </label>
               <input
@@ -179,14 +183,14 @@ const LoginPage = () => {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5E936C] focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5E936C] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                 placeholder={isAdminLogin ? "admin123" : "member123"}
               />
             </div>
 
             {/* Password Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 transition-colors duration-300">
                 Mật khẩu
               </label>
               <div className="relative">
@@ -195,12 +199,12 @@ const LoginPage = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 pr-12 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5E936C] focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5E936C] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-200 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                   onClick={togglePasswordVisibility}
                 >
                   <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
@@ -217,11 +221,11 @@ const LoginPage = () => {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 text-[#5E936C] focus:ring-[#93DA97] border-gray-600 rounded bg-gray-700"
+                  className="h-4 w-4 text-[#5E936C] focus:ring-[#93DA97] border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 transition-colors duration-300"
                 />
                 <label
                   htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-200"
+                  className="ml-2 block text-sm text-gray-700 dark:text-gray-200 transition-colors duration-300"
                 >
                   Ghi nhớ tôi
                 </label>
@@ -253,10 +257,12 @@ const LoginPage = () => {
             {/* Sign up link for non-admin login */}
             {!isAdminLogin && (
               <div className="text-center mt-6">
-                <span className="text-gray-300">Chưa có tài khoản? </span>
+                <span className="text-gray-600 dark:text-gray-300 transition-colors duration-300">
+                  Chưa có tài khoản?{" "}
+                </span>
                 <Link
                   to="/register"
-                  className="text-[#93DA97] hover:text-[#E8FFD7] font-medium transition-colors"
+                  className="text-[#93DA97] hover:text-[#E8FFD7] font-medium transition-colors duration-300"
                 >
                   Đăng ký
                 </Link>

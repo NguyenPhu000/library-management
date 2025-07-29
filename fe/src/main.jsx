@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./styles/index.css";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 // Suppress verbose logs unless explicitly enabled
 if (!import.meta.env.VITE_VERBOSE_LOG) {
@@ -15,7 +16,9 @@ if (!import.meta.env.VITE_VERBOSE_LOG) {
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

@@ -6,23 +6,27 @@ import { LoanProvider } from "./LoanContext";
 import { SearchBookProvider } from "./SearchBookContext";
 import { UserProvider } from "./UserContext";
 import { PaymentProvider } from "./PaymentContext";
+import { ThemeProvider } from "./ThemeContext";
+
 const AppProviders = ({ children }) => {
   return (
-    <AuthProvider>
-      <UserProvider>
-        <MemberProvider>
-          <LoanProvider>
-            <SearchBookProvider>
-              <CategoryProvider>
-                <BookProvider>
-                  <PaymentProvider>{children}</PaymentProvider>
-                </BookProvider>
-              </CategoryProvider>
-            </SearchBookProvider>
-          </LoanProvider>
-        </MemberProvider>
-      </UserProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <UserProvider>
+          <MemberProvider>
+            <LoanProvider>
+              <SearchBookProvider>
+                <CategoryProvider>
+                  <BookProvider>
+                    <PaymentProvider>{children}</PaymentProvider>
+                  </BookProvider>
+                </CategoryProvider>
+              </SearchBookProvider>
+            </LoanProvider>
+          </MemberProvider>
+        </UserProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 

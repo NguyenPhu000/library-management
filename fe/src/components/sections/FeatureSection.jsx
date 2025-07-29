@@ -64,7 +64,7 @@ const features = [
 
 const FeatureSection = () => {
   return (
-    <section className="relative py-20 md:py-28 bg-gradient-to-b from-gray-950 via-slate-900 to-gray-950 text-white overflow-hidden">
+    <section className="relative py-20 md:py-28 bg-gradient-to-b from-gray-100 via-gray-50 to-gray-100 dark:from-gray-950 dark:via-slate-900 dark:to-gray-950 text-gray-900 dark:text-white overflow-hidden transition-colors duration-300">
       {/* Enhanced Background Effects */}
       <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-gradient-to-r from-[#3E5F44]/20 to-[#5E936C]/20 filter blur-3xl animate-pulse" />
       <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full bg-gradient-to-br from-[#93DA97]/20 to-[#E8FFD7]/20 filter blur-3xl animate-pulse delay-1000" />
@@ -93,22 +93,25 @@ const FeatureSection = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center bg-gradient-to-r from-[#3E5F44]/20 to-[#5E936C]/20 backdrop-blur-sm border border-[#93DA97]/30 rounded-full px-6 py-3 mb-6 text-sm font-medium text-[#E8FFD7]">
-            <FontAwesomeIcon icon={faStar} className="mr-2 text-[#93DA97]" />
+          <div className="inline-flex items-center bg-gradient-to-r from-[#3E5F44]/20 to-[#5E936C]/20 backdrop-blur-sm border border-[#5E936C]/30 dark:border-[#93DA97]/30 rounded-full px-6 py-3 mb-6 text-sm font-medium text-[#5E936C] dark:text-[#E8FFD7]">
+            <FontAwesomeIcon
+              icon={faStar}
+              className="mr-2 text-[#5E936C] dark:text-[#93DA97]"
+            />
             Tại sao chọn chúng tôi
           </div>
 
           <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-white via-[#E8FFD7] to-[#93DA97] text-transparent bg-clip-text">
+            <span className="bg-gradient-to-r from-gray-900 via-[#3E5F44] to-[#5E936C] dark:from-white dark:via-[#E8FFD7] dark:to-[#93DA97] text-transparent bg-clip-text">
               Trải Nghiệm Đọc Sách
             </span>
             <br />
-            <span className="bg-gradient-to-r from-[#93DA97] to-[#5E936C] text-transparent bg-clip-text">
+            <span className="bg-gradient-to-r from-[#5E936C] to-[#3E5F44] dark:from-[#93DA97] dark:to-[#5E936C] text-transparent bg-clip-text">
               Tuyệt Vời Nhất
             </span>
           </h2>
 
-          <p className="text-xl text-gray-300/90 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600 dark:text-gray-300/90 max-w-3xl mx-auto leading-relaxed">
             Khám phá những tính năng đặc biệt giúp bạn có trải nghiệm đọc sách
             trực tuyến tốt nhất
           </p>
@@ -119,7 +122,7 @@ const FeatureSection = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/40 hover:border-[#93DA97]/60 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#93DA97]/20"
+              className="group relative bg-gradient-to-br from-white/40 to-gray-100/40 dark:from-gray-800/40 dark:to-gray-900/40 backdrop-blur-sm rounded-2xl p-8 border border-gray-300/40 dark:border-gray-700/40 hover:border-[#5E936C]/60 dark:hover:border-[#93DA97]/60 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#5E936C]/20 dark:hover:shadow-[#93DA97]/20"
             >
               {/* Background Gradient */}
               <div
@@ -147,7 +150,7 @@ const FeatureSection = () => {
 
                 {/* Stats Badge */}
                 <div
-                  className={`inline-flex items-center bg-gradient-to-r from-gray-800/60 to-gray-700/60 backdrop-blur-sm border border-gray-600/40 rounded-full px-3 py-1 mb-4 text-xs font-medium ${feature.textColor}`}
+                  className={`inline-flex items-center bg-gradient-to-r from-gray-200/60 to-gray-300/60 dark:from-gray-800/60 dark:to-gray-700/60 backdrop-blur-sm border border-gray-400/40 dark:border-gray-600/40 rounded-full px-3 py-1 mb-4 text-xs font-medium ${feature.textColor}`}
                 >
                   {feature.stats}
                 </div>
@@ -160,7 +163,7 @@ const FeatureSection = () => {
                 </h3>
 
                 {/* Description */}
-                <p className="text-gray-300 leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors duration-300">
                   {feature.description}
                 </p>
 
@@ -183,7 +186,7 @@ const FeatureSection = () => {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">
-          <p className="text-gray-400 mb-6 text-lg">
+          <p className="text-gray-600 dark:text-gray-400 mb-6 text-lg">
             Bắt đầu hành trình khám phá tri thức cùng chúng tôi
           </p>
           <button className="bg-gradient-to-r from-[#3E5F44] to-[#5E936C] hover:from-[#5E936C] hover:to-[#93DA97] text-white font-semibold text-lg py-4 px-8 rounded-full transition-all duration-300 ease-in-out shadow-xl hover:shadow-[#5E936C]/30 hover:scale-105">

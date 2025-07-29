@@ -61,12 +61,12 @@ const BookListPage = () => {
   let currentError = isSearching ? searchError : bookError;
 
   return (
-    <div className="font-poppins p-4 bg-gray-900 text-white min-h-screen">
+    <div className="font-poppins p-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
       <div className="container mx-auto px-4 py-6">
         <CategoryFilter className="mb-6" />
 
         {isSearching && searchResults.length > 0 && (
-          <div className="mb-4 text-gray-300">
+          <div className="mb-4 text-gray-600 dark:text-gray-300">
             <p>
               Tìm thấy {booksToDisplay.length} kết quả{" "}
               {selectedCategory ? "(đã lọc theo thể loại)" : ""}
@@ -87,7 +87,7 @@ const BookListPage = () => {
         />
 
         {isSearching && searchResults.length === 0 && !searchLoading && (
-          <div className="text-center py-8 text-gray-400">
+          <div className="text-center py-8 text-gray-600 dark:text-gray-400">
             <p className="text-xl">
               Không tìm thấy sách phù hợp với từ khóa tìm kiếm.
             </p>

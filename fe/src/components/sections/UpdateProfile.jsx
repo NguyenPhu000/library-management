@@ -294,7 +294,7 @@ const UpdateProfileButton = () => {
     <>
       <button
         onClick={openModal}
-        className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-100 font-semibold py-3 px-6 rounded-xl backdrop-blur-sm border border-emerald-500/30 hover:border-emerald-500/40 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all duration-200 flex items-center gap-2"
+        className="bg-emerald-200 dark:bg-emerald-500/20 hover:bg-emerald-300 dark:hover:bg-emerald-500/30 text-emerald-800 dark:text-emerald-100 font-bold py-3 px-6 rounded-xl backdrop-blur-sm border-2 border-emerald-400 dark:border-emerald-500/30 hover:border-emerald-500 dark:hover:border-emerald-500/40 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl"
       >
         <FaEdit className="w-4 h-4" />
         <span className="hidden sm:inline">Cập nhật thông tin</span>

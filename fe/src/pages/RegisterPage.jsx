@@ -103,21 +103,21 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-900">
+    <div className="min-h-screen flex bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Left side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-900">
-        <div className="w-full max-w-md bg-gray-800 p-8 rounded-xl border border-gray-700 shadow-2xl">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-xl border border-gray-200 dark:border-gray-700 shadow-2xl transition-colors duration-300">
           {/* Header */}
           <div className="mb-8">
             <h2 className="text-3xl font-bold bg-gradient-to-r from-[#93DA97] to-[#E8FFD7] bg-clip-text text-transparent mb-2">
               Chào mừng đến <br />
               Góc Thư Viện
             </h2>
-            <p className="text-gray-300">
+            <p className="text-gray-600 dark:text-gray-300 transition-colors duration-300">
               Đã có tài khoản?
               <Link
                 to="/login"
-                className="text-[#93DA97] hover:text-[#E8FFD7] ml-1 font-medium transition-colors"
+                className="text-[#5E936C] hover:text-[#93DA97] ml-1 font-medium transition-colors"
               >
                 Đăng nhập
               </Link>
@@ -128,7 +128,7 @@ const RegisterPage = () => {
           <form onSubmit={handleRegisterSubmit} className="space-y-4">
             {/* Email Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1 transition-colors duration-300">
                 Email
               </label>
               <input
@@ -136,14 +136,14 @@ const RegisterPage = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-white text-sm bg-gray-700 placeholder-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-gray-900 dark:text-white text-sm bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                 placeholder="example@email.com"
               />
             </div>
 
             {/* Username Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1 transition-colors duration-300">
                 Tên đăng nhập
               </label>
               <input
@@ -151,14 +151,14 @@ const RegisterPage = () => {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-white text-sm bg-gray-700 placeholder-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-gray-900 dark:text-white text-sm bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                 placeholder="username"
               />
             </div>
 
             {/* Password Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1 transition-colors duration-300">
                 Mật khẩu
               </label>
               <div className="relative">
@@ -167,12 +167,12 @@ const RegisterPage = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 pr-10 border border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-white text-sm bg-gray-700 placeholder-gray-400"
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-gray-900 dark:text-white text-sm bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-300"
                   onClick={togglePasswordVisibility}
                 >
                   <FontAwesomeIcon
@@ -186,7 +186,7 @@ const RegisterPage = () => {
             {/* Full Name Row */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-200 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1 transition-colors duration-300">
                   Họ
                 </label>
                 <input
@@ -194,12 +194,12 @@ const RegisterPage = () => {
                   required
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-white text-sm bg-gray-700 placeholder-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-gray-900 dark:text-white text-sm bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                   placeholder="Nguyễn"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-200 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1 transition-colors duration-300">
                   Tên
                 </label>
                 <input
@@ -207,7 +207,7 @@ const RegisterPage = () => {
                   required
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-white text-sm bg-gray-700 placeholder-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-gray-900 dark:text-white text-sm bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                   placeholder="Văn A"
                 />
               </div>
@@ -216,7 +216,7 @@ const RegisterPage = () => {
             {/* Phone & Gender Row */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-200 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1 transition-colors duration-300">
                   Số điện thoại
                 </label>
                 <input
@@ -224,18 +224,18 @@ const RegisterPage = () => {
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-white text-sm bg-gray-700 placeholder-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-gray-900 dark:text-white text-sm bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                   placeholder="0123456789"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-200 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1 transition-colors duration-300">
                   Giới tính
                 </label>
                 <select
                   value={gender}
                   onChange={(e) => setGender(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-white text-sm bg-gray-700 placeholder-gray-400"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-gray-900 dark:text-white text-sm bg-white dark:bg-gray-700 transition-colors duration-300"
                 >
                   <option value="1">Nam</option>
                   <option value="0">Nữ</option>
@@ -245,7 +245,7 @@ const RegisterPage = () => {
 
             {/* Address */}
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1 transition-colors duration-300">
                 Địa chỉ
               </label>
               <input
@@ -253,7 +253,7 @@ const RegisterPage = () => {
                 required
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-white text-sm bg-gray-700 placeholder-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E936C] focus:border-transparent text-gray-900 dark:text-white text-sm bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                 placeholder="123 Đường ABC, Quận XYZ, TP. HCM"
               />
             </div>
@@ -266,18 +266,24 @@ const RegisterPage = () => {
                   type="checkbox"
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="h-4 w-4 text-[#5E936C] focus:ring-[#93DA97] border-gray-600 rounded mt-0.5 bg-gray-700"
+                  className="h-4 w-4 text-[#5E936C] focus:ring-[#93DA97] border-gray-300 dark:border-gray-600 rounded mt-0.5 bg-white dark:bg-gray-700 transition-colors duration-300"
                 />
                 <label
                   htmlFor="agree-terms"
-                  className="ml-2 text-xs text-gray-300 leading-relaxed"
+                  className="ml-2 text-xs text-gray-600 dark:text-gray-300 leading-relaxed transition-colors duration-300"
                 >
                   Tôi đồng ý với{" "}
-                  <a href="#" className="text-[#93DA97] hover:text-[#E8FFD7]">
+                  <a
+                    href="#"
+                    className="text-[#5E936C] hover:text-[#93DA97] transition-colors"
+                  >
                     Điều khoản sử dụng
                   </a>{" "}
                   và{" "}
-                  <a href="#" className="text-[#93DA97] hover:text-[#E8FFD7]">
+                  <a
+                    href="#"
+                    className="text-[#5E936C] hover:text-[#93DA97] transition-colors"
+                  >
                     Chính sách bảo mật
                   </a>
                 </label>
@@ -289,11 +295,11 @@ const RegisterPage = () => {
                   type="checkbox"
                   checked={receiveEmails}
                   onChange={(e) => setReceiveEmails(e.target.checked)}
-                  className="h-4 w-4 text-[#5E936C] focus:ring-[#93DA97] border-gray-600 rounded mt-0.5 bg-gray-700"
+                  className="h-4 w-4 text-[#5E936C] focus:ring-[#93DA97] border-gray-300 dark:border-gray-600 rounded mt-0.5 bg-white dark:bg-gray-700 transition-colors duration-300"
                 />
                 <label
                   htmlFor="receive-emails"
-                  className="ml-2 text-xs text-gray-300 leading-relaxed"
+                  className="ml-2 text-xs text-gray-600 dark:text-gray-300 leading-relaxed transition-colors duration-300"
                 >
                   Tôi muốn nhận email về cập nhật sản phẩm, sự kiện và chương
                   trình khuyến mãi marketing.
@@ -302,13 +308,19 @@ const RegisterPage = () => {
             </div>
 
             {/* Terms text */}
-            <div className="text-xs text-gray-400 leading-relaxed">
+            <div className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed transition-colors duration-300">
               Bằng cách tạo tài khoản, bạn đồng ý với{" "}
-              <a href="#" className="text-[#93DA97] hover:text-[#E8FFD7]">
+              <a
+                href="#"
+                className="text-[#5E936C] hover:text-[#93DA97] transition-colors"
+              >
                 Điều khoản sử dụng
               </a>{" "}
               và{" "}
-              <a href="#" className="text-[#93DA97] hover:text-[#E8FFD7]">
+              <a
+                href="#"
+                className="text-[#5E936C] hover:text-[#93DA97] transition-colors"
+              >
                 Chính sách bảo mật
               </a>
               .
@@ -332,10 +344,12 @@ const RegisterPage = () => {
 
             {/* Login link */}
             <div className="text-center mt-4">
-              <span className="text-gray-300 text-sm">Đã có tài khoản? </span>
+              <span className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">
+                Đã có tài khoản?{" "}
+              </span>
               <Link
                 to="/login"
-                className="text-[#93DA97] hover:text-[#E8FFD7] font-medium text-sm transition-colors"
+                className="text-[#5E936C] hover:text-[#93DA97] font-medium text-sm transition-colors"
               >
                 Đăng nhập
               </Link>

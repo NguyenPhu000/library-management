@@ -59,40 +59,43 @@ const UpdatedBook = () => {
   }, []);
 
   return (
-    <section className="relative py-20 md:py-28 bg-gradient-to-b from-gray-950 via-slate-900 to-gray-950 text-white overflow-hidden">
+    <section className="relative py-20 md:py-28 bg-gradient-to-b from-white via-gray-50 to-white dark:from-gray-950 dark:via-slate-900 dark:to-gray-950 text-gray-900 dark:text-white overflow-hidden transition-colors duration-300">
       {/* Enhanced Background Effects */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-gradient-to-r from-[#3E5F44]/20 to-[#5E936C]/20 filter blur-3xl animate-pulse" />
-      <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full bg-gradient-to-br from-[#93DA97]/20 to-[#E8FFD7]/20 filter blur-3xl animate-pulse delay-1000" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-gradient-to-r from-[#3E5F44]/10 dark:from-[#3E5F44]/20 to-[#5E936C]/10 dark:to-[#5E936C]/20 filter blur-3xl animate-pulse" />
+      <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full bg-gradient-to-br from-[#93DA97]/10 dark:from-[#93DA97]/20 to-[#E8FFD7]/10 dark:to-[#E8FFD7]/20 filter blur-3xl animate-pulse delay-1000" />
 
       {/* Floating Elements */}
       <div className="absolute top-20 left-20 animate-bounce delay-300">
         <FontAwesomeIcon
           icon={faNewspaper}
-          className="text-[#93DA97] text-2xl opacity-40"
+          className="text-[#5E936C] dark:text-[#93DA97] text-2xl opacity-40"
         />
       </div>
       <div className="absolute top-32 right-32 animate-bounce delay-700">
         <FontAwesomeIcon
           icon={faFire}
-          className="text-[#E8FFD7] text-xl opacity-30"
+          className="text-[#3E5F44] dark:text-[#E8FFD7] text-xl opacity-30"
         />
       </div>
 
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center bg-gradient-to-r from-[#3E5F44]/20 to-[#5E936C]/20 backdrop-blur-sm border border-[#93DA97]/30 rounded-full px-6 py-3 mb-6 text-sm font-medium text-[#E8FFD7]">
-            <FontAwesomeIcon icon={faFire} className="mr-2 text-[#93DA97]" />
+          <div className="inline-flex items-center bg-gradient-to-r from-gray-100 dark:from-[#3E5F44]/20 to-gray-200 dark:to-[#5E936C]/20 backdrop-blur-sm border-2 border-gray-300 dark:border-[#93DA97]/30 rounded-full px-6 py-3 mb-6 text-sm font-medium text-[#3E5F44] dark:text-[#E8FFD7] shadow-lg">
+            <FontAwesomeIcon
+              icon={faFire}
+              className="mr-2 text-[#3E5F44] dark:text-[#93DA97]"
+            />
             Cập nhật liên tục
           </div>
 
           <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-[#E8FFD7] via-[#93DA97] to-[#5E936C] text-transparent bg-clip-text">
+            <span className="bg-gradient-to-r from-[#3E5F44] via-[#5E936C] to-[#93DA97] dark:from-[#E8FFD7] dark:via-[#93DA97] dark:to-[#5E936C] text-transparent bg-clip-text">
               Sách Mới Cập Nhật
             </span>
           </h2>
 
-          <p className="text-xl text-gray-300/90 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600 dark:text-gray-300/90 max-w-3xl mx-auto leading-relaxed">
             Khám phá những cuốn sách được cập nhật mới nhất trong thư viện với
             nội dung phong phú
           </p>
@@ -102,27 +105,27 @@ const UpdatedBook = () => {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32">
             <div className="relative">
-              <div className="w-20 h-20 border-4 border-[#93DA97]/30 border-t-[#93DA97] rounded-full animate-spin"></div>
+              <div className="w-20 h-20 border-4 border-gray-300 dark:border-[#93DA97]/30 border-t-[#5E936C] dark:border-t-[#93DA97] rounded-full animate-spin"></div>
               <FontAwesomeIcon
                 icon={faBookOpen}
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[#93DA97] text-2xl animate-pulse"
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[#5E936C] dark:text-[#93DA97] text-2xl animate-pulse"
               />
             </div>
-            <p className="text-gray-400 mt-6 text-lg">
+            <p className="text-gray-600 dark:text-gray-400 mt-6 text-lg">
               Đang tải sách mới cập nhật...
             </p>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-32">
-            <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-8 text-center max-w-md">
+            <div className="bg-red-50 dark:bg-red-500/10 border-2 border-red-300 dark:border-red-500/30 rounded-2xl p-8 text-center max-w-md shadow-2xl">
               <FontAwesomeIcon
                 icon={faExclamationTriangle}
-                className="text-red-400 text-5xl mb-6"
+                className="text-red-500 dark:text-red-400 text-5xl mb-6"
               />
-              <h3 className="text-xl font-semibold text-red-400 mb-4">
+              <h3 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-4">
                 Không thể tải sách
               </h3>
-              <p className="text-red-400/80">
+              <p className="text-red-500 dark:text-red-400/80">
                 Đã xảy ra lỗi khi tải sách. Vui lòng thử lại sau.
               </p>
             </div>
@@ -139,10 +142,10 @@ const UpdatedBook = () => {
                 return (
                   <div key={book.book_id} className="group">
                     <Link to={`/books/${slug}`} className="block">
-                      <div className="relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl border border-gray-700/40 hover:border-[#93DA97]/60 transition-all duration-500 hover:scale-105 hover:shadow-[#93DA97]/20">
+                      <div className="relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm rounded-2xl overflow-hidden shadow-2xl border-2 border-gray-300 dark:border-gray-700/40 hover:border-[#5E936C] dark:hover:border-[#93DA97]/60 transition-all duration-500 hover:scale-105 hover:shadow-3xl hover:shadow-[#5E936C]/20 dark:hover:shadow-[#93DA97]/20">
                         {/* New Badge */}
                         {isNew && (
-                          <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-[#93DA97] to-[#E8FFD7] text-gray-900 text-xs font-bold px-2 py-1 rounded-full flex items-center space-x-1">
+                          <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-[#5E936C] to-[#93DA97] dark:from-[#93DA97] dark:to-[#E8FFD7] text-white dark:text-gray-900 text-xs font-bold px-2 py-1 rounded-full flex items-center space-x-1 border border-white/20 shadow-lg">
                             <FontAwesomeIcon
                               icon={faFire}
                               className="text-xs"
@@ -152,7 +155,7 @@ const UpdatedBook = () => {
                         )}
 
                         {/* Heart Icon */}
-                        <div className="absolute top-3 right-3 z-10 w-8 h-8 bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="absolute top-3 right-3 z-10 w-8 h-8 bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-white/20">
                           <FontAwesomeIcon
                             icon={faHeart}
                             className="text-[#93DA97] text-xs"
@@ -171,19 +174,19 @@ const UpdatedBook = () => {
                             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                           />
                           {/* Enhanced Overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent group-hover:from-black/70 transition-all duration-500"></div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 dark:from-black/90 via-black/30 dark:via-black/50 to-transparent group-hover:from-black/60 dark:group-hover:from-black/70 transition-all duration-500"></div>
                         </div>
 
                         {/* Content */}
                         <div className="p-4">
-                          <h3 className="text-lg font-bold mb-2 line-clamp-2 group-hover:text-[#93DA97] transition-colors duration-300">
+                          <h3 className="text-lg font-bold mb-2 line-clamp-2 text-gray-900 dark:text-white group-hover:text-[#5E936C] dark:group-hover:text-[#93DA97] transition-colors duration-300">
                             {book.title || "Không có tiêu đề"}
                           </h3>
 
-                          <p className="text-gray-400 text-sm mb-3 flex items-center">
+                          <p className="text-gray-600 dark:text-gray-400 text-sm mb-3 flex items-center">
                             <FontAwesomeIcon
                               icon={faPenNib}
-                              className="mr-2 text-gray-500 flex-shrink-0"
+                              className="mr-2 text-gray-500 dark:text-gray-500 flex-shrink-0"
                             />
                             <span className="truncate">
                               {book.author || "Không rõ tác giả"}
@@ -191,11 +194,11 @@ const UpdatedBook = () => {
                           </p>
 
                           {/* Stats Row */}
-                          <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+                          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-500 mb-3">
                             <div className="flex items-center space-x-1">
                               <FontAwesomeIcon
                                 icon={faStar}
-                                className="text-[#93DA97]"
+                                className="text-[#5E936C] dark:text-[#93DA97]"
                               />
                               <span>{(Math.random() * 2 + 3).toFixed(1)}</span>
                             </div>
@@ -212,7 +215,7 @@ const UpdatedBook = () => {
                           </div>
 
                           {/* Progress Bar */}
-                          <div className="w-full bg-gray-700 rounded-full h-1 mb-3">
+                          <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-1 mb-3">
                             <div
                               className="bg-gradient-to-r from-[#5E936C] to-[#93DA97] h-1 rounded-full transition-all duration-1000"
                               style={{ width: `${Math.random() * 60 + 20}%` }}
@@ -220,7 +223,7 @@ const UpdatedBook = () => {
                           </div>
 
                           {/* Action Button */}
-                          <button className="w-full bg-gradient-to-r from-[#3E5F44] to-[#5E936C] hover:from-[#5E936C] hover:to-[#93DA97] text-white py-2 rounded-lg text-sm font-medium transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0">
+                          <button className="w-full bg-gradient-to-r from-[#3E5F44] to-[#5E936C] hover:from-[#5E936C] hover:to-[#93DA97] text-white py-2 rounded-lg text-sm font-medium transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 shadow-lg hover:shadow-xl">
                             Đọc ngay
                           </button>
                         </div>
@@ -231,15 +234,15 @@ const UpdatedBook = () => {
               })
             ) : (
               <div className="col-span-full text-center py-32">
-                <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl p-12 max-w-md mx-auto border border-gray-700/40">
+                <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm rounded-2xl p-12 max-w-md mx-auto border-2 border-gray-300 dark:border-gray-700/40 shadow-2xl">
                   <FontAwesomeIcon
                     icon={faBookOpen}
-                    className="text-[#93DA97] text-6xl mb-6 opacity-60"
+                    className="text-[#5E936C] dark:text-[#93DA97] text-6xl mb-6 opacity-60"
                   />
-                  <h3 className="text-2xl font-semibold text-gray-300 mb-4">
+                  <h3 className="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-4">
                     Chưa có sách mới
                   </h3>
-                  <p className="text-gray-400">
+                  <p className="text-gray-500 dark:text-gray-400">
                     Hệ thống đang được cập nhật với nhiều cuốn sách mới.
                   </p>
                 </div>

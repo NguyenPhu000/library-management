@@ -47,10 +47,12 @@ const LoanHistory = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center transition-colors duration-300">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-gray-700 border-t-emerald-500 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400 animate-pulse">Đang tải lịch sử...</p>
+          <div className="w-16 h-16 border-4 border-gray-300 dark:border-gray-700 border-t-emerald-500 rounded-full animate-spin mx-auto mb-4 transition-colors duration-300"></div>
+          <p className="text-gray-600 dark:text-gray-400 animate-pulse transition-colors duration-300">
+            Đang tải lịch sử...
+          </p>
         </div>
       </div>
     );
@@ -58,18 +60,20 @@ const LoanHistory = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-        <div className="bg-gray-800 rounded-xl border border-gray-700 p-8 max-w-md w-full text-center shadow-2xl">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4 transition-colors duration-300">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-8 max-w-md w-full text-center shadow-2xl transition-colors duration-300">
           <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <FontAwesomeIcon
               icon={faExclamationTriangle}
               className="text-2xl text-red-400"
             />
           </div>
-          <h2 className="text-xl font-semibold text-white mb-2">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
             Có lỗi xảy ra
           </h2>
-          <p className="text-gray-400 mb-6">{error}</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-6 transition-colors duration-300">
+            {error}
+          </p>
           <button
             onClick={() => fetchLoanHistory()}
             className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-emerald-500/25"
@@ -224,22 +228,22 @@ const LoanHistory = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-900 border-b border-gray-700">
+      <div className="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="flex items-center space-x-4 mb-2">
             <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center">
               <FontAwesomeIcon
                 icon={faHistory}
-                className="text-emerald-400 text-xl"
+                className="text-emerald-500 text-xl"
               />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
                 Lịch sử mượn sách
               </h1>
-              <p className="text-gray-400 mt-1">
+              <p className="text-gray-600 dark:text-gray-400 mt-1 transition-colors duration-300">
                 Xem lại các lần mượn sách và tình trạng thanh toán
               </p>
             </div>
@@ -250,45 +254,51 @@ const LoanHistory = () => {
       <div className="max-w-6xl mx-auto px-4 py-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-gray-600 transition-all duration-200 group">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 group shadow-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Tổng số lần mượn</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 transition-colors duration-300">
+                  Tổng số lần mượn
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
                   {loanHistory.length}
                 </p>
               </div>
               <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                 <FontAwesomeIcon
                   icon={faBook}
-                  className="text-blue-400 text-xl"
+                  className="text-blue-500 text-xl"
                 />
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-gray-600 transition-all duration-200 group">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 group shadow-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Có phạt trễ</p>
-                <p className="text-2xl font-bold text-orange-400">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 transition-colors duration-300">
+                  Có phạt trễ
+                </p>
+                <p className="text-2xl font-bold text-orange-500">
                   {finedCount}
                 </p>
               </div>
               <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                 <FontAwesomeIcon
                   icon={faClock}
-                  className="text-orange-400 text-xl"
+                  className="text-orange-500 text-xl"
                 />
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-gray-600 transition-all duration-200 group">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 group shadow-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Đã thanh toán</p>
-                <p className="text-2xl font-bold text-emerald-400">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 transition-colors duration-300">
+                  Đã thanh toán
+                </p>
+                <p className="text-2xl font-bold text-emerald-500">
                   {
                     loanHistory.filter(
                       (loan) =>
@@ -300,22 +310,24 @@ const LoanHistory = () => {
               <div className="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                 <FontAwesomeIcon
                   icon={faCheckCircle}
-                  className="text-emerald-400 text-xl"
+                  className="text-emerald-500 text-xl"
                 />
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-gray-600 transition-all duration-200 group">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 group shadow-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Chưa thanh toán</p>
-                <p className="text-2xl font-bold text-red-400">{unpaidCount}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 transition-colors duration-300">
+                  Chưa thanh toán
+                </p>
+                <p className="text-2xl font-bold text-red-500">{unpaidCount}</p>
               </div>
               <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                 <FontAwesomeIcon
                   icon={faMoneyBill}
-                  className="text-red-400 text-xl"
+                  className="text-red-500 text-xl"
                 />
               </div>
             </div>
@@ -323,28 +335,31 @@ const LoanHistory = () => {
         </div>
 
         {/* Search and Filter Section */}
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 mb-6 transition-colors duration-300 shadow-lg">
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search Bar */}
             <div className="flex-1">
               <div className="relative">
                 <FontAwesomeIcon
                   icon={faSearch}
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 transition-colors duration-300"
                 />
                 <input
                   type="text"
                   placeholder="Tìm kiếm theo tên sách hoặc ISBN..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all duration-200"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all duration-200"
                 />
               </div>
             </div>
 
             {/* Filter Buttons */}
             <div className="flex items-center space-x-2">
-              <FontAwesomeIcon icon={faFilter} className="text-gray-400" />
+              <FontAwesomeIcon
+                icon={faFilter}
+                className="text-gray-500 dark:text-gray-400 transition-colors duration-300"
+              />
               <div className="flex flex-wrap gap-2">
                 {[
                   { key: "all", label: "Tất cả", icon: faBook, color: "gray" },
@@ -373,7 +388,7 @@ const LoanHistory = () => {
                     className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       filter === key
                         ? `bg-${color}-500 text-white shadow-lg shadow-${color}-500/25`
-                        : "bg-gray-700 text-gray-300 hover:text-white hover:bg-gray-600"
+                        : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-300 dark:hover:bg-gray-600"
                     }`}
                   >
                     <FontAwesomeIcon icon={icon} className="text-sm" />
@@ -452,7 +467,7 @@ const LoanHistory = () => {
               return (
                 <div
                   key={loan.loan_id}
-                  className={`bg-gray-800 rounded-xl border ${statusInfo.border} overflow-hidden transition-all duration-300 hover:shadow-lg ${statusInfo.glow}`}
+                  className={`bg-white dark:bg-gray-800 rounded-xl border ${statusInfo.border} overflow-hidden transition-all duration-300 hover:shadow-lg ${statusInfo.glow}`}
                 >
                   <div className="p-6">
                     {/* Header */}
@@ -467,11 +482,11 @@ const LoanHistory = () => {
                               className={`${statusInfo.color} text-lg`}
                             />
                           </div>
-                          <h3 className="text-xl font-semibold text-white">
+                          <h3 className="text-xl font-semibold text-gray-900 dark:text-white transition-colors duration-300">
                             {loan.Book?.title || "Không có tiêu đề"}
                           </h3>
                         </div>
-                        <div className="flex items-center space-x-4 text-sm text-gray-400">
+                        <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
                           <span>
                             ISBN: {loan.Book?.isbn || loan.isbn || "N/A"}
                           </span>
@@ -488,51 +503,51 @@ const LoanHistory = () => {
 
                     {/* Main Info */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                      <div className="bg-gray-700/50 rounded-lg p-3">
-                        <p className="text-xs text-gray-400 mb-1 flex items-center">
+                      <div className="bg-gray-100 dark:bg-gray-700/50 rounded-lg p-3 transition-colors duration-300">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 flex items-center transition-colors duration-300">
                           <FontAwesomeIcon
                             icon={faCalendarAlt}
-                            className="mr-2 text-blue-400"
+                            className="mr-2 text-blue-500"
                           />
                           Ngày mượn
                         </p>
-                        <p className="text-white font-medium">
+                        <p className="text-gray-900 dark:text-white font-medium transition-colors duration-300">
                           {new Date(loan.loan_date).toLocaleDateString("vi-VN")}
                         </p>
                       </div>
-                      <div className="bg-gray-700/50 rounded-lg p-3">
-                        <p className="text-xs text-gray-400 mb-1 flex items-center">
+                      <div className="bg-gray-100 dark:bg-gray-700/50 rounded-lg p-3 transition-colors duration-300">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 flex items-center transition-colors duration-300">
                           <FontAwesomeIcon
                             icon={faCalendarAlt}
-                            className="mr-2 text-amber-400"
+                            className="mr-2 text-amber-500"
                           />
                           Hạn trả
                         </p>
-                        <p className="text-white font-medium">
+                        <p className="text-gray-900 dark:text-white font-medium transition-colors duration-300">
                           {new Date(loan.due_date).toLocaleDateString("vi-VN")}
                         </p>
                       </div>
-                      <div className="bg-gray-700/50 rounded-lg p-3">
-                        <p className="text-xs text-gray-400 mb-1 flex items-center">
+                      <div className="bg-gray-100 dark:bg-gray-700/50 rounded-lg p-3 transition-colors duration-300">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 flex items-center transition-colors duration-300">
                           <FontAwesomeIcon
                             icon={faClock}
-                            className="mr-2 text-emerald-400"
+                            className="mr-2 text-emerald-500"
                           />
                           Thời gian mượn
                         </p>
-                        <p className="text-white font-medium">
+                        <p className="text-gray-900 dark:text-white font-medium transition-colors duration-300">
                           {loanDuration} ngày
                         </p>
                       </div>
-                      <div className="bg-gray-700/50 rounded-lg p-3">
-                        <p className="text-xs text-gray-400 mb-1 flex items-center">
+                      <div className="bg-gray-100 dark:bg-gray-700/50 rounded-lg p-3 transition-colors duration-300">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 flex items-center transition-colors duration-300">
                           <FontAwesomeIcon
                             icon={faHistory}
-                            className="mr-2 text-purple-400"
+                            className="mr-2 text-purple-500"
                           />
                           Gia hạn
                         </p>
-                        <p className="text-white font-medium">
+                        <p className="text-gray-900 dark:text-white font-medium transition-colors duration-300">
                           {loan.renewal_count || 0} lần
                         </p>
                       </div>
@@ -588,16 +603,16 @@ const LoanHistory = () => {
                               </span>
                             </div>
                             {loan.return_date && (
-                              <p className="text-sm text-gray-400 mb-3">
+                              <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 transition-colors duration-300">
                                 <FontAwesomeIcon
                                   icon={faCalendarAlt}
-                                  className="mr-2 text-gray-500"
+                                  className="mr-2 text-gray-500 dark:text-gray-400"
                                 />
                                 Trả sách:{" "}
                                 {new Date(loan.return_date).toLocaleDateString(
                                   "vi-VN"
                                 )}{" "}
-                                <span className="text-red-400">
+                                <span className="text-red-500">
                                   (
                                   {Math.ceil(
                                     (new Date(loan.return_date) -
@@ -650,7 +665,7 @@ const LoanHistory = () => {
                                 if (status === "pending") {
                                   return (
                                     <>
-                                      <span className="text-amber-400 font-semibold flex items-center">
+                                      <span className="text-amber-500 font-semibold flex items-center">
                                         <FontAwesomeIcon
                                           icon={faClock}
                                           className="mr-2"
@@ -670,7 +685,7 @@ const LoanHistory = () => {
 
                                 if (status === "processing") {
                                   return (
-                                    <span className="text-amber-400 font-semibold flex items-center">
+                                    <span className="text-amber-500 font-semibold flex items-center">
                                       <FontAwesomeIcon
                                         icon={faClock}
                                         className="mr-2 animate-pulse"
@@ -682,7 +697,7 @@ const LoanHistory = () => {
 
                                 // Các trạng thái khác (đã xác nhận)
                                 return (
-                                  <span className="text-emerald-400 font-semibold flex items-center">
+                                  <span className="text-emerald-500 font-semibold flex items-center">
                                     <FontAwesomeIcon
                                       icon={faCheckCircle}
                                       className="mr-2"
@@ -698,28 +713,28 @@ const LoanHistory = () => {
                     {hasFine && isPaid && (
                       <div className="mt-4 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 backdrop-blur-sm">
                         <div className="flex justify-between items-center mb-3">
-                          <span className="font-medium text-emerald-400 flex items-center">
+                          <span className="font-medium text-emerald-500 flex items-center">
                             <FontAwesomeIcon
                               icon={faMoneyBill}
                               className="mr-2"
                             />
                             Phí phạt trễ hạn:
                           </span>
-                          <span className="font-bold text-lg text-emerald-400">
+                          <span className="font-bold text-lg text-emerald-500">
                             {loan.fine_amount.toLocaleString()} VND
                           </span>
                         </div>
                         {loan.return_date && (
-                          <p className="text-sm text-gray-400 mb-3">
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 transition-colors duration-300">
                             <FontAwesomeIcon
                               icon={faCalendarAlt}
-                              className="mr-2 text-gray-500"
+                              className="mr-2 text-gray-500 dark:text-gray-400"
                             />
                             Trả sách:{" "}
                             {new Date(loan.return_date).toLocaleDateString(
                               "vi-VN"
                             )}{" "}
-                            <span className="text-emerald-400">
+                            <span className="text-emerald-500">
                               (
                               {Math.ceil(
                                 (new Date(loan.return_date) -
@@ -730,7 +745,7 @@ const LoanHistory = () => {
                             </span>
                           </p>
                         )}
-                        <span className="text-emerald-400 font-semibold flex items-center">
+                        <span className="text-emerald-500 font-semibold flex items-center">
                           <FontAwesomeIcon
                             icon={faCheckCircle}
                             className="mr-2"
@@ -745,23 +760,23 @@ const LoanHistory = () => {
                       onClick={() =>
                         setExpandedCard(isExpanded ? null : loan.loan_id)
                       }
-                      className="mt-4 text-gray-400 hover:text-emerald-400 text-sm flex items-center transition-all duration-200 group"
+                      className="mt-4 text-gray-500 dark:text-gray-400 hover:text-emerald-500 text-sm flex items-center transition-all duration-200 group"
                     >
                       <span className="group-hover:mr-3 transition-all duration-200">
                         {isExpanded ? "Thu gọn" : "Xem thêm"}
                       </span>
                       <FontAwesomeIcon
                         icon={isExpanded ? faChevronUp : faChevronDown}
-                        className="ml-2 group-hover:text-emerald-400 transition-all duration-200"
+                        className="ml-2 group-hover:text-emerald-500 transition-all duration-200"
                       />
                     </button>
 
                     {/* Expanded Content */}
                     {isExpanded && (
-                      <div className="mt-4 pt-4 border-t border-gray-700 animate-fadeIn">
+                      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 animate-fadeIn transition-colors duration-300">
                         <div className="space-y-4">
                           <div>
-                            <h4 className="text-sm font-semibold text-emerald-400 mb-3 flex items-center">
+                            <h4 className="text-sm font-semibold text-emerald-500 mb-3 flex items-center">
                               <FontAwesomeIcon
                                 icon={faInfoCircle}
                                 className="mr-2"
@@ -769,28 +784,28 @@ const LoanHistory = () => {
                               Chi tiết thêm
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                              <div className="bg-gray-700/30 rounded-lg p-3">
-                                <p className="text-xs text-gray-400 mb-1">
+                              <div className="bg-gray-100 dark:bg-gray-700/30 rounded-lg p-3 transition-colors duration-300">
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 transition-colors duration-300">
                                   Trạng thái mượn
                                 </p>
-                                <p className="text-white font-medium">
+                                <p className="text-gray-900 dark:text-white font-medium transition-colors duration-300">
                                   {getStatusText(loan.status)}
                                 </p>
                               </div>
-                              <div className="bg-gray-700/30 rounded-lg p-3">
-                                <p className="text-xs text-gray-400 mb-1">
+                              <div className="bg-gray-100 dark:bg-gray-700/30 rounded-lg p-3 transition-colors duration-300">
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 transition-colors duration-300">
                                   Trạng thái gia hạn
                                 </p>
                                 <p className="font-medium">
                                   <span
                                     className={
                                       loan.renewal_status === "approved"
-                                        ? "text-emerald-400"
+                                        ? "text-emerald-500"
                                         : loan.renewal_status === "pending"
-                                        ? "text-amber-400"
+                                        ? "text-amber-500"
                                         : loan.renewal_status === "rejected"
-                                        ? "text-red-400"
-                                        : "text-gray-400"
+                                        ? "text-red-500"
+                                        : "text-gray-500 dark:text-gray-400"
                                     }
                                   >
                                     {loan.renewal_status === "approved"
@@ -804,11 +819,13 @@ const LoanHistory = () => {
                                 </p>
                               </div>
                               {loan.notes && (
-                                <div className="bg-gray-700/30 rounded-lg p-3 md:col-span-2">
-                                  <p className="text-xs text-gray-400 mb-1">
+                                <div className="bg-gray-100 dark:bg-gray-700/30 rounded-lg p-3 md:col-span-2 transition-colors duration-300">
+                                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 transition-colors duration-300">
                                     Ghi chú
                                   </p>
-                                  <p className="text-white">{loan.notes}</p>
+                                  <p className="text-gray-900 dark:text-white transition-colors duration-300">
+                                    {loan.notes}
+                                  </p>
                                 </div>
                               )}
                             </div>
@@ -823,14 +840,14 @@ const LoanHistory = () => {
           </div>
         ) : (
           <div className="text-center py-12">
-            <div className="bg-gray-800 rounded-xl p-8 border border-gray-700 max-w-md mx-auto">
-              <div className="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 max-w-md mx-auto transition-colors duration-300 shadow-lg">
+              <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors duration-300">
                 <FontAwesomeIcon
                   icon={faBook}
-                  className="text-3xl text-gray-500"
+                  className="text-3xl text-gray-500 dark:text-gray-400"
                 />
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 transition-colors duration-300">
                 {filter === "all"
                   ? "Chưa có lịch sử mượn sách"
                   : filter === "fined"
@@ -839,7 +856,7 @@ const LoanHistory = () => {
                   ? "Không có khoản phạt đã đóng"
                   : "Không có khoản phạt chưa đóng"}
               </h3>
-              <p className="text-gray-400 text-sm mb-4">
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 transition-colors duration-300">
                 {filter === "all"
                   ? "Khi bạn trả sách, lịch sử sẽ xuất hiện ở đây!"
                   : "Thay đổi bộ lọc để xem các mục khác"}

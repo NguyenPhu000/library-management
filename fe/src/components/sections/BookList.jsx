@@ -59,7 +59,7 @@ const BookList = ({ books, loading, error }) => {
       >
         {loading ? (
           <motion.p
-            className="text-center col-span-full text-white text-2xl flex items-center justify-center space-x-3 py-16"
+            className="text-center col-span-full text-gray-900 dark:text-white text-2xl flex items-center justify-center space-x-3 py-16 transition-colors duration-300"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -105,8 +105,8 @@ const BookList = ({ books, loading, error }) => {
               >
                 <Link to={`/books/${slug}`} className="block h-full">
                   <div
-                    className="relative flex flex-col h-full bg-gray-800 rounded-lg shadow-lg overflow-hidden
-                               group transition duration-300 ease-in-out border border-transparent hover:border-teal-500/50 cursor-pointer"
+                    className="relative flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden
+                               group transition duration-300 ease-in-out border-2 border-gray-300 dark:border-transparent hover:border-teal-400 dark:hover:border-teal-500/50 cursor-pointer"
                   >
                     <div className="relative overflow-hidden aspect-[3/4]">
                       {" "}
@@ -122,21 +122,21 @@ const BookList = ({ books, loading, error }) => {
                                  bg-[length:250%_250%] bg-[position:-100%_-100%] bg-no-repeat transition-[background-position_0s_ease] group-hover:bg-[position:200%_200%] group-hover:duration-[1200ms]"
                       ></div>
                     </div>
-                    <div className="p-4 flex flex-col flex-grow">
+                    <div className="p-4 flex flex-col flex-grow bg-white dark:bg-gray-800">
                       {" "}
                       <h3
-                        className="text-md font-semibold text-white mb-1 line-clamp-2"
+                        className="text-md font-semibold text-gray-900 dark:text-white mb-1 line-clamp-2 transition-colors duration-300"
                         title={book.title || "Không có tiêu đề"}
                       >
                         {book.title || "Không có tiêu đề"}
                       </h3>
                       <p
-                        className="text-gray-400 text-xs mb-2 flex items-center"
+                        className="text-gray-600 dark:text-gray-400 text-xs mb-2 flex items-center transition-colors duration-300"
                         title={book.author || "Không rõ tác giả"}
                       >
                         <FontAwesomeIcon
                           icon={faPenNib}
-                          className="mr-1.5 w-3 h-3 flex-shrink-0"
+                          className="mr-1.5 w-3 h-3 flex-shrink-0 text-gray-500 dark:text-gray-400"
                         />
                         <span className="truncate">
                           {" "}
